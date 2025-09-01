@@ -7,6 +7,8 @@ const connectToDatabase = require('./database/config');
 const authRoutes = require('./routes/authRoutes');
 const tagRoutes = require('./routes/tagRoutes');
 const technologyRoutes = require('./routes/technologyRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
+const portfolioRoutes = require('./routes/portfolioRoutes');
 
 dotenv.config();
 
@@ -28,6 +30,8 @@ app.get('/', (_req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/tags', tagRoutes);
 app.use('/api/technologies', technologyRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/portfolios', portfolioRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
