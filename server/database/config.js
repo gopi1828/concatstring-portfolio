@@ -10,7 +10,7 @@ async function connectToDatabase() {
 		return mongoose.connection;
 	}
 
-	const mongoUri = process.env.MONGODB_URI || process.env.DATABASE_URL || 'mongodb://127.0.0.1:27017/concatstring_portfolio';
+	const mongoUri = process.env.DATABASE_URL;
 
 	mongoose.set('strictQuery', true);
 
