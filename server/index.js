@@ -5,6 +5,8 @@ const dotenv = require('dotenv');
 
 const connectToDatabase = require('./database/config');
 const authRoutes = require('./routes/authRoutes');
+const tagRoutes = require('./routes/tagRoutes');
+const technologyRoutes = require('./routes/technologyRoutes');
 
 dotenv.config();
 
@@ -24,6 +26,8 @@ app.get('/', (_req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/tags', tagRoutes);
+app.use('/api/technologies', technologyRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
