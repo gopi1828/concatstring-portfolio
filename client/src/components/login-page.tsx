@@ -1,26 +1,27 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
-import { AxiosError } from "axios";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useNavigate } from "react-router";
+
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "../components/ui/card";
+
 import { Eye, EyeOff, FolderOpen } from "lucide-react";
 
 export function LoginPage() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -39,16 +40,30 @@ export function LoginPage() {
     }),
     onSubmit: async (values) => {
       setIsLoading(true);
+
+      const trimmedValues = {
+        username: values.username.trim(),
+        password: values.password.trim(),
+      };
+
       try {
-        const response = await axios.post("/api/users/login", values);
+        const response = await axios.post(
+          `${process.env.REACT_APP_API_URL}/auth/login`,
+          trimmedValues
+        );
 
         if (response.status === 200) {
           toast.success("Login successful!");
           const { token } = response.data;
 
-          // Only persist the token
-          localStorage.setItem("token", token);
-          router.push("/dashboard");
+          try {
+            localStorage.setItem("token", token);
+          } catch (e) {
+            toast.error("Failed to save token. Please check browser settings.");
+            return;
+          }
+
+          navigate("/dashboard");
         }
       } catch (error) {
         if (error instanceof AxiosError && error.response?.status === 400) {
@@ -58,7 +73,7 @@ export function LoginPage() {
           } else if (message === "Incorrect password") {
             toast.error("Incorrect password");
           } else {
-            toast.error(message);
+            toast.error(message || "Invalid credentials");
           }
         } else {
           toast.error("Something went wrong. Please try again.");
@@ -92,33 +107,26 @@ export function LoginPage() {
             className="space-y-6"
           >
             <div className="space-y-2">
-              <Label
-                htmlFor="username"
-                className="text-sm font-medium text-gray-700"
-              >
+              <Label htmlFor="username" className="text-sm font-medium text-gray-700">
                 Username
               </Label>
               <Input
                 id="username"
                 name="username"
                 type="text"
-                placeholder="Enter your user name"
+                placeholder="Enter your username"
                 value={formik.values.username}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
               />
               {formik.touched.username && formik.errors.username && (
-                <p className="text-sm text-red-600 -mt-2">
-                  {formik.errors.username}
-                </p>
+                <p className="text-sm text-red-600 -mt-2">{formik.errors.username}</p>
               )}
             </div>
+
             <div className="space-y-2">
-              <Label
-                htmlFor="password"
-                className="text-sm font-medium text-gray-700"
-              >
+              <Label htmlFor="password" className="text-sm font-medium text-gray-700">
                 Password
               </Label>
               <div className="relative">
@@ -139,24 +147,18 @@ export function LoginPage() {
                   className="absolute right-0 top-0 h-11 w-11 text-gray-400 hover:text-gray-600"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
               {formik.touched.password && formik.errors.password && (
-                <p className="text-sm text-red-600 -mt-2">
-                  {formik.errors.password}
-                </p>
+                <p className="text-sm text-red-600 -mt-2">{formik.errors.password}</p>
               )}
             </div>
 
             <Button
               type="submit"
+              disabled={!formik.isValid || isLoading}
               className="w-full h-11 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
-              disabled={isLoading}
             >
               {isLoading ? "Signing in..." : "Sign In"}
             </Button>
