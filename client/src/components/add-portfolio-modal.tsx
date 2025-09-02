@@ -1,17 +1,15 @@
-"use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useFormik } from "formik";
-import * as Yup from "yup";
-import { portfolioValidationSchema } from "@/lib/portfolioValidation";
+import { portfolioValidationSchema } from "../lib/portfolioValidation";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Textarea } from "../components/ui/textarea";
+import { Badge } from "../components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -19,7 +17,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "../components/ui/dialog";
 import { Upload, X, Plus } from "lucide-react";
 
 interface AddPortfolioModalProps {
@@ -52,7 +50,7 @@ export function AddPortfolioModal({
     const fetchTech = async () => {
       try {
         setIsLoading(true);
-        const res = await axios.get("/api/technology");
+        const res = await axios.get("http://localhost:8000/api/technologies");
         setTechOptions(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Failed to fetch techs:", err);
@@ -72,7 +70,7 @@ export function AddPortfolioModal({
   useEffect(() => {
     const fetchCategory = async () => {
       try {
-        const res = await axios.get("/api/category");
+        const res = await axios.get("http://localhost:8000/api/categories");
         setCategoryOptions(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Failed to fetch category:", err);
@@ -88,7 +86,7 @@ export function AddPortfolioModal({
   useEffect(() => {
     const fetchTag = async () => {
       try {
-        const res = await axios.get("/api/tag");
+        const res = await axios.get("http://localhost:8000/api/tags");
         setTagOptions(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Failed to fetch tag:", err);
@@ -141,7 +139,7 @@ export function AddPortfolioModal({
       formData.append("tags", JSON.stringify(selectedTags));
 
       try {
-        const response = await axios.post("/api/portfolio", formData, {
+        const response = await axios.post("http://localhost:8000/api/portfolios", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
 

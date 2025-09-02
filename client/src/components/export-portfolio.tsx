@@ -1,7 +1,5 @@
-"use client";
-
 import { useMemo } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../components/ui/button";
 import { Upload } from "lucide-react";
 
 export type ExportPortfolioItem = {

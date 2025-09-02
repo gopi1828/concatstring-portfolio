@@ -1,10 +1,8 @@
-"use client";
-
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Badge } from "../components/ui/badge";
+import { Card, CardContent } from "../components/ui/card";
 import {
   Table,
   TableBody,
@@ -12,7 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "../components/ui/table";
 import {
   Pagination,
   PaginationContent,
@@ -20,16 +18,15 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
-import { AddPortfolioModal } from "@/components/add-portfolio-modal";
-import EditPortfolioModal from "@/components/edit-portfolio-modal";
+} from "../components/ui/pagination";
+import { AddPortfolioModal } from "../components/add-portfolio-modal";
+import EditPortfolioModal from "../components/edit-portfolio-modal";
 import {
   Search,
   Plus,
   Grid3X3,
   List,
   Calendar,
-  Eye,
   Edit,
   Trash2,
   FileText,
@@ -37,8 +34,8 @@ import {
 import Link from "next/link";
 import { ConfirmDialog } from "./confirmDelete ";
 
-import ExportPortfolio from "@/components/export-portfolio";
-import ImportPortfolio from "@/components/import-portfolio";
+import ExportPortfolio from "../components/export-portfolio";
+import ImportPortfolio from "../components/import-portfolio";
 import { Skeleton } from "./ui/skeleton";
 import axios from "axios";
 
@@ -139,7 +136,7 @@ export function PortfolioPage() {
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const itemsPerPage = 6;
+  const itemsPerPage = 10;
 
   const decodeJwtPayload = (token: string) => {
     try {
@@ -161,7 +158,7 @@ export function PortfolioPage() {
   const fetchPortfolios = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("/api/portfolio", {
+      const response = await axios.get("http://localhost:8000/api/portfolios", {
         headers: {
           "Cache-Control": "no-store",
         },
@@ -241,7 +238,7 @@ export function PortfolioPage() {
     if (!itemToDelete) return;
 
     try {
-      const response = await axios.delete(`/api/portfolio/${itemToDelete}`, {
+      const response = await axios.delete(`http://localhost:8000/api/portfolios/${itemToDelete}`, {
         headers: {
           "Content-Type": "application/json",
         },

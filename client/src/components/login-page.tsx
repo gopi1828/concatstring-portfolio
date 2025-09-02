@@ -1,12 +1,9 @@
-"use client";
-
 import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios, { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
-
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -17,7 +14,6 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
-
 import { Eye, EyeOff, FolderOpen } from "lucide-react";
 
 export function LoginPage() {
@@ -48,9 +44,10 @@ export function LoginPage() {
 
       try {
         const response = await axios.post(
-          `${process.env.REACT_APP_API_URL}/auth/login`,
+          "http://localhost:8000/api/auth/login",
           trimmedValues
         );
+
 
         if (response.status === 200) {
           toast.success("Login successful!");
@@ -107,7 +104,10 @@ export function LoginPage() {
             className="space-y-6"
           >
             <div className="space-y-2">
-              <Label htmlFor="username" className="text-sm font-medium text-gray-700">
+              <Label
+                htmlFor="username"
+                className="text-sm font-medium text-gray-700"
+              >
                 Username
               </Label>
               <Input
@@ -121,12 +121,17 @@ export function LoginPage() {
                 className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
               />
               {formik.touched.username && formik.errors.username && (
-                <p className="text-sm text-red-600 -mt-2">{formik.errors.username}</p>
+                <p className="text-sm text-red-600 -mt-2">
+                  {formik.errors.username}
+                </p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+              <Label
+                htmlFor="password"
+                className="text-sm font-medium text-gray-700"
+              >
                 Password
               </Label>
               <div className="relative">
@@ -147,11 +152,17 @@ export function LoginPage() {
                   className="absolute right-0 top-0 h-11 w-11 text-gray-400 hover:text-gray-600"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
               {formik.touched.password && formik.errors.password && (
-                <p className="text-sm text-red-600 -mt-2">{formik.errors.password}</p>
+                <p className="text-sm text-red-600 -mt-2">
+                  {formik.errors.password}
+                </p>
               )}
             </div>
 

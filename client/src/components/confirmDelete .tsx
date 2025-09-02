@@ -1,6 +1,5 @@
-// components/common/confirm-dialog.tsx
-import { ReactNode } from "react";
-import { Button } from "@/components/ui/button";
+import type { ReactNode } from "react";
+import { Button } from "../components/ui/button";
 
 type ConfirmDialogProps = {
   title?: string;

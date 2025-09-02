@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,9 +9,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "../components/ui/dialog";
 import { Loader2, Download } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "../hooks/use-toast";
 
 type ImportResultItem = {
   projectName: string;
