@@ -52,7 +52,7 @@ const fetchTechnologies = async () => {
   setLoading(true)
   setError("")
   try {
-    const response = await axios.get("/api/technology")
+    const response = await axios.get("http://localhost:5000/api/technologies")
     const data: Technology[] = response.data
 
     const cleaned = data.filter(
@@ -86,7 +86,7 @@ const fetchTechnologies = async () => {
     if (!technologyToDelete) return
     setDeleteLoading(true)
    try {
-  const response = await axios.delete(`/api/technology/${technologyToDelete._id}`)
+  const response = await axios.delete(`http://localhost:5000/api/technologies/${technologyToDelete._id}`)
 
   const result = response.data
   if (result?.success === false) {

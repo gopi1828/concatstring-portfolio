@@ -1,7 +1,4 @@
-"use client";
-
-import type React from "react";
-
+import type { FormEvent } from "react";
 import { useState } from "react";
 import axios from "axios";
 import { Button } from "./ui/button";
@@ -51,11 +48,11 @@ export function AddCategoryModal({
   const [icon, setIcon] = useState("");
   const [color, setColor] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("/api/category", {
+      const response = await axios.post("http://localhost:5000/api/categories", {
         name,
         description,
         icon,

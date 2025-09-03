@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from "../components/ui/dialog";
 import { Upload, X, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface AddPortfolioModalProps {
   open: boolean;
@@ -49,7 +50,7 @@ export function AddPortfolioModal({
     const fetchTech = async () => {
       try {
         setIsLoading(true);
-        const res = await axios.get("http://localhost:8000/api/technologies");
+        const res = await axios.get("http://localhost:5000/api/technologies");
         setTechOptions(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Failed to fetch techs:", err);
@@ -69,7 +70,7 @@ export function AddPortfolioModal({
   useEffect(() => {
     const fetchCategory = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/categories");
+        const res = await axios.get("http://localhost:5000/api/categories");
         setCategoryOptions(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Failed to fetch category:", err);
@@ -85,7 +86,7 @@ export function AddPortfolioModal({
   useEffect(() => {
     const fetchTag = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/tags");
+        const res = await axios.get("http://localhost:5000/api/tags");
         setTagOptions(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Failed to fetch tag:", err);
@@ -138,7 +139,7 @@ export function AddPortfolioModal({
       formData.append("tags", JSON.stringify(selectedTags));
 
       try {
-        const response = await axios.post("http://localhost:8000/api/portfolios", formData, {
+        const response = await axios.post("http://localhost:5000/api/portfolios", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
