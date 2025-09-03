@@ -1,8 +1,7 @@
-"use client";
-import type { FormEvent } from "react";
 
+import type { FormEvent } from "react";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../lib/api";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -69,7 +68,7 @@ export function EditCategoryModal({
 
     setLoading(true);
     try {
-      const response = await axios.put(`http://localhost:5000/api/categories/${category.id}`, {
+      const response = await api.put(`/api/categories/${category.id}`, {
         name,
         description,
         icon,

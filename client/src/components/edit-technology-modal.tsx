@@ -1,4 +1,4 @@
-"use client";
+
 import type { FormEvent } from "react";
 
 import { useState, useEffect } from "react";
@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import toast from "react-hot-toast";
-import axios from "axios";
+import api from "../lib/api";
 
 interface Technology {
   _id: string;
@@ -160,7 +160,7 @@ export function EditTechnologyModal({
     setLoading(true);
 
     try {
-      const response = await axios.patch(`http://localhost:5000/api/technologies/${technology._id}`, {
+      const response = await api.patch(`/api/technologies/${technology._id}`, {
         name,
         description,
         category,

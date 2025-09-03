@@ -1,7 +1,6 @@
-"use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../lib/api";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
@@ -38,7 +37,7 @@ export function CategoriesPage() {
     try {
       setLoading(true);
       setError("");
-      const response = await axios.get("http://localhost:5000/api/categories");
+      const response = await api.get("/api/categories");
       const categoriesWithId = response.data.map((cat: any) => ({
         ...cat,
         id: cat._id || cat.id,
@@ -71,7 +70,7 @@ export function CategoriesPage() {
     if (!categoryToDelete) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/categories/${categoryToDelete}`);
+      await api.delete(`/api/categories/${categoryToDelete}`);
       setCategories((prev) =>
         prev.filter((cat) => cat.id !== categoryToDelete)
       );
