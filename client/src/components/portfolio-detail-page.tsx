@@ -1,8 +1,7 @@
-"use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
 import {
   Card,
   CardContent,
@@ -11,8 +10,8 @@ import {
   CardTitle,
 } from "./ui/card";
 // import { Separator } from "./ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import {
   ArrowLeft,
   Edit,
@@ -33,7 +32,7 @@ import {
   Code,
   Zap,
 } from "lucide-react";
-import axios from "axios";
+import api from "../lib/api";
 import { useNavigate } from "react-router-dom";
 
 interface PortfolioItem {
@@ -73,10 +72,17 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
       try {
         setIsLoading(true);
 
-        const response = await axios.get(`/api/portfolio/${id}`);
+        const response = await api.get(`/api/portfolios/${id}`);
 
         const data = response.data;
-        setPortfolio(data.result);
+        const item = (data && (data.result || data.portfolio || data.item || data)) as
+          | PortfolioItem
+          | null;
+        if (item && (item as any)._id) {
+          setPortfolio(item as PortfolioItem);
+        } else {
+          setError("Portfolio not found");
+        }
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Failed to fetch portfolio"

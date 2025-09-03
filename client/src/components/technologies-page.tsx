@@ -11,7 +11,7 @@ import { ConfirmDialog } from "./confirmDelete "
 import { Search, Plus, Edit, Trash2, Code2, Star, TrendingUp } from "lucide-react"
 import toast from "react-hot-toast"
 import { Skeleton } from "./ui/skeleton" 
-import axios from "axios"
+import api from "../lib/api"
 
 interface Technology {
   _id: string
@@ -52,7 +52,7 @@ const fetchTechnologies = async () => {
   setLoading(true)
   setError("")
   try {
-    const response = await axios.get("http://localhost:5000/api/technologies")
+    const response = await api.get("/api/technologies")
     const data: Technology[] = response.data
 
     const cleaned = data.filter(
@@ -86,7 +86,7 @@ const fetchTechnologies = async () => {
     if (!technologyToDelete) return
     setDeleteLoading(true)
    try {
-  const response = await axios.delete(`http://localhost:5000/api/technologies/${technologyToDelete._id}`)
+  const response = await api.delete(`/api/technologies/${technologyToDelete._id}`)
 
   const result = response.data
   if (result?.success === false) {

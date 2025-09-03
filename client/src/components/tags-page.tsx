@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import axios from "axios"
+import api from "../lib/api"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Badge } from "./ui/badge"
@@ -28,7 +28,7 @@ export function TagsPage() {
   const fetchTags = async () => {
     try {
       setLoading(true)
-      const res = await axios.get("http://localhost:5000/api/tags")
+      const res = await api.get("/api/tags")
       setTags(res.data)
     } catch (error) {
       toast.error("Error fetching tags")
@@ -44,7 +44,7 @@ export function TagsPage() {
   const handleAdd = async () => {
     if (!newTag.trim()) return
     try {
-      await axios.post("http://localhost:5000/api/tags", { name: newTag.trim() })
+      await api.post("/api/tags", { name: newTag.trim() })
       toast.success("Tag added")
       setNewTag("")
       fetchTags()
@@ -56,7 +56,7 @@ export function TagsPage() {
   const handleUpdate = async (id: string) => {
     if (!editedName.trim()) return
     try {
-      await axios.patch(`http://localhost:5000/api/tags/${id}`, { name: editedName.trim() })
+      await api.patch(`/api/tags/${id}`, { name: editedName.trim() })
       toast.success("Tag updated")
       setEditingId(null)
       setEditedName("")
@@ -214,7 +214,7 @@ export function TagsPage() {
         onConfirm={async () => {
           if (!tagToDelete) return
           try {
-            await axios.delete(`http://localhost:5000/api/tags/${tagToDelete._id}`)
+            await api.delete(`/api/tags/${tagToDelete._id}`)
             toast.success("Deleted successfully")
             fetchTags()
           } catch (error) {

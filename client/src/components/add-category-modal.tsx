@@ -1,6 +1,6 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
-import axios from "axios";
+import api from "../lib/api";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -52,7 +52,7 @@ export function AddCategoryModal({
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:5000/api/categories", {
+      const response = await api.post("/api/categories", {
         name,
         description,
         icon,

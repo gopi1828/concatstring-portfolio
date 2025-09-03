@@ -37,7 +37,7 @@ import { ConfirmDialog } from "./confirmDelete ";
 import ExportPortfolio from "../components/export-portfolio";
 import ImportPortfolio from "../components/import-portfolio";
 import { Skeleton } from "./ui/skeleton";
-import axios from "axios";
+import api from "../lib/api";
 
 type PortfolioItem = {
   _id: string;
@@ -158,7 +158,7 @@ export function PortfolioPage() {
   const fetchPortfolios = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://localhost:5000/api/portfolios", {
+      const response = await api.get("/api/portfolios", {
         headers: {
           "Cache-Control": "no-store",
         },
@@ -238,7 +238,7 @@ export function PortfolioPage() {
     if (!itemToDelete) return;
 
     try {
-      const response = await axios.delete(`http://localhost:5000/api/portfolios/${itemToDelete}`, {
+      const response = await api.delete(`/api/portfolios/${itemToDelete}`, {
         headers: {
           "Content-Type": "application/json",
         },

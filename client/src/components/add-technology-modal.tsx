@@ -1,6 +1,5 @@
-"use client";
-import type { FormEvent } from "react";
 
+import type { FormEvent } from "react";
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -23,7 +22,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import toast from "react-hot-toast";
-import axios from "axios";
+import api from "../lib/api";
 
 interface AddTechnologyModalProps {
   open: boolean;
@@ -137,7 +136,7 @@ export function AddTechnologyModal({
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/technologies", {
+      const response = await api.post("/api/technologies", {
         name,
         description,
         category,
