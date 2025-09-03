@@ -1,3 +1,4 @@
+"use client";
 
 import { useState } from "react";
 import { Button } from "./ui/button";
@@ -154,11 +155,14 @@ export function ProjectsList() {
       {/* Filters */}
       <div className="flex items-center gap-4">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          placeholder="Search projects..." value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          <Input className="pl-10" />
-        </div>
+  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+  <Input
+    className="pl-10"
+    placeholder="Search projects..."
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+  />
+</div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

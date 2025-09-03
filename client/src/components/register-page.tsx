@@ -1,5 +1,3 @@
-
-
 import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -9,9 +7,9 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import api from "../lib/api";
 
 export function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,8 +31,9 @@ export function RegisterPage() {
         .required("Password is required"),
     }),
     onSubmit: async (values) => {
+      
       try {
-        const res = await axios.post("/api/users/register", values);
+        const res = await api.post("/api/auth/register", values);
         if (res.status === 200) {
           toast.success("User added successfully");
           formik.resetForm();

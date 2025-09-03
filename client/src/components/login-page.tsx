@@ -1,4 +1,3 @@
-// import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios, { AxiosError } from "axios";
@@ -36,6 +35,7 @@ export function LoginPage() {
         .min(4, "Password must be at least 4 characters"),
     }),
     onSubmit: async (values) => {
+            
       setIsLoading(true);
 
       const trimmedValues = {
@@ -43,12 +43,12 @@ export function LoginPage() {
         password: values.password.trim(),
       };
 
+
       try {
         const response = await axios.post(
           "http://localhost:5000/api/auth/login",
           trimmedValues
         );
-
 
         if (response.status === 200) {
           toast.success("Login successful!");

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
@@ -34,6 +33,7 @@ import {
 } from "lucide-react";
 import api from "../lib/api";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 interface PortfolioItem {
   _id: string;
@@ -72,7 +72,7 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
       try {
         setIsLoading(true);
 
-        const response = await api.get(`/api/portfolios/${id}`);
+        const response = await axios.get(`http://localhost:5000//api/portfolios/${id}`);
 
         const data = response.data;
         const item = (data && (data.result || data.portfolio || data.item || data)) as
