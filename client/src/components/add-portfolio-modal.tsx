@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useFormik } from "formik";
 import { portfolioValidationSchema } from "../lib/portfolioValidation";
 import axios from "axios";
@@ -40,7 +39,7 @@ export function AddPortfolioModal({
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const router = useRouter();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsClientSide(true);
@@ -144,7 +143,7 @@ export function AddPortfolioModal({
         });
 
         if (response.status === 200) {
-          router.push("/dashboard");
+          navigate("/dashboard");
           toast.success("Project added successfully!");
           handleCancel();
 
@@ -153,8 +152,7 @@ export function AddPortfolioModal({
             onPortfolioAdded();
           }
 
-          router.refresh();
-          router.push("/dashboard");
+          navigate("/dashboard");
         }
       } catch (error) {
         if (error instanceof Error) {

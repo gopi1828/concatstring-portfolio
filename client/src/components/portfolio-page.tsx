@@ -31,7 +31,7 @@ import {
   Trash2,
   FileText,
 } from "lucide-react";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { ConfirmDialog } from "./confirmDelete ";
 
 import ExportPortfolio from "../components/export-portfolio";
@@ -346,7 +346,7 @@ export function PortfolioPage() {
               </TableCell>
               <TableCell>
                 <div>
-                  <Link href={`/dashboard/portfolio/${item._id}`}>
+                  <Link to={`/dashboard/portfolio/${item._id}`}>
                     <div className="font-medium text-gray-900 hover:text-blue-600 cursor-pointer">
                       {item.projectName}
                     </div>
@@ -418,7 +418,7 @@ export function PortfolioPage() {
           key={item._id}
           className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-white"
         >
-          <Link href={`/dashboard/portfolio/${item._id}`}>
+          <Link to={`/dashboard/portfolio/${item._id}`}>
             <div className="relative overflow-hidden rounded-t-lg">
               {item.clientInvoices &&
               item.clientInvoices.length > 0 &&
@@ -468,7 +468,7 @@ export function PortfolioPage() {
             </div>
           </Link>
           <CardContent className="p-6">
-            <Link href={`/dashboard/portfolio/${item._id}`}>
+            <Link to={`/dashboard/portfolio/${item._id}`}>
               <h3 className="font-semibold text-lg text-gray-900 mb-2 group-hover:text-blue-600 transition-colors cursor-pointer">
                 {item.projectName}
               </h3>
@@ -607,6 +607,7 @@ export function PortfolioPage() {
                   className={
                     currentPage === 1 ? "pointer-events-none opacity-50" : ""
                   }
+                  size="icon"
                 />
               </PaginationItem>
               {[...Array(totalPages)].map((_, i) => (
@@ -618,6 +619,7 @@ export function PortfolioPage() {
                       setCurrentPage(i + 1);
                     }}
                     isActive={currentPage === i + 1}
+                    size="icon"
                   >
                     {i + 1}
                   </PaginationLink>
@@ -636,6 +638,7 @@ export function PortfolioPage() {
                       ? "pointer-events-none opacity-50"
                       : ""
                   }
+                  size="icon"
                 />
               </PaginationItem>
             </PaginationContent>

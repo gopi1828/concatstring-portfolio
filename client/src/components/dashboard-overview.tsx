@@ -6,9 +6,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+} from "./ui/card";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
 import {
   FolderOpen,
   Eye,
@@ -20,7 +20,7 @@ import {
   Activity,
   Settings,
 } from "lucide-react"; // Added Settings import
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
 const stats = [
   {
@@ -98,7 +98,7 @@ export function DashboardOverview() {
           </p>
         </div>
         <Button asChild>
-          <Link href="/projects/new">
+          <Link to="/projects/new">
             <Plus className="mr-2 h-4 w-4" />
             New Project
           </Link>
@@ -135,7 +135,7 @@ export function DashboardOverview() {
                 </CardDescription>
               </div>
               <Button variant="outline" size="sm" asChild>
-                <Link href="/projects">
+                <Link to="/projects">
                   View All
                   <ExternalLink className="ml-2 h-4 w-4" />
                 </Link>
@@ -200,32 +200,20 @@ export function DashboardOverview() {
             <CardDescription>Common tasks and shortcuts</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button
-              className="w-full justify-start bg-transparent"
-              variant="outline"
-              asChild
-            >
-              <Link href="/projects/new">
+            <Button className="w-full justify-start bg-transparent" variant="outline" asChild>
+              <Link to="/projects/new">
                 <Plus className="mr-2 h-4 w-4" />
                 Create New Project
               </Link>
             </Button>
-            <Button
-              className="w-full justify-start bg-transparent"
-              variant="outline"
-              asChild
-            >
-              <Link href="/analytics">
+            <Button className="w-full justify-start bg-transparent" variant="outline" asChild>
+              <Link to="/analytics">
                 <TrendingUp className="mr-2 h-4 w-4" />
                 View Analytics
               </Link>
             </Button>
-            <Button
-              className="w-full justify-start bg-transparent"
-              variant="outline"
-              asChild
-            >
-              <Link href="/settings">
+            <Button className="w-full justify-start bg-transparent" variant="outline" asChild>
+              <Link to="/settings">
                 <Settings className="mr-2 h-4 w-4" />
                 Account Settings
               </Link>

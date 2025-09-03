@@ -1,14 +1,13 @@
-"use client";
 
-import type React from "react";
-import { Button } from "@/components/ui/button";
+// import React from "react";
+import { Button } from "./ui/button";
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
+} from "./ui/sheet";
 import {
   LayoutDashboard,
   FolderOpen,
@@ -19,8 +18,8 @@ import {
   Bell,
   Search,
 } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "./ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,7 +27,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "./ui/dropdown-menu";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 

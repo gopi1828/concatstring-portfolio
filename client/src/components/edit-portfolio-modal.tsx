@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useFormik } from "formik";
 import { portfolioValidationSchema } from "../lib/portfolioValidation";
 import axios from "axios";
@@ -45,7 +44,7 @@ export default function EditPortfolioModal({
   );
   const [newTag, setNewTag] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const isImageUrl = (url: string) => {
     const clean = (url || "").split("?")[0].toLowerCase();
@@ -204,8 +203,7 @@ export default function EditPortfolioModal({
           if (typeof onUpdated === "function") {
             onUpdated();
           } else {
-            // fallback for pages outside dashboard list
-            router.refresh();
+            navigate(0);
           }
           toast.success("Project updated successfully!");
           handleCancel();

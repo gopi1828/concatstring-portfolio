@@ -1,21 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import type { AxiosError } from "axios";
 import { Eye, EyeOff, FolderOpen } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -39,14 +39,14 @@ export function RegisterPage() {
           toast.success("User added successfully");
           formik.resetForm();
           setShowPassword(false);
-          router.push("/dashboard/register");
+          navigate("/dashboard/register");
         } else {
           const msg =
             typeof res.data === "string" ? res.data : "Registration completed";
           toast.success(msg);
           formik.resetForm();
           setShowPassword(false);
-          router.push("/dashboard");
+          navigate("/dashboard");
         }
       } catch (error) {
         const err = error as AxiosError<any>;

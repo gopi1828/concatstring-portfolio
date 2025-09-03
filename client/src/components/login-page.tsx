@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios, { AxiosError } from "axios";
@@ -15,11 +15,12 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { Eye, EyeOff, FolderOpen } from "lucide-react";
+import { useState } from "react";
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -44,7 +45,7 @@ export function LoginPage() {
 
       try {
         const response = await axios.post(
-          "http://localhost:8000/api/auth/login",
+          "http://localhost:5000/api/auth/login",
           trimmedValues
         );
 

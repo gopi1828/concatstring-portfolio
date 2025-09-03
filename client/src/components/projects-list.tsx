@@ -1,22 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "./ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+} from "./ui/card";
+import { Badge } from "./ui/badge";
+import { Input } from "./ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "./ui/dropdown-menu";
 import {
   Plus,
   Search,
@@ -30,7 +30,7 @@ import {
   Calendar,
   FolderOpen,
 } from "lucide-react";
-import Link from "next/link";
+// Using plain anchors for navigation
 
 const projects = [
   {
@@ -145,10 +145,10 @@ export function ProjectsList() {
           </p>
         </div>
         <Button asChild>
-          <Link href="/projects/new">
+          <a href="/projects/new">
             <Plus className="mr-2 h-4 w-4" />
             New Project
-          </Link>
+          </a>
         </Button>
       </div>
 
@@ -294,10 +294,10 @@ export function ProjectsList() {
               : "Get started by creating your first project"}
           </p>
           <Button asChild>
-            <Link href="/projects/new">
+            <a href="/projects/new">
               <Plus className="mr-2 h-4 w-4" />
               Create Project
-            </Link>
+            </a>
           </Button>
         </div>
       )}
