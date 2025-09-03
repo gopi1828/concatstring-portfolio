@@ -1,6 +1,5 @@
 "use client";
-
-import type React from "react";
+import type { FormEvent } from "react";
 
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
@@ -133,12 +132,12 @@ export function AddTechnologyModal({
     setPopularity([75]);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const response = await axios.post("/api/technology", {
+      const response = await axios.post("http://localhost:5000/api/technologies", {
         name,
         description,
         category,

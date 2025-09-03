@@ -158,7 +158,7 @@ export function PortfolioPage() {
   const fetchPortfolios = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://localhost:8000/api/portfolios", {
+      const response = await axios.get("http://localhost:5000/api/portfolios", {
         headers: {
           "Cache-Control": "no-store",
         },
@@ -238,7 +238,7 @@ export function PortfolioPage() {
     if (!itemToDelete) return;
 
     try {
-      const response = await axios.delete(`http://localhost:8000/api/portfolios/${itemToDelete}`, {
+      const response = await axios.delete(`http://localhost:5000/api/portfolios/${itemToDelete}`, {
         headers: {
           "Content-Type": "application/json",
         },

@@ -28,7 +28,7 @@ export function TagsPage() {
   const fetchTags = async () => {
     try {
       setLoading(true)
-      const res = await axios.get("/api/tag")
+      const res = await axios.get("http://localhost:5000/api/tags")
       setTags(res.data)
     } catch (error) {
       toast.error("Error fetching tags")
@@ -44,7 +44,7 @@ export function TagsPage() {
   const handleAdd = async () => {
     if (!newTag.trim()) return
     try {
-      await axios.post("/api/tag", { name: newTag.trim() })
+      await axios.post("http://localhost:5000/api/tags", { name: newTag.trim() })
       toast.success("Tag added")
       setNewTag("")
       fetchTags()
@@ -56,7 +56,7 @@ export function TagsPage() {
   const handleUpdate = async (id: string) => {
     if (!editedName.trim()) return
     try {
-      await axios.patch(`/api/tag/${id}`, { name: editedName.trim() })
+      await axios.patch(`http://localhost:5000/api/tags/${id}`, { name: editedName.trim() })
       toast.success("Tag updated")
       setEditingId(null)
       setEditedName("")
@@ -214,7 +214,7 @@ export function TagsPage() {
         onConfirm={async () => {
           if (!tagToDelete) return
           try {
-            await axios.delete(`/api/tag/${tagToDelete._id}`)
+            await axios.delete(`http://localhost:5000/api/tags/${tagToDelete._id}`)
             toast.success("Deleted successfully")
             fetchTags()
           } catch (error) {

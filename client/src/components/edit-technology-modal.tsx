@@ -1,6 +1,5 @@
 "use client";
-
-import type React from "react";
+import type { FormEvent } from "react";
 
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
@@ -154,14 +153,14 @@ export function EditTechnologyModal({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!technology) return;
 
     setLoading(true);
 
     try {
-      const response = await axios.patch(`/api/technology/${technology._id}`, {
+      const response = await axios.patch(`http://localhost:5000/api/technologies/${technology._id}`, {
         name,
         description,
         category,
