@@ -1,6 +1,5 @@
-"use client";
 
-import React, { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Button } from "../components/ui/button";
 import {
   Dialog,

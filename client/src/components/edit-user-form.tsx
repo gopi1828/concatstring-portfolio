@@ -1,15 +1,15 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom";
 import axios, { AxiosError } from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-hot-toast";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Eye, EyeOff, FolderOpen } from "lucide-react";
 
 function decodeJwtPayload(token: string): any | null {
@@ -23,7 +23,7 @@ function decodeJwtPayload(token: string): any | null {
 }
 
 export function EditUserForm() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
   const [userId, setUserId] = React.useState<string | null>(null);
@@ -53,7 +53,7 @@ export function EditUserForm() {
         const res = await axios.put(`/api/users/${userId}`, payload);
         if (res.status === 200) {
           toast.success("Profile updated");
-          router.push("/dashboard");
+          navigate("/dashboard");
         }
       } catch (error) {
         const err = error as AxiosError<{ message?: string }>;
@@ -66,13 +66,13 @@ export function EditUserForm() {
   React.useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      router.push("/");
+      navigate("/");
       return;
     }
     const payload = decodeJwtPayload(token);
     const id: string | undefined = payload?.id;
     if (!id) {
-      router.push("/");
+      navigate("/");
       return;
     }
     setUserId(id);
@@ -94,7 +94,7 @@ export function EditUserForm() {
         setIsLoading(false);
       }
     })();
-  }, [router]);
+  }, [navigate]);
 
   if (isLoading) {
     return (

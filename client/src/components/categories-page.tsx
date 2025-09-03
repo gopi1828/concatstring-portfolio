@@ -2,16 +2,16 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AddCategoryModal } from "@/components/add-category-modal";
-import { EditCategoryModal } from "@/components/edit-category-modal";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Badge } from "./ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { AddCategoryModal } from "../components/add-category-modal";
+import { EditCategoryModal } from "../components/edit-category-modal";
 import { Search, Plus, Edit, Trash2, Layers, FolderOpen } from "lucide-react";
 import { ConfirmDialog } from "./confirmDelete ";
 import toast, { Toaster } from "react-hot-toast";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "./ui/skeleton";
 
 interface Category {
   id: string;
