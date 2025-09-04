@@ -224,7 +224,7 @@ const filteredTechnologies = technologies.filter((tech) => {
                       className="h-8 w-8 hover:bg-accent"
                       onClick={() => handleEditTechnology(tech)}
                     >
-                      <Edit className="h-4 w-4 text-blue-600" />
+                      <Edit className="h-4 w-4" />
                     </Button>
                     <Button
                       size="icon"

@@ -86,7 +86,7 @@ export function AddCategoryModal({
   };
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      {/* <Toaster position="top-right"/> */}
+
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">

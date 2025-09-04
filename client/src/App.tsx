@@ -8,6 +8,7 @@ import { CategoriesPage } from './components/categories-page'
 import { TechnologiesPage } from './components/technologies-page'
 import { TagsPage } from './components/tags-page'
 import { EditUserForm } from './components/edit-user-form'
+import { Toaster } from 'react-hot-toast'
 
 const App = () => {
   const PortfolioDetailRoute = () => {
@@ -20,6 +21,7 @@ const App = () => {
   };
   return (
     <div>
+       <Toaster position="top-right" reverseOrder={false} />
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<LoginPage />} />

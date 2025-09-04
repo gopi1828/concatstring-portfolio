@@ -5,7 +5,7 @@ import { Input } from "./ui/input"
 import { Badge } from "./ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { Search, Plus, Edit, Trash2, Tag, Save } from "lucide-react"
-import toast, { Toaster } from "react-hot-toast"
+import toast from "react-hot-toast"
 import { ConfirmDialog } from "./confirmDelete "
 import { Skeleton } from "./ui/skeleton"
 import axios from "axios"
@@ -24,17 +24,19 @@ export function TagsPage() {
   const [tagToDelete, setTagToDelete] = useState<TagType | null>(null)
   const [loading, setLoading] = useState(true) // 👈 loader state
 
-  const fetchTags = async () => {
-    try {
-      setLoading(true)
-      const res = await api.get("/api/tags")
-      setTags(res.data)
-    } catch (error) {
-      toast.error("Error fetching tags")
-    } finally {
-      setLoading(false)
-    }
+const fetchTags = async () => {
+  try {
+    setLoading(true)
+    const res = await api.get("/api/tags")
+    // Sort tags by _id (which contains timestamp) in descending order to show newest first
+    const sortedTags = res.data.sort((a: TagType, b: TagType) => b._id.localeCompare(a._id))
+    setTags(sortedTags)
+  } catch (error) {
+    toast.error("Error fetching tags")
+  } finally {
+    setLoading(false)
   }
+}
 
   useEffect(() => {
     fetchTags()
@@ -71,7 +73,7 @@ export function TagsPage() {
 
   return (
     <div className="space-y-6">
-      <Toaster position="top-right" />
+     
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -123,58 +125,66 @@ export function TagsPage() {
             {filteredTags.map((tag) => (
               <Card
                 key={tag._id}
-                className="group hover:shadow-lg transition-all duration-200 border-0 shadow-md bg-white"
+                className="group hover:shadow-lg transition-all duration-200 border-0 shadow-md bg-white w-full min-w-0 overflow-hidden"
               >
                 <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    {editingId === tag._id ? (
-                      <Input
-                        value={editedName}
-                        onChange={(e) => setEditedName(e.target.value)}
-                        onKeyDown={(e) =>
-                          e.key === "Enter" && handleUpdate(tag._id)
-                        }
-                        className="text-sm"
-                        autoFocus
-                      />
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <Tag className="h-4 w-4 text-gray-500" />
-                        <CardTitle className="text-lg">{tag.name}</CardTitle>
-                      </div>
-                    )}
-
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1">
+                  <div className="flex flex-col gap-3">
+                    {/* Tag Content Row */}
+                    <div className="flex items-start gap-2 min-w-0">
                       {editingId === tag._id ? (
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="h-8 w-8"
-                          onClick={() => handleUpdate(tag._id)}
-                        >
-                          <Save className="h-4 w-4 text-green-600" />
-                        </Button>
+                        <Input
+                          value={editedName}
+                          onChange={(e) => setEditedName(e.target.value)}
+                          onKeyDown={(e) =>
+                            e.key === "Enter" && handleUpdate(tag._id)
+                          }
+                          className="text-sm flex-1"
+                          autoFocus
+                        />
                       ) : (
+                        <div className="flex items-start gap-2 min-w-0 flex-1">
+                          <Tag className="h-4 w-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                          <CardTitle className="text-lg break-words hyphens-auto leading-relaxed">
+                            {tag.name}
+                          </CardTitle>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Action Buttons Row */}
+                    <div className="flex justify-end">
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1">
+                        {editingId === tag._id ? (
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8"
+                            onClick={() => handleUpdate(tag._id)}
+                          >
+                            <Save className="h-4 w-4 text-green-600" />
+                          </Button>
+                        ) : (
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8"
+                            onClick={() => {
+                              setEditingId(tag._id)
+                              setEditedName(tag.name)
+                            }}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        )}
                         <Button
                           size="icon"
                           variant="ghost"
-                          className="h-8 w-8"
-                          onClick={() => {
-                            setEditingId(tag._id)
-                            setEditedName(tag.name)
-                          }}
+                          className="h-8 w-8 text-red-600"
+                          onClick={() => setTagToDelete(tag)}
                         >
-                          <Edit className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
-                      )}
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-8 w-8 text-red-600"
-                        onClick={() => setTagToDelete(tag)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      </div>
                     </div>
                   </div>
                 </CardHeader>
@@ -224,7 +234,7 @@ export function TagsPage() {
         }}
         confirmText="Delete"
         cancelText="Cancel"
-      />
+        />
     </div>
   )
 }

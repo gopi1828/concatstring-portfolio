@@ -38,7 +38,7 @@ import ExportPortfolio from "../components/export-portfolio";
 import ImportPortfolio from "../components/import-portfolio";
 import { Skeleton } from "./ui/skeleton";
 import api from "../lib/api";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 type PortfolioItem = {
   _id: string;
@@ -522,7 +522,7 @@ export function PortfolioPage() {
 
   return (
     <div className="space-y-6">
-      <Toaster position="top-right"/>
+      
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>

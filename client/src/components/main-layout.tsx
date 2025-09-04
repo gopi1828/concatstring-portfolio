@@ -27,7 +27,7 @@ import {
   Code2,
 } from "lucide-react";
 import { AxiosError } from "axios";
-import { Toaster, toast } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import api from "../lib/api";
 
 const navigation = [
@@ -179,7 +179,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Toaster position="top-right" />
+     
       {/* Desktop Sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <Sidebar />

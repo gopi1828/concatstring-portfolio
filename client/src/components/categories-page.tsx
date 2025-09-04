@@ -8,7 +8,7 @@ import { AddCategoryModal } from "../components/add-category-modal";
 import { EditCategoryModal } from "../components/edit-category-modal";
 import { Search, Plus, Edit, Trash2, Layers } from "lucide-react";
 import { ConfirmDialog } from "./confirmDelete ";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { Skeleton } from "./ui/skeleton";
 
 interface Category {
@@ -95,7 +95,6 @@ export function CategoriesPage() {
   const handleDeleteCancel = () => {
     setDeleteModalOpen(false);
     setCategoryToDelete(null);
-    
   };
 
   const filteredCategories = categories.filter(
@@ -106,7 +105,7 @@ export function CategoriesPage() {
 
   return (
     <div className="space-y-6">
-      <Toaster position="top-right" />
+      
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -163,17 +162,49 @@ export function CategoriesPage() {
               className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-white"
             >
               <CardHeader className="pb-3">
+<<<<<<< Updated upstream
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <div className="text-2xl">{category.icon}</div>
                     <div className="flex-1 w-full min-w-0">
                       <CardTitle className="text-lg text-gray-900 break-all whitespace-normal leading-tight">
+=======
+                {/* Fixed layout structure */}
+                <div className="space-y-3">
+                  {/* Top row with icon, content, and action buttons */}
+                  <div className="flex items-start gap-3">
+                    <div className="text-2xl flex-shrink-0">{category.icon}</div>
+                    <div className="flex-1 min-w-0"> {/* min-w-0 allows text to shrink */}
+                      <CardTitle className="text-lg text-gray-900 break-words">
+>>>>>>> Stashed changes
                         {category.name}
                       </CardTitle>
-                      <p className="text-sm text-gray-500 mt-1 break-all whitespace-normal">
-                        {category.description}
-                      </p>
+                      {category.description && (
+                        <p className="text-sm text-gray-500 mt-1 break-words">
+                          {category.description}
+                        </p>
+                      )}
                     </div>
+                    {/* Action buttons in a separate container */}
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1 flex-shrink-0">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => handleEditClick(category)}
+                        className="h-8 w-8"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => handleDeleteClick(category.id)}
+                        className="h-8 w-8 text-red-600"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+<<<<<<< Updated upstream
                   </div>
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1 shrink-0">
                     <Button
@@ -192,6 +223,8 @@ export function CategoriesPage() {
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
+=======
+>>>>>>> Stashed changes
                   </div>
                 </div>
               </CardHeader>
