@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import api from "../lib/api"
 import { Button } from "./ui/button"
@@ -10,6 +8,7 @@ import { Search, Plus, Edit, Trash2, Tag, Save } from "lucide-react"
 import toast, { Toaster } from "react-hot-toast"
 import { ConfirmDialog } from "./confirmDelete "
 import { Skeleton } from "./ui/skeleton"
+import axios from "axios"
 
 type TagType = {
   _id: string
@@ -56,7 +55,7 @@ export function TagsPage() {
   const handleUpdate = async (id: string) => {
     if (!editedName.trim()) return
     try {
-      await api.patch(`/api/tags/${id}`, { name: editedName.trim() })
+      await axios.put(`http://localhost:5000/api/tags/${id}`, { name: editedName.trim() })
       toast.success("Tag updated")
       setEditingId(null)
       setEditedName("")
