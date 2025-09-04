@@ -6,7 +6,7 @@ import { Badge } from "./ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { AddCategoryModal } from "../components/add-category-modal";
 import { EditCategoryModal } from "../components/edit-category-modal";
-import { Search, Plus, Edit, Trash2, Layers, FolderOpen } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Layers } from "lucide-react";
 import { ConfirmDialog } from "./confirmDelete ";
 import toast, { Toaster } from "react-hot-toast";
 import { Skeleton } from "./ui/skeleton";
@@ -166,8 +166,8 @@ export function CategoriesPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <div className="text-2xl">{category.icon}</div>
-                    <div className="flex-1 w-full">
-                      <CardTitle className="text-lg text-gray-900">
+                    <div className="flex-1 w-full min-w-0">
+                      <CardTitle className="text-lg text-gray-900 break-all whitespace-normal leading-tight">
                         {category.name}
                       </CardTitle>
                       <p className="text-sm text-gray-500 mt-1 break-all whitespace-normal">
@@ -175,7 +175,7 @@ export function CategoriesPage() {
                       </p>
                     </div>
                   </div>
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1 flex-shrink-0">
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1 shrink-0">
                     <Button
                       size="icon"
                       variant="ghost"

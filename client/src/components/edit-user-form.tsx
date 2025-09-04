@@ -50,7 +50,7 @@ export function EditUserForm() {
         if (values.password && values.password.trim().length > 0) {
           payload.password = values.password;
         }
-        const res = await api.put(`/api/users/${userId}`, payload);
+        const res = await api.put(`/api/auth/users/${userId}`, payload);
         if (res.status === 200) {
           toast.success("Profile updated");
           navigate("/dashboard");
@@ -78,7 +78,7 @@ export function EditUserForm() {
     setUserId(id);
     (async () => {
       try {
-        const res = await api.get(`/api/users/${id}`);
+        const res = await api.get(`/api/auth/users/${id}`);
         if (res.status === 200) {
           const { name, username } = res.data;
           formik.setValues({

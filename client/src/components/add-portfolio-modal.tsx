@@ -125,41 +125,44 @@ export function AddPortfolioModal({
     validationSchema,
     validateOnBlur: false,
     onSubmit: async (values) => {
-      const formData = new FormData();
-      Object.keys(values).forEach((key) => {
-        if (key === "clientInvoices") {
-          Array.from(values.clientInvoices).forEach((file) => {
-            formData.append("clientInvoices", file);
-          });
-        } else {
-          formData.append(key, values[key as keyof typeof values] as any);
-        }
-      });
-
-      formData.append("tags", JSON.stringify(selectedTags));
+      const hasFiles = (values.clientInvoices?.length ?? 0) > 0;
+      if (hasFiles) {
+        toast("File uploads aren’t supported on create yet. Continuing without files.");
+      }
+      const payload: any = {
+        projectName: values.projectName,
+        websiteLink: values.websiteLink,
+        technology: values.technology,
+        category: values.category,
+        industry: values.industry,
+        description: values.description,
+        pageBuilder: values.pageBuilder,
+        clientName: values.clientName,
+        clientInvoices: [],
+        bidPlatform: values.bidPlatform,
+        bidPlatformUrl: values.bidPlatformUrl,
+        invoiceAmount:
+          typeof values.invoiceAmount === "string" && values.invoiceAmount !== ""
+            ? Number(values.invoiceAmount)
+            : values.invoiceAmount,
+        startDate: values.startDate || undefined,
+        completionDate: values.completionDate || undefined,
+        testimonials: values.testimonials,
+        tag: selectedTags,
+      };
+      Object.keys(payload).forEach((k) => payload[k] === undefined && delete payload[k]);
 
       try {
-        const response = await api.post("/api/portfolios", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-
-        if (response.status === 200) {
-          navigate("/dashboard");
+        const response = await api.post("/api/portfolios", payload);
+        if (response.status === 201 || response.status === 200) {
           toast.success("Project added successfully!");
           handleCancel();
-
-          // Call the callback to refresh parent data
-          if (onPortfolioAdded) {
-            onPortfolioAdded();
-          }
-
+          if (onPortfolioAdded) onPortfolioAdded();
           navigate("/dashboard");
         }
-      } catch (error) {
-        if (error instanceof Error) {
-          console.log("Error occurred:", error.message);
-        }
-        toast.error("Failed to add project.");
+      } catch (err: any) {
+        const message = err?.response?.data?.message || "Failed to add project.";
+        toast.error(message);
       }
     },
   });
