@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom'
+import { RequireAuth, RedirectIfAuth } from './lib/routeGuards'
 import { LoginPage } from './components/login-page'
 import { PortfolioPage } from './components/portfolio-page'
 import { MainLayout } from './components/main-layout'
@@ -14,9 +15,11 @@ const App = () => {
   const PortfolioDetailRoute = () => {
     const { id } = useParams();
     return (
-      <MainLayout>
-        <PortfolioDetailPage id={id ?? ''} />
-      </MainLayout>
+      <RequireAuth>
+        <MainLayout>
+          <PortfolioDetailPage id={id ?? ''} />
+        </MainLayout>
+      </RequireAuth>
     );
   };
   return (
@@ -24,56 +27,68 @@ const App = () => {
        <Toaster position="top-right" reverseOrder={false} />
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<LoginPage />} />
+          <Route path='/' element={<RedirectIfAuth><LoginPage /></RedirectIfAuth>} />
 
           {/* Dashboard routes with shared layout */}
           <Route
             path='/dashboard'
             element={
-              <MainLayout>
-                <PortfolioPage />
-              </MainLayout>
+              <RequireAuth>
+                <MainLayout>
+                  <PortfolioPage />
+                </MainLayout>
+              </RequireAuth>
             }
           />
           <Route path='/dashboard/portfolio/:id' element={<PortfolioDetailRoute />} />
           <Route
             path='/dashboard/register'
             element={
-              <MainLayout>
-                <RegisterPage />
-              </MainLayout>
+              <RequireAuth>
+                <MainLayout>
+                  <RegisterPage />
+                </MainLayout>
+              </RequireAuth>
             }
           />
           <Route
             path='/dashboard/categories'
             element={
-              <MainLayout>
-                <CategoriesPage />
-              </MainLayout>
+              <RequireAuth>
+                <MainLayout>
+                  <CategoriesPage />
+                </MainLayout>
+              </RequireAuth>
             }
           />
           <Route
             path='/dashboard/technologies'
             element={
-              <MainLayout>
-                <TechnologiesPage />
-              </MainLayout>
+              <RequireAuth>
+                <MainLayout>
+                  <TechnologiesPage />
+                </MainLayout>
+              </RequireAuth>
             }
           />
           <Route
             path='/dashboard/tags'
             element={
-              <MainLayout>
-                <TagsPage />
-              </MainLayout>
+              <RequireAuth>
+                <MainLayout>
+                  <TagsPage />
+                </MainLayout>
+              </RequireAuth>
             }
           />
           <Route
             path='/dashboard/edit-user'
             element={
-              <MainLayout>
-                <EditUserForm />
-              </MainLayout>
+              <RequireAuth>
+                <MainLayout>
+                  <EditUserForm />
+                </MainLayout>
+              </RequireAuth>
             }
           />
         </Routes>
