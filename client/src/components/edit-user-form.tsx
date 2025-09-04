@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-hot-toast";
@@ -9,6 +9,8 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Eye, EyeOff, FolderOpen } from "lucide-react";
+import api from "../lib/api";
+import { useEffect, useState } from "react";
 
 function decodeJwtPayload(token: string): any | null {
   try {
@@ -22,9 +24,9 @@ function decodeJwtPayload(token: string): any | null {
 
 export function EditUserForm() {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [userId, setUserId] = React.useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const formik = useFormik({
     initialValues: {
@@ -48,7 +50,7 @@ export function EditUserForm() {
         if (values.password && values.password.trim().length > 0) {
           payload.password = values.password;
         }
-        const res = await axios.put(`/api/users/${userId}`, payload);
+        const res = await api.put(`/api/users/${userId}`, payload);
         if (res.status === 200) {
           toast.success("Profile updated");
           navigate("/dashboard");
@@ -61,7 +63,7 @@ export function EditUserForm() {
     },
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/");
@@ -76,7 +78,7 @@ export function EditUserForm() {
     setUserId(id);
     (async () => {
       try {
-        const res = await axios.get(`/api/users/${id}`);
+        const res = await api.get(`/api/users/${id}`);
         if (res.status === 200) {
           const { name, username } = res.data;
           formik.setValues({

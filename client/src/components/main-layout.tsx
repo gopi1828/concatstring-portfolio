@@ -26,7 +26,9 @@ import {
   Layers,
   Code2,
 } from "lucide-react";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
+import { Toaster, toast } from "react-hot-toast";
+import api from "../lib/api";
 
 const navigation = [
   { name: "Add User", href: "/dashboard/register", icon: UserPlus },
@@ -112,7 +114,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   const logOut = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.get("/api/users/logout");
+      const response = await api.get("/api/auth/logout");
       if (response.status === 200) {
         // Remove all auth-related data from local storage
         localStorage.removeItem("token");
@@ -124,11 +126,13 @@ export function MainLayout({ children }: MainLayoutProps) {
         setUser(null);
 
         // Redirect
+        toast.success("Logged out");
         navigate("/");
       }
     } catch (error) {
       const err = error as AxiosError;
       console.error(err.response?.data || err.message);
+      toast.error("Failed to logout");
     }
   };
 
@@ -175,6 +179,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Toaster position="top-right" />
       {/* Desktop Sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <Sidebar />

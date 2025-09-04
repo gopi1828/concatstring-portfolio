@@ -32,6 +32,7 @@ import {
   Zap,
 } from "lucide-react";
 import api from "../lib/api";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -72,7 +73,7 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
       try {
         setIsLoading(true);
 
-        const response = await axios.get(`http://localhost:5000//api/portfolios/${id}`);
+        const response = await api.get(`/api/portfolios/${id}`);
 
         const data = response.data;
         const item = (data && (data.result || data.portfolio || data.item || data)) as
@@ -84,9 +85,9 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
           setError("Portfolio not found");
         }
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to fetch portfolio"
-        );
+        const message = err instanceof Error ? err.message : "Failed to fetch portfolio";
+        setError(message);
+        toast.error(message);
       } finally {
         setIsLoading(false);
       }

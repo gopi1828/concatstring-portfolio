@@ -1,7 +1,7 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios, { AxiosError } from "axios";
-import { toast } from "react-hot-toast";
+import { AxiosError } from "axios";
+import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -15,6 +15,7 @@ import {
 } from "../components/ui/card";
 import { Eye, EyeOff, FolderOpen } from "lucide-react";
 import { useState } from "react";
+import api from "../lib/api";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -45,10 +46,7 @@ export function LoginPage() {
 
 
       try {
-        const response = await axios.post(
-          "http://localhost:5000/api/auth/login",
-          trimmedValues
-        );
+        const response = await api.post("/api/auth/login", trimmedValues);
 
         if (response.status === 200) {
           toast.success("Login successful!");
@@ -64,18 +62,14 @@ export function LoginPage() {
           navigate("/dashboard");
         }
       } catch (error) {
-        if (error instanceof AxiosError && error.response?.status === 400) {
-          const message = error.response.data?.message;
-          if (message === "Username does not exist") {
-            toast.error("Username does not exist");
-          } else if (message === "Incorrect password") {
-            toast.error("Incorrect password");
-          } else {
-            toast.error(message || "Invalid credentials");
-          }
-        } else {
-          toast.error("Something went wrong. Please try again.");
-        }
+        const err = error as AxiosError<any>;
+        const raw = err.response?.data;
+        const message =
+          (typeof raw === "string" && raw) ||
+          (typeof raw?.message === "string" && raw.message) ||
+          (typeof raw?.error === "string" && raw.error) ||
+          "Something went wrong. Please try again.";
+        toast.error(message);
       } finally {
         setIsLoading(false);
       }
@@ -84,6 +78,7 @@ export function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
+      <Toaster position="top-right" />
       <Card className="w-full max-w-md shadow-xl border-0 bg-white/80 backdrop-blur-sm">
         <CardHeader className="text-center space-y-4">
           <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">

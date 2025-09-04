@@ -51,17 +51,11 @@ export function RegisterPage() {
         const err = error as AxiosError<any>;
         const raw = err.response?.data;
         const message =
-          typeof raw === "string" ? raw : raw?.error || "Something went wrong";
-        if (
-          /username\s*is\s*already\s*exist/i.test(message) ||
-          /already exists/i.test(message)
-        ) {
-          toast.error("Username already exists");
-        } else if (err.response?.status === 400) {
-          toast.error(message);
-        } else {
-          toast.error("Something went wrong. Please try again.");
-        }
+          (typeof raw === "string" && raw) ||
+          (typeof raw?.message === "string" && raw.message) ||
+          (typeof raw?.error === "string" && raw.error) ||
+          "Something went wrong";
+        toast.error(message);
       }
     },
   });

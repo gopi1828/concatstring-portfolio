@@ -3,7 +3,7 @@ import { useFormik } from "formik";
 import { portfolioValidationSchema } from "../lib/portfolioValidation";
 import api from "../lib/api";
 import { useDropzone } from "react-dropzone";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";

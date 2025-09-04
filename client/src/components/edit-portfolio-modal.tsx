@@ -3,7 +3,7 @@ import { useFormik } from "formik";
 import { portfolioValidationSchema } from "../lib/portfolioValidation";
 import api from "../lib/api";
 import { useDropzone } from "react-dropzone";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -169,36 +169,49 @@ export default function EditPortfolioModal({
         },
     validationSchema,
     onSubmit: async (values) => {
-      const formData = new FormData();
-      Object.keys(values).forEach((key) => {
-        if (key === "clientInvoices") {
-          return;
-        } else {
-          formData.append(key, values[key as keyof typeof values] as any);
-        }
-      });
-
+      // Backend expects JSON fields, not multipart. Only send supported keys.
       const allUploads = (values.clientInvoices as Array<File | string>) || [];
-      const existingUrls = allUploads.filter(
-        (item) => typeof item === "string"
-      ) as string[];
-      const newFiles = allUploads.filter(
-        (item) => item instanceof File
-      ) as File[];
+      const existingUrls = (allUploads.filter((item) => typeof item === "string") as string[]) || [];
+      const newFiles = (allUploads.filter((item) => item instanceof File) as File[]) || [];
 
-      newFiles.forEach((file) => {
-        formData.append("clientInvoices", file);
-      });
-      formData.append("existingClientInvoices", JSON.stringify(existingUrls));
-      formData.append("tags", JSON.stringify(selectedTags));
+      if (newFiles.length > 0) {
+        toast((t) => (
+          <div className="text-sm">
+            File uploads aren\'t supported on update yet. Only existing file URLs will be saved.
+            <Button variant="ghost" size="sm" className="ml-2" onClick={() => toast.dismiss(t.id)}>
+              OK
+            </Button>
+          </div>
+        ));
+      }
+
+      const payload: any = {
+        projectName: values.projectName,
+        websiteLink: values.websiteLink,
+        technology: values.technology,
+        category: values.category,
+        industry: values.industry,
+        description: values.description,
+        pageBuilder: values.pageBuilder,
+        clientName: values.clientName,
+        clientInvoices: existingUrls, // server expects array if provided
+        bidPlatform: values.bidPlatform,
+        bidPlatformUrl: values.bidPlatformUrl,
+        invoiceAmount:
+          typeof values.invoiceAmount === "string" && values.invoiceAmount !== ""
+            ? Number(values.invoiceAmount)
+            : values.invoiceAmount,
+        startDate: values.startDate || undefined,
+        completionDate: values.completionDate || undefined,
+        testimonials: values.testimonials,
+        tag: selectedTags, // server expects `tag` array
+      };
+
+      // Remove undefined keys to avoid empty update
+      Object.keys(payload).forEach((k) => payload[k] === undefined && delete payload[k]);
+
       try {
-        const response = await api.put(
-          `/api/portfolios/${portfolioId}`,
-          formData,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-          }
-        );
+        const response = await api.put(`/api/portfolios/${portfolioId}`, payload);
         if (response.status === 200) {
           // Notify parent to refresh its data without requiring a full page reload
           if (typeof onUpdated === "function") {
