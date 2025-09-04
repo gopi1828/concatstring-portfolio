@@ -38,6 +38,7 @@ import ExportPortfolio from "../components/export-portfolio";
 import ImportPortfolio from "../components/import-portfolio";
 import { Skeleton } from "./ui/skeleton";
 import api from "../lib/api";
+import { toast, Toaster } from "react-hot-toast";
 
 type PortfolioItem = {
   _id: string;
@@ -171,6 +172,7 @@ export function PortfolioPage() {
       setPortfolioItems(portfolios);
     } catch (error) {
       console.error("Failed to fetch portfolios:", error);
+      toast.error("Failed to fetch portfolios");
       setPortfolioItems([]);
     } finally {
       setIsLoading(false);
@@ -253,9 +255,10 @@ export function PortfolioPage() {
       setPortfolioItems((prev) =>
         prev.filter((item) => item._id !== itemToDelete)
       );
-      console.log("Portfolio item deleted successfully");
+      toast.success("Portfolio deleted successfully!");
     } catch (error) {
       console.error("Failed to delete portfolio:", error);
+      toast.error("Failed to delete portfolio");
     } finally {
       setDeleteConfirmOpen(false);
       setItemToDelete(null);
@@ -519,6 +522,7 @@ export function PortfolioPage() {
 
   return (
     <div className="space-y-6">
+      <Toaster position="top-right"/>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
