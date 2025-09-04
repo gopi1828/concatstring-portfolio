@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { categoryIcons, colorOptions } from "../lib/category-config";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 interface Category {
   id: string;
