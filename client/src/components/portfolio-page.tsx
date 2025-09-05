@@ -596,65 +596,65 @@ export function PortfolioPage() {
         <>{viewMode === "table" ? <TableView /> : <GridView />}</>
       )}
 
-      
-    {/* Pagination */}
-{totalPages > 1 && (
-  <div className="flex justify-center">
-    <Pagination>
-      <PaginationContent>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center">
+          <Pagination>
+            <PaginationContent>
         {/* Previous */}
-        <PaginationItem>
-          <PaginationPrevious
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              if (currentPage > 1) setCurrentPage(currentPage - 1);
-            }}
-            className={
-              currentPage === 1 ? "pointer-events-none opacity-50" : ""
-            }
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage > 1) setCurrentPage(currentPage - 1);
+                  }}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
             // ⛔ remove size="icon"
-          />
-        </PaginationItem>
+                />
+              </PaginationItem>
 
         {/* Page Numbers */}
-        {[...Array(totalPages)].map((_, i) => (
-          <PaginationItem key={i}>
-            <PaginationLink
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                setCurrentPage(i + 1);
-              }}
-              isActive={currentPage === i + 1}
+              {[...Array(totalPages)].map((_, i) => (
+                <PaginationItem key={i}>
+                  <PaginationLink
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCurrentPage(i + 1);
+                    }}
+                    isActive={currentPage === i + 1}
               size="icon" // ✅ keep icon size only for numbers
-            >
-              {i + 1}
-            </PaginationLink>
-          </PaginationItem>
-        ))}
+                  >
+                    {i + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
 
         {/* Next */}
-        <PaginationItem>
-          <PaginationNext
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              if (currentPage < totalPages)
-                setCurrentPage(currentPage + 1);
-            }}
-            className={
-              currentPage === totalPages
-                ? "pointer-events-none opacity-50"
-                : ""
-            }
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage < totalPages)
+                      setCurrentPage(currentPage + 1);
+                  }}
+                  className={
+                    currentPage === totalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
             // ⛔ remove size="icon"
-          />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
-  </div>
-)}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
 
 
       {/* Pass the callback function to the modal */}

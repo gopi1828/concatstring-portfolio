@@ -9,7 +9,7 @@ const tagRoutes = require('./routes/tagRoutes');
 const technologyRoutes = require('./routes/technologyRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const portfolioRoutes = require('./routes/portfolioRoutes');
-
+const uploadRoutes = require('./routes/uploadRoutes');
 dotenv.config();
 
 const app = express();
@@ -32,6 +32,7 @@ app.use('/api/tags', tagRoutes);
 app.use('/api/technologies', technologyRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/portfolios', portfolioRoutes);
+app.use('/api/upload', uploadRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
