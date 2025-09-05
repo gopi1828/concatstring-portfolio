@@ -7,8 +7,12 @@ const {
 	deletePortfolioById,
 	getPortfoliosByCategory,
 } = require('../controller/portfolioController');
+const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
+
+// All portfolio routes require authentication
+router.use(authenticateToken);
 
 router.post('/', createPortfolio);
 router.get('/', getPortfolios);

@@ -169,21 +169,21 @@ export default function EditPortfolioModal({
         },
     validationSchema,
     onSubmit: async (values) => {
-      // Backend expects JSON fields, not multipart. Only send supported keys.
       const allUploads = (values.clientInvoices as Array<File | string>) || [];
       const existingUrls = (allUploads.filter((item) => typeof item === "string") as string[]) || [];
       const newFiles = (allUploads.filter((item) => item instanceof File) as File[]) || [];
 
-      if (newFiles.length > 0) {
-        toast((t) => (
-          <div className="text-sm">
-            File uploads aren\'t supported on update yet. Only existing file URLs will be saved.
-            <Button variant="ghost" size="sm" className="ml-2" onClick={() => toast.dismiss(t.id)}>
-              OK
-            </Button>
-          </div>
-        ));
+      async function uploadViaBackend(files: File[]): Promise<string[]> {
+        const fd = new FormData();
+        files.forEach((f) => fd.append('files', f));
+        const res = await api.post("/api/upload", fd, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        const data = res.data;
+        return Array.isArray(data.urls) ? data.urls : [];
       }
+
+      const uploadedUrls = newFiles.length > 0 ? await uploadViaBackend(newFiles) : [];
 
       const payload: any = {
         projectName: values.projectName,
@@ -194,7 +194,7 @@ export default function EditPortfolioModal({
         description: values.description,
         pageBuilder: values.pageBuilder,
         clientName: values.clientName,
-        clientInvoices: existingUrls, // server expects array if provided
+        clientInvoices: [...existingUrls, ...uploadedUrls],
         bidPlatform: values.bidPlatform,
         bidPlatformUrl: values.bidPlatformUrl,
         invoiceAmount:
@@ -204,7 +204,7 @@ export default function EditPortfolioModal({
         startDate: values.startDate || undefined,
         completionDate: values.completionDate || undefined,
         testimonials: values.testimonials,
-        tag: selectedTags, // server expects `tag` array
+        tag: selectedTags,
       };
 
       // Remove undefined keys to avoid empty update

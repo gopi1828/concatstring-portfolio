@@ -126,9 +126,34 @@ export function AddPortfolioModal({
     validateOnBlur: false,
     onSubmit: async (values) => {
       const hasFiles = (values.clientInvoices?.length ?? 0) > 0;
+
+      async function uploadViaBackend(files: File[]): Promise<string[]> {
+        const fd = new FormData();
+        files.forEach((f) => fd.append('files', f));
+        try {
+          const res = await api.post("/api/upload", fd, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+      
+          // Axios puts parsed data here
+          const data = res.data;
+      
+          return Array.isArray(data.urls) ? data.urls : [];
+        } catch (err: any) {
+          throw new Error(err?.response?.data?.message || "Upload failed");
+        }
+        }
+
+      let uploadedInvoices: string[] = [];
       if (hasFiles) {
-        toast("File uploads aren’t supported on create yet. Continuing without files.");
+        try {
+          const onlyFiles = (values.clientInvoices as File[]).filter(Boolean);
+          uploadedInvoices = await uploadViaBackend(onlyFiles);
+        } catch (e: any) {
+          toast.error(e?.message || 'Failed to upload files');
+        }
       }
+
       const payload: any = {
         projectName: values.projectName,
         websiteLink: values.websiteLink,
@@ -138,7 +163,7 @@ export function AddPortfolioModal({
         description: values.description,
         pageBuilder: values.pageBuilder,
         clientName: values.clientName,
-        clientInvoices: [],
+        clientInvoices: uploadedInvoices,
         bidPlatform: values.bidPlatform,
         bidPlatformUrl: values.bidPlatformUrl,
         invoiceAmount:

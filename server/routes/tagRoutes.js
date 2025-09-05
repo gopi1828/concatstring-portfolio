@@ -5,8 +5,12 @@ const {
   updateTag,
   deleteTag,
 } = require("../controller/tagController");
+const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
+
+// All tag routes require authentication
+router.use(authenticateToken);
 
 router.post("/", createTag);
 router.get("/", getTags);

@@ -6,8 +6,12 @@ const {
   updateCategoryById,
   deleteCategoryById,
 } = require('../controller/categoryController');
+const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
+
+// All category routes require authentication
+router.use(authenticateToken);
 
 router.post('/', createCategory);
 router.get('/', getCategories);

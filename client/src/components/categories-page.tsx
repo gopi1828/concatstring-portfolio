@@ -30,12 +30,10 @@ export function CategoriesPage() {
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      setError("");
       const response = await api.get("/api/categories");
       const categoriesWithId = response.data.map((cat: any) => ({
         ...cat,
@@ -44,7 +42,6 @@ export function CategoriesPage() {
       setCategories(categoriesWithId);
     } catch (err: any) {
       console.error(err);
-      setError("Error fetching categories.");
     } finally {
       setLoading(false);
     }
