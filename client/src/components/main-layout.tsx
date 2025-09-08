@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,6 +45,8 @@ export function MainLayout({ children }: MainLayoutProps) {
   const [user, setUser] = useState<any>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -68,15 +69,18 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
+    
     if (userData) {
-      setUser(JSON.parse(userData));
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
     }
 
-    // derive role for admin check
     let detectedRole: string | null = null;
+    let detectedUsername: string | null = null;
     const token = localStorage.getItem("token");
     if (token) {
       const payload = decodeJwtPayload(token);
+
       const roleFromToken = (payload?.role ??
         payload?.user?.role ??
         (Array.isArray(payload?.roles) ? payload.roles[0] : null)) as
@@ -85,6 +89,12 @@ export function MainLayout({ children }: MainLayoutProps) {
       if (typeof roleFromToken === "string") {
         detectedRole = roleFromToken;
       }
+      
+      // Extract username from token
+      const usernameFromToken = payload?.username || payload?.user?.username;
+      if (typeof usernameFromToken === "string") {
+        detectedUsername = usernameFromToken;
+       }
     }
     if (!detectedRole && userData) {
       try {
@@ -103,6 +113,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       }
     }
     setUserRole(detectedRole ? detectedRole.toUpperCase() : null);
+    setUsername(detectedUsername);
   }, []);
 
   const isAdmin = (userRole ?? "").toUpperCase() === "ADMIN";
@@ -120,6 +131,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
         // Clear user state so UI updates immediately
         setUser(null);
+        setUsername(null);
 
         // Redirect
         toast.success("Logged out");
@@ -207,25 +219,26 @@ export function MainLayout({ children }: MainLayoutProps) {
 
             <div className="flex-1 lg:flex-none" />
 
-            <DropdownMenu>
+            <DropdownMenu onOpenChange={setIsProfileDropdownOpen}>
               <DropdownMenuTrigger asChild>
                 <Button
-                  variant="ghost"
-                  className="relative h-10 w-10 rounded-full hover:bg-gray-100"
-                >
-                  <Avatar className="h-10 w-10 border-2 border-gray-200">
-                    <AvatarImage
-                      src={user?.avatar || "/placeholder.svg"}
-                      alt={user?.name}
-                    />
-                    <AvatarFallback className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
-                      {user?.name
-                        ?.split(" ")
-                        .map((n: string) => n[0])
-                        .join("") || "U"}
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
+  variant="ghost"
+  className={`relative p-0 rounded-full hover:bg-gray-100 focus:outline-none ${
+    isProfileDropdownOpen ? 'ring-2 ring-black ring-offset-2' : ''
+  }`}
+>
+  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 text-white font-semibold text-lg select-none">
+    {(() => {
+      const displayChar =
+        username?.[0]?.toUpperCase() ||
+        user?.username?.[0]?.toUpperCase() ||
+        user?.name?.[0]?.toUpperCase() ||
+        "U";
+      return displayChar;
+    })()}
+  </div>
+</Button>
+
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
