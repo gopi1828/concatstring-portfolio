@@ -158,7 +158,7 @@ export function EditTechnologyModal({
     setLoading(true);
 
     try {
-      const response = await api.patch(`/api/technologies/${technology._id}`, {
+      await api.patch(`/api/technologies/${technology._id}`, {
         name,
         description,
         category,
@@ -167,8 +167,6 @@ export function EditTechnologyModal({
         website,
         popularity: popularity[0],
       });
-
-      const updatedTechnology = response.data;
 
       onOpenChange(false);
 
