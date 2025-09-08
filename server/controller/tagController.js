@@ -26,7 +26,7 @@ exports.createTag = async function createTag(req, res) {
 exports.getTags = async function getTags(_req, res) {
 	try {
 		await connectToDatabase();
-		const tags = await Tag.find().lean();
+		const tags = await Tag.find().sort({ createdAt: -1 }).lean();
 		return res.status(200).json(tags);
 	} catch (error) {
 		console.error('Get tags error:', error);

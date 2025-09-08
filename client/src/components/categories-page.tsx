@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { AddCategoryModal } from "../components/add-category-modal";
 import { EditCategoryModal } from "../components/edit-category-modal";
 import { Search, Plus, Edit, Trash2, Layers } from "lucide-react";
-import { ConfirmDialog } from "./confirmDelete ";
+import { ConfirmDialog } from "./confirmDelete "
 import toast from "react-hot-toast";
 import { Skeleton } from "./ui/skeleton";
 
@@ -26,7 +26,7 @@ export function CategoriesPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,8 +51,8 @@ export function CategoriesPage() {
     fetchCategories();
   }, []);
 
-  const handleDeleteClick = (id: string) => {
-    setCategoryToDelete(id);
+  const handleDeleteClick = (category: Category) => {
+    setCategoryToDelete(category);
     setDeleteModalOpen(true);
   };
 
@@ -66,15 +66,15 @@ export function CategoriesPage() {
     if (!categoryToDelete) return;
 
     try {
-      await api.delete(`/api/categories/${categoryToDelete}`);
+      await api.delete(`/api/categories/${categoryToDelete.id}`);
       setCategories((prev) =>
-        prev.filter((cat) => cat.id !== categoryToDelete)
+        prev.filter((cat) => cat.id !== categoryToDelete.id)
       );
       setDeleteModalOpen(false);
       setCategoryToDelete(null);
       toast.success("Category deleted successfully!");
     } catch (error) {
-      toast.error("Error category deleted");
+      toast.error("Error deleting category");
     }
   };
 
@@ -102,8 +102,6 @@ export function CategoriesPage() {
 
   return (
     <div className="space-y-6">
-      
-
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -161,10 +159,9 @@ export function CategoriesPage() {
               <CardHeader className="pb-3">
                 {/* Fixed layout structure */}
                 <div className="space-y-3">
-                  {/* Top row with icon, content, and action buttons */}
                   <div className="flex items-start gap-3">
                     <div className="text-2xl flex-shrink-0">{category.icon}</div>
-                    <div className="flex-1 min-w-0"> {/* min-w-0 allows text to shrink */}
+                    <div className="flex-1 min-w-0">
                       <CardTitle className="text-lg text-gray-900 break-words">
                         {category.name}
                       </CardTitle>
@@ -174,7 +171,6 @@ export function CategoriesPage() {
                         </p>
                       )}
                     </div>
-                    {/* Action buttons in a separate container */}
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1 flex-shrink-0">
                       <Button
                         size="icon"
@@ -187,7 +183,7 @@ export function CategoriesPage() {
                       <Button
                         size="icon"
                         variant="ghost"
-                        onClick={() => handleDeleteClick(category.id)}
+                        onClick={() => handleDeleteClick(category)}
                         className="h-8 w-8 text-red-600"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -233,6 +229,7 @@ export function CategoriesPage() {
         </div>
       )}
 
+      {/* Modals */}
       <AddCategoryModal
         open={isAddModalOpen}
         onOpenChange={setIsAddModalOpen}
@@ -249,7 +246,7 @@ export function CategoriesPage() {
       <ConfirmDialog
         isOpen={deleteModalOpen}
         title="Delete Category"
-        description="Are you sure you want to delete this category?"
+        description={`Are you sure you want to delete "${categoryToDelete?.name}"?`}
         confirmText="Delete"
         cancelText="Cancel"
         onConfirm={handleDeleteConfirm}

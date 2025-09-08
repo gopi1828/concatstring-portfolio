@@ -322,7 +322,7 @@ const filteredTechnologies = technologies.filter((tech) => {
       <ConfirmDialog
         isOpen={!!technologyToDelete}
         title="Delete Technology"
-        description={`Are you sure you want to delete "${technologyToDelete?.name}"? This action cannot be undone.`}
+        description={`Are you sure you want to delete "${technologyToDelete?.name}"?`}
         confirmText={deleteLoading ? "Deleting..." : "Delete"}
         cancelText="Cancel"
         onConfirm={handleDeleteTechnology}

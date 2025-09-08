@@ -5,10 +5,10 @@ import { Input } from "./ui/input"
 import { Badge } from "./ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { Search, Plus, Edit, Trash2, Tag, Save } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip"
 import toast from "react-hot-toast"
 import { ConfirmDialog } from "./confirmDelete "
 import { Skeleton } from "./ui/skeleton"
-import axios from "axios"
 
 type TagType = {
   _id: string
@@ -28,9 +28,7 @@ const fetchTags = async () => {
   try {
     setLoading(true)
     const res = await api.get("/api/tags")
-    // Sort tags by _id (which contains timestamp) in descending order to show newest first
-    const sortedTags = res.data.sort((a: TagType, b: TagType) => b._id.localeCompare(a._id))
-    setTags(sortedTags)
+    setTags(res.data)
   } catch (error) {
     toast.error("Error fetching tags")
   } finally {
@@ -49,21 +47,25 @@ const fetchTags = async () => {
       toast.success("Tag added")
       setNewTag("")
       fetchTags()
-    } catch (error) {
-      toast.error("Error adding tag")
+    } catch (error: any) {
+      console.error("Tag add error:", error)
+      const errorMessage = error.response?.data?.error || error.message || "Error adding tag"
+      toast.error(errorMessage)
     }
   }
 
   const handleUpdate = async (id: string) => {
     if (!editedName.trim()) return
     try {
-      await axios.put(`http://localhost:5000/api/tags/${id}`, { name: editedName.trim() })
+      await api.put(`/api/tags/${id}`, { name: editedName.trim() })
       toast.success("Tag updated")
       setEditingId(null)
       setEditedName("")
       fetchTags()
-    } catch (error) {
-      toast.error("Error updating tag")
+    } catch (error: any) {
+      console.error("Tag update error:", error)
+      const errorMessage = error.response?.data?.error || error.message || "Error updating tag"
+      toast.error(errorMessage)
     }
   }
 
@@ -111,77 +113,95 @@ const fetchTags = async () => {
 
       {/* Loader / Tags Grid */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, i) => (
             <Card key={i} className="p-4 border-0 shadow-md">
-              <Skeleton className="h-6 w-32 mb-4" />
-              <Skeleton className="h-4 w-20" />
+              <div className="flex items-center gap-3 mb-4">
+                <Skeleton className="h-10 w-10 rounded-full" />
+                <div className="flex-1">
+                  <Skeleton className="h-5 w-32 mb-2" />
+                  <Skeleton className="h-4 w-24" />
+                </div>
+              </div>
+              <Skeleton className="h-3 w-full mb-2" />
+              <Skeleton className="h-3 w-3/4 mb-2" />
+              <Skeleton className="h-3 w-1/2" />
             </Card>
           ))}
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredTags.map((tag) => (
               <Card
                 key={tag._id}
-                className="group hover:shadow-lg transition-all duration-200 border-0 shadow-md bg-white w-full min-w-0 overflow-hidden"
+                className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-white"
               >
               <CardHeader className="pb-3">
-  <div className="flex items-start gap-3">
-    {/* Left side: icon + name (or input when editing) */}
-    <div className="flex-1 min-w-0 flex items-start gap-2">
-      <Tag className="h-4 w-4 text-gray-500 mt-0.5 flex-shrink-0" />
-      {editingId === tag._id ? (
-        <Input
-          value={editedName}
-          onChange={(e) => setEditedName(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleUpdate(tag._id)}
-          className="text-sm flex-1"
-          autoFocus
-        />
-      ) : (
-        <CardTitle className="text-lg text-gray-900 break-words">
-          {tag.name}
-        </CardTitle>
-      )}
-    </div>
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-start gap-3 min-w-0 flex-1">
+                    <div className="text-2xl flex-shrink-0">🏷️</div>
+                    <div className="flex-1 min-w-0">
+                      {editingId === tag._id ? (
+                        <Input
+                          value={editedName}
+                          onChange={(e) => setEditedName(e.target.value)}
+                          onKeyDown={(e) => e.key === "Enter" && handleUpdate(tag._id)}
+                          className="text-sm flex-1 min-w-0"
+                          autoFocus
+                        />
+                      ) : (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <CardTitle className="text-lg text-gray-900 break-words leading-tight cursor-help">
+                                {tag.name}
+                              </CardTitle>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="max-w-xs break-words">{tag.name}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
+                    </div>
+                  </div>
 
-    {/* Right side: actions */}
-    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1 flex-shrink-0">
-      {editingId === tag._id ? (
-        <Button
-          size="icon"
-          variant="ghost"
-          className="h-8 w-8"
-          onClick={() => handleUpdate(tag._id)}
-        >
-          <Save className="h-4 w-4 text-green-600" />
-        </Button>
-      ) : (
-        <Button
-          size="icon"
-          variant="ghost"
-          className="h-8 w-8"
-          onClick={() => {
-            setEditingId(tag._id)
-            setEditedName(tag.name)
-          }}
-        >
-          <Edit className="h-4 w-4" />
-        </Button>
-      )}
-      <Button
-        size="icon"
-        variant="ghost"
-        className="h-8 w-8 text-red-600"
-        onClick={() => setTagToDelete(tag)}
-      >
-        <Trash2 className="h-4 w-4" />
-      </Button>
-    </div>
-  </div>
-</CardHeader>
+                  {/* Action Buttons */}
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1 shrink-0">
+                    {editingId === tag._id ? (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-8 w-8 hover:bg-accent"
+                        onClick={() => handleUpdate(tag._id)}
+                      >
+                        <Save className="h-4 w-4 text-green-600" />
+                      </Button>
+                    ) : (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-8 w-8 hover:bg-accent"
+                        onClick={() => {
+                          setEditingId(tag._id)
+                          setEditedName(tag.name)
+                        }}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    )}
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8 hover:bg-accent"
+                      onClick={() => setTagToDelete(tag)}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-600" />
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
 
                 <CardContent className="pt-0">
                   <Badge className="bg-gray-100 text-gray-700">0 items</Badge>
@@ -210,10 +230,10 @@ const fetchTags = async () => {
       )}
 
       {/* Delete Confirmation Modal */}
-      <ConfirmDialog
+      <ConfirmDialog 
         isOpen={!!tagToDelete}
         title="Delete Tag"
-        description={`Are you sure you want to delete "${tagToDelete?.name}"? This action cannot be undo.`}
+        description={`Are you sure you want to delete "${tagToDelete?.name}"?`}
         onCancel={() => setTagToDelete(null)}
         onConfirm={async () => {
           if (!tagToDelete) return
