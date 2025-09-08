@@ -34,9 +34,16 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/portfolios', portfolioRoutes);
 app.use('/api/upload', uploadRoutes);
 
+// Add a test route to verify upload endpoint is accessible
+app.get('/api/upload/test', (req, res) => {
+	res.json({ message: 'Upload endpoint is accessible', timestamp: new Date().toISOString() });
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
 	console.log(`Server listening on port ${PORT}`);
+	console.log(`Upload endpoint available at: http://localhost:${PORT}/api/upload`);
+	console.log(`Test endpoint available at: http://localhost:${PORT}/api/upload/test`);
 });
 
 

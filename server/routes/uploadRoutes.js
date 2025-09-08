@@ -16,6 +16,25 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 const router = express.Router();
 
+// Add logging middleware for debugging
+router.use((req, res, next) => {
+  console.log(`📤 Upload request: ${req.method} ${req.path}`, {
+    headers: req.headers,
+    body: req.body,
+    files: req.files ? req.files.length : 0
+  });
+  next();
+});
+
+// Health check route (no auth required)
+router.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    cloudinaryConfigured: isCloudinaryConfigured,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Upload routes require authentication
 router.use(authenticateToken);
 
