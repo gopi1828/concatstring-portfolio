@@ -4,7 +4,7 @@ const Technology = require('../model/Technology');
 exports.listTechnologies = async function listTechnologies(_req, res) {
 	try {
 		await connectToDatabase();
-		const techs = await Technology.find({}).lean();
+		const techs = await Technology.find({}).sort({ createdAt: -1 }).lean();
 		return res.status(200).json(techs);
 	} catch (error) {
 		console.error('List technologies error:', error);

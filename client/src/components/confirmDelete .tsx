@@ -14,7 +14,7 @@ type ConfirmDialogProps = {
 
 export const ConfirmDialog = ({
   title = "Are you sure?",
-  description = "This action cannot be undone.",
+  description,
   confirmText = "Confirm",
   cancelText = "Cancel",
   onConfirm,
