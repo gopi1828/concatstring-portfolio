@@ -50,10 +50,13 @@ export function LoginPage() {
 
         if (response.status === 200) {
           toast.success("Login successful!");
-          const { token } = response.data;
-
+          const { token, user } = response.data;
+          
           try {
             localStorage.setItem("token", token);
+            if (user) {
+              localStorage.setItem("user", JSON.stringify(user));
+              }
           } catch (e) {
             toast.error("Failed to save token. Please check browser settings.");
             return;
