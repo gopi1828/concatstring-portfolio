@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const baseURL = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "") || "http://localhost:5000";
 
@@ -28,9 +29,17 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      // Token is invalid or expired, remove it and redirect to login
+      // Token is invalid or expired, show toast and redirect to login
       localStorage.removeItem('token');
-      window.location.href = '/';
+      
+      // Show specific error message based on server response
+      const errorMessage = error.response?.data?.message || 'Session expired. Please login again.';
+      toast.error(errorMessage);
+      
+      // Redirect after a short delay to allow toast to show
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 2000);
     }
     return Promise.reject(error);
   }

@@ -13,7 +13,18 @@ function authenticateToken(req, res, next) {
   jwt.verify(token, secret, (err, user) => {
     if (err) {
       console.log('JWT verification failed:', err.message);
-      return res.status(403).json({ message: 'Invalid or expired token' });
+      
+      // Provide specific error message based on error type
+      let errorMessage = 'Invalid token';
+      if (err.name === 'TokenExpiredError') {
+        errorMessage = 'Token has expired. Please login again.';
+      } else if (err.name === 'JsonWebTokenError') {
+        errorMessage = 'Invalid token format. Please login again.';
+      } else if (err.name === 'NotBeforeError') {
+        errorMessage = 'Token not active yet. Please try again later.';
+      }
+      
+      return res.status(401).json({ message: errorMessage });
     }
     
     req.user = user;
