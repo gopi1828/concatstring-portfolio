@@ -613,7 +613,7 @@ export function PortfolioPage() {
                   className={
                     currentPage === 1 ? "pointer-events-none opacity-50" : ""
                   }
-            // ⛔ remove size="icon"
+
                 />
               </PaginationItem>
 
@@ -627,7 +627,7 @@ export function PortfolioPage() {
                       setCurrentPage(i + 1);
                     }}
                     isActive={currentPage === i + 1}
-              size="icon" // ✅ keep icon size only for numbers
+              size="icon" 
                   >
                     {i + 1}
                   </PaginationLink>
@@ -648,8 +648,7 @@ export function PortfolioPage() {
                       ? "pointer-events-none opacity-50"
                       : ""
                   }
-            // ⛔ remove size="icon"
-                />
+              />
               </PaginationItem>
             </PaginationContent>
           </Pagination>
