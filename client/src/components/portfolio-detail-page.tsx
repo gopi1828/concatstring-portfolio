@@ -13,28 +13,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import {
   ArrowLeft,
-  Edit,
   ExternalLink,
-  Github,
-  Globe,
   Calendar,
   Eye,
   Star,
-  Download,
   DollarSign,
   User,
-  Mail,
-  Phone,
-  MapPin,
   ImageIcon,
   FileText,
   Code,
-  Zap,
 } from "lucide-react";
 import api from "../lib/api";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+
 
 interface PortfolioItem {
   _id: string;

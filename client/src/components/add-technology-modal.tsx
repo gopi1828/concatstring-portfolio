@@ -135,7 +135,7 @@ export function AddTechnologyModal({
     setLoading(true);
 
     try {
-      const response = await api.post("/api/technologies", {
+      await api.post("/api/technologies", {
         name,
         description,
         category,

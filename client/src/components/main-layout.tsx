@@ -44,7 +44,6 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   const [user, setUser] = useState<any>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -72,9 +71,6 @@ export function MainLayout({ children }: MainLayoutProps) {
     if (userData) {
       setUser(JSON.parse(userData));
     }
-    const hasToken = !!localStorage.getItem("token");
-    const hasUser = !!userData;
-    setIsLoggedIn(hasToken || hasUser);
 
     // derive role for admin check
     let detectedRole: string | null = null;
