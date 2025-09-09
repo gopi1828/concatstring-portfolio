@@ -53,7 +53,6 @@ export function AddPortfolioModal({
         const res = await api.get("/api/technologies");
         setTechOptions(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
-        console.error("Failed to fetch techs:", err);
         setTechOptions([]);
       } finally {
         setIsLoading(false);
@@ -73,7 +72,6 @@ export function AddPortfolioModal({
         const res = await api.get("/api/categories");
         setCategoryOptions(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
-        console.error("Failed to fetch category:", err);
         setCategoryOptions([]);
       }
     };
@@ -89,7 +87,6 @@ export function AddPortfolioModal({
         const res = await api.get("/api/tags");
         setTagOptions(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
-        console.error("Failed to fetch tag:", err);
         setTagOptions([]);
       }
     };

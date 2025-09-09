@@ -1,13 +1,14 @@
 import { useMemo } from "react";
 import { Button } from "../components/ui/button";
 import { Upload } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 export type ExportPortfolioItem = {
   _id: string;
   projectName: string;
   description: string;
   websiteLink: string;
-  technology: string[];
+  technology: string;
   category: string;
   industry: string;
   pageBuilder: string;
@@ -31,7 +32,8 @@ type ExportPortfolioProps = {
 function toCsvValue(value: unknown): string {
   if (value === null || value === undefined) return "";
   const stringValue = String(value);
-  if (/[",\n]/.test(stringValue)) {
+  // Escape quotes and wrap in quotes if contains comma, quote, or newline
+  if (/[",\n\r]/.test(stringValue)) {
     return '"' + stringValue.replace(/"/g, '""') + '"';
   }
   return stringValue;
@@ -45,6 +47,25 @@ function formatDateForCsv(dateStr?: string): string {
   const month = String(d.getMonth() + 1).padStart(2, "0");
   const year = d.getFullYear();
   return `${day}/${month}/${year}`;
+}
+
+function cleanTextForCsv(text: string, maxLength: number = 100): string {
+  if (!text) return "";
+  
+  // Remove base64 data
+  if (text.startsWith('data:image/')) {
+    return '[Image Data]';
+  }
+  
+  // Remove excessive whitespace and newlines
+  const cleaned = text.replace(/\s+/g, ' ').trim();
+  
+  // Truncate if too long
+  if (cleaned.length > maxLength) {
+    return cleaned.substring(0, maxLength - 3) + '...';
+  }
+  
+  return cleaned;
 }
 
 export default function ExportPortfolio({
@@ -77,30 +98,59 @@ export default function ExportPortfolio({
     rows.push(headers);
 
     const source = items && items.length > 0 ? items : allItems ?? [];
+    
+    // Debug log to see what data we're working with
+    console.log('Export data:', source);
 
     for (const p of source) {
-      rows.push([
-        p.projectName || "",
+      try {
+        rows.push([
+        cleanTextForCsv(p.projectName || "", 50),
         Array.isArray(p.technology)
           ? p.technology.join(", ")
-          : String(p.technology ?? ""),
-        p.category || "",
-        p.industry || "",
-        p.description || "",
-        p.pageBuilder || "",
-        p.clientName || "",
-        p.websiteLink || "",
-        p.bidPlatform || "",
-        p.bidPlatformUrl || "",
+          : cleanTextForCsv(String(p.technology ?? ""), 30),
+        cleanTextForCsv(p.category || "", 30),
+        cleanTextForCsv(p.industry || "", 30),
+        cleanTextForCsv(p.description || "", 200),
+        cleanTextForCsv(p.pageBuilder || "", 20),
+        cleanTextForCsv(p.clientName || "", 30),
+        cleanTextForCsv(p.websiteLink || "", 50),
+        cleanTextForCsv(p.bidPlatform || "", 20),
+        cleanTextForCsv(p.bidPlatformUrl || "", 50),
         p.invoiceAmount != null ? String(p.invoiceAmount) : "",
         formatDateForCsv(p.startDate),
         formatDateForCsv(p.completionDate),
-        p.testimonials || "",
-        Array.isArray(p.tag) ? p.tag.join(", ") : String(p.tag ?? ""),
+        cleanTextForCsv(p.testimonials || "", 150),
+        Array.isArray(p.tag) ? p.tag.join(", ") : cleanTextForCsv(String(p.tag ?? ""), 50),
         Array.isArray(p.clientInvoices)
-          ? p.clientInvoices.join(" | ")
-          : String(p.clientInvoices ?? ""),
-      ]);
+          ? p.clientInvoices
+              .filter(url => url && typeof url === 'string')
+              .map(url => cleanTextForCsv(url, 50))
+              .join(" | ")
+          : cleanTextForCsv(String(p.clientInvoices ?? ""), 50),
+        ]);
+      } catch (error) {
+        console.error('Error processing portfolio item:', p, error);
+        // Add a row with error info instead of skipping
+        rows.push([
+          p.projectName || "ERROR",
+          "ERROR",
+          "ERROR",
+          "ERROR",
+          "Error processing this item",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+        ]);
+      }
     }
 
     const lines = rows.map((r) => r.map(toCsvValue).join(","));
@@ -108,25 +158,48 @@ export default function ExportPortfolio({
   }, [items, allItems]);
 
   const handleDownload = () => {
-    const content = csvContent;
-    const blob = new Blob([content], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    const now = new Date();
-    const ts = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}${String(now.getDate()).padStart(2, "0")}_${String(
-      now.getHours()
-    ).padStart(2, "0")}${String(now.getMinutes()).padStart(2, "0")}${String(
-      now.getSeconds()
-    ).padStart(2, "0")}`;
-    link.href = url;
-    link.download = `projects_export_${ts}.csv`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    try {
+      // Add BOM for proper UTF-8 encoding in Excel
+      const BOM = '\uFEFF';
+      const content = BOM + csvContent;
+      
+      const blob = new Blob([content], { 
+        type: "text/csv;charset=utf-8;" 
+      });
+      
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      
+      const now = new Date();
+      const ts = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}${String(now.getDate()).padStart(2, "0")}_${String(
+        now.getHours()
+      ).padStart(2, "0")}${String(now.getMinutes()).padStart(2, "0")}${String(
+        now.getSeconds()
+      ).padStart(2, "0")}`;
+      
+      link.href = url;
+      link.download = `portfolio_export_${ts}.csv`;
+      link.style.display = 'none';
+      
+      document.body.appendChild(link);
+      link.click();
+      
+      // Clean up
+      setTimeout(() => {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }, 100);
+      
+      const sourceCount = items && items.length > 0 ? items.length : (allItems?.length ?? 0);
+      toast.success(`Successfully exported ${sourceCount} portfolio items`);
+      
+    } catch (error) {
+      console.error('Export failed:', error);
+      toast.error('Failed to export data. Please try again.');
+    }
   };
 
   return (

@@ -18,7 +18,6 @@ exports.createTag = async function createTag(req, res) {
 		const newTag = await Tag.create({ name: name.trim() });
 		return res.status(201).json({ message: 'Tag created successfully', tag: newTag });
 	} catch (error) {
-		console.error('Create tag error:', error);
 		return res.status(500).json({ error: 'server error' });
 	}
 };
@@ -29,7 +28,6 @@ exports.getTags = async function getTags(_req, res) {
 		const tags = await Tag.find().sort({ createdAt: -1 }).lean();
 		return res.status(200).json(tags);
 	} catch (error) {
-		console.error('Get tags error:', error);
 		return res.status(500).json({ error: 'server error' });
 	}
 };
@@ -65,11 +63,9 @@ exports.updateTag = async function updateTag(req, res) {
 			if (err && err.code === 11000) {
 				return res.status(400).json({ error: 'Tag already exists' });
 			}
-			console.error('Update tag DB error:', err);
 			throw err;
 		}
 	} catch (error) {
-		console.error('Update tag error:', error);
 		return res.status(500).json({ error: 'Failed to update tag' });
 	}
 };
@@ -89,7 +85,6 @@ exports.deleteTag = async function deleteTag(req, res) {
 		}
 		return res.status(200).json({ message: 'Tag deleted successfully' });
 	} catch (error) {
-		console.error('Delete tag error:', error);
 		return res.status(500).json({ error: 'Failed to delete tag' });
 	}
 };

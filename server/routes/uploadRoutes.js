@@ -8,8 +8,6 @@ const isCloudinaryConfigured = !!process.env.CLOUDINARY_URL;
 
 if (isCloudinaryConfigured) {
   cloudinary.config({ secure: true }); // uses process.env.CLOUDINARY_URL
-} else {
-  console.error('CLOUDINARY_URL not found in environment variables. File uploads are disabled.');
 }
 
 const upload = multer({ storage: multer.memoryStorage() });

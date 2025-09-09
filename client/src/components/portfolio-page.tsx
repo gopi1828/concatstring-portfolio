@@ -45,7 +45,7 @@ type PortfolioItem = {
   projectName: string;
   description: string;
   websiteLink: string;
-  technology: string[];
+  technology: string;
   category: string;
   industry: string;
   pageBuilder: string;
@@ -166,12 +166,10 @@ export function PortfolioPage() {
       });
 
       const data = response.data;
-      // console.log("data", data)
 
       const portfolios = Array.isArray(data) ? data : data.result || [];
       setPortfolioItems(portfolios);
     } catch (error) {
-      console.error("Failed to fetch portfolios:", error);
       toast.error("Failed to fetch portfolios");
       setPortfolioItems([]);
     } finally {
@@ -257,7 +255,6 @@ export function PortfolioPage() {
       );
       toast.success("Portfolio deleted successfully!");
     } catch (error) {
-      console.error("Failed to delete portfolio:", error);
       toast.error("Failed to delete portfolio");
     } finally {
       setDeleteConfirmOpen(false);
@@ -273,14 +270,14 @@ export function PortfolioPage() {
   const filteredItems = portfolioItems.filter((item) => {
     const projectName = item.projectName?.toLowerCase() || "";
     const description = item.description?.toLowerCase() || "";
-    const technology = Array.isArray(item.technology) ? item.technology : [];
+    const technology = typeof item.technology === 'string' ? item.technology.toLowerCase() : "";
     const tag = Array.isArray(item.tag) ? item.tag : [];
     const search = searchTerm.toLowerCase();
 
     return (
       projectName.includes(search) ||
       description.includes(search) ||
-      technology.some((tech) => tech?.toLowerCase().includes(search)) ||
+      technology.includes(search) ||
       tag.some((t) => t?.toLowerCase().includes(search)) ||
       item.category?.toLowerCase().includes(search) ||
       item.industry?.toLowerCase().includes(search)
@@ -295,7 +292,7 @@ export function PortfolioPage() {
   );
 
   const getDisplayTags = (item: PortfolioItem) => {
-    const techTags = Array.isArray(item.technology) ? item.technology : [];
+    const techTags = typeof item.technology === 'string' ? [item.technology] : [];
     const tags = Array.isArray(item.tag) ? item.tag : [];
     return [...techTags, ...tags].filter(Boolean);
   };

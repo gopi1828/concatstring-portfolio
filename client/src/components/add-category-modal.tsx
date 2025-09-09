@@ -73,7 +73,6 @@ export function AddCategoryModal({
       onOpenChange(false);
     } catch (error) {
       toast.error("Error adding category");
-      // console.error("Error adding category", error)
     }
   };
 
