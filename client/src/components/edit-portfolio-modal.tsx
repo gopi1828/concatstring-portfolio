@@ -170,12 +170,15 @@ export default function EditPortfolioModal({
     validationSchema,
     onSubmit: async (values) => {
       const allUploads = (values.clientInvoices as Array<File | string>) || [];
-      const existingUrls = (allUploads.filter((item) => typeof item === "string") as string[]) || [];
-      const newFiles = (allUploads.filter((item) => item instanceof File) as File[]) || [];
+      const existingUrls =
+        (allUploads.filter((item) => typeof item === "string") as string[]) ||
+        [];
+      const newFiles =
+        (allUploads.filter((item) => item instanceof File) as File[]) || [];
 
       async function uploadViaBackend(files: File[]): Promise<string[]> {
         const fd = new FormData();
-        files.forEach((f) => fd.append('files', f));
+        files.forEach((f) => fd.append("files", f));
         const res = await api.post("/api/upload", fd, {
           headers: { "Content-Type": "multipart/form-data" },
         });
@@ -183,7 +186,8 @@ export default function EditPortfolioModal({
         return Array.isArray(data.urls) ? data.urls : [];
       }
 
-      const uploadedUrls = newFiles.length > 0 ? await uploadViaBackend(newFiles) : [];
+      const uploadedUrls =
+        newFiles.length > 0 ? await uploadViaBackend(newFiles) : [];
 
       const payload: any = {
         projectName: values.projectName,
@@ -198,7 +202,8 @@ export default function EditPortfolioModal({
         bidPlatform: values.bidPlatform,
         bidPlatformUrl: values.bidPlatformUrl,
         invoiceAmount:
-          typeof values.invoiceAmount === "string" && values.invoiceAmount !== ""
+          typeof values.invoiceAmount === "string" &&
+          values.invoiceAmount !== ""
             ? Number(values.invoiceAmount)
             : values.invoiceAmount,
         startDate: values.startDate || undefined,
@@ -208,10 +213,15 @@ export default function EditPortfolioModal({
       };
 
       // Remove undefined keys to avoid empty update
-      Object.keys(payload).forEach((k) => payload[k] === undefined && delete payload[k]);
+      Object.keys(payload).forEach(
+        (k) => payload[k] === undefined && delete payload[k]
+      );
 
       try {
-        const response = await api.put(`/api/portfolios/${portfolioId}`, payload);
+        const response = await api.put(
+          `/api/portfolios/${portfolioId}`,
+          payload
+        );
         if (response.status === 200) {
           // Notify parent to refresh its data without requiring a full page reload
           if (typeof onUpdated === "function") {

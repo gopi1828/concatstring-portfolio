@@ -126,20 +126,20 @@ export function AddPortfolioModal({
 
       async function uploadViaBackend(files: File[]): Promise<string[]> {
         const fd = new FormData();
-        files.forEach((f) => fd.append('files', f));
+        files.forEach((f) => fd.append("files", f));
         try {
           const res = await api.post("/api/upload", fd, {
             headers: { "Content-Type": "multipart/form-data" },
           });
-      
+
           // Axios puts parsed data here
           const data = res.data;
-      
+
           return Array.isArray(data.urls) ? data.urls : [];
         } catch (err: any) {
           throw new Error(err?.response?.data?.message || "Upload failed");
         }
-        }
+      }
 
       let uploadedInvoices: string[] = [];
       if (hasFiles) {
@@ -147,7 +147,7 @@ export function AddPortfolioModal({
           const onlyFiles = (values.clientInvoices as File[]).filter(Boolean);
           uploadedInvoices = await uploadViaBackend(onlyFiles);
         } catch (e: any) {
-          toast.error(e?.message || 'Failed to upload files');
+          toast.error(e?.message || "Failed to upload files");
         }
       }
 
@@ -164,7 +164,8 @@ export function AddPortfolioModal({
         bidPlatform: values.bidPlatform,
         bidPlatformUrl: values.bidPlatformUrl,
         invoiceAmount:
-          typeof values.invoiceAmount === "string" && values.invoiceAmount !== ""
+          typeof values.invoiceAmount === "string" &&
+          values.invoiceAmount !== ""
             ? Number(values.invoiceAmount)
             : values.invoiceAmount,
         startDate: values.startDate || undefined,
@@ -172,7 +173,9 @@ export function AddPortfolioModal({
         testimonials: values.testimonials,
         tag: selectedTags,
       };
-      Object.keys(payload).forEach((k) => payload[k] === undefined && delete payload[k]);
+      Object.keys(payload).forEach(
+        (k) => payload[k] === undefined && delete payload[k]
+      );
 
       try {
         const response = await api.post("/api/portfolios", payload);
@@ -183,7 +186,8 @@ export function AddPortfolioModal({
           navigate("/dashboard");
         }
       } catch (err: any) {
-        const message = err?.response?.data?.message || "Failed to add project.";
+        const message =
+          err?.response?.data?.message || "Failed to add project.";
         toast.error(message);
       }
     },

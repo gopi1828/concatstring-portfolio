@@ -9,7 +9,12 @@ import {
   CardTitle,
 } from "./ui/card";
 // import { Separator } from "./ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import {
   ArrowLeft,
@@ -26,7 +31,6 @@ import {
 import api from "../lib/api";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-
 
 interface PortfolioItem {
   _id: string;
@@ -68,16 +72,19 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
         const response = await api.get(`/api/portfolios/${id}`);
 
         const data = response.data;
-        const item = (data && (data.result || data.portfolio || data.item || data)) as
-          | PortfolioItem
-          | null;
+        const item = (data &&
+          (data.result ||
+            data.portfolio ||
+            data.item ||
+            data)) as PortfolioItem | null;
         if (item && (item as any)._id) {
           setPortfolio(item as PortfolioItem);
         } else {
           setError("Portfolio not found");
         }
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Failed to fetch portfolio";
+        const message =
+          err instanceof Error ? err.message : "Failed to fetch portfolio";
         setError(message);
         toast.error(message);
       } finally {

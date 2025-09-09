@@ -31,7 +31,6 @@ export function RegisterPage() {
         .required("Password is required"),
     }),
     onSubmit: async (values) => {
-      
       try {
         const res = await api.post("/api/auth/register", values);
         if (res.status === 200) {

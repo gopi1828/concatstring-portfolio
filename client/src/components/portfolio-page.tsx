@@ -32,7 +32,7 @@ import {
   FileText,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { ConfirmDialog } from "./confirmDelete ";
+import { ConfirmDialog } from "./ui/confirm-delete";
 
 import ExportPortfolio from "../components/export-portfolio";
 import ImportPortfolio from "../components/import-portfolio";
@@ -476,7 +476,7 @@ export function PortfolioPage() {
             <p className="text-gray-600 text-sm mb-4 line-clamp-2">
               {item.description}
             </p>
-            <div className= "flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-wrap gap-2 mb-4">
               {getDisplayTags(item).map((tag, index) => (
                 <Badge
                   key={`${tag}-${index}`}
@@ -519,7 +519,6 @@ export function PortfolioPage() {
 
   return (
     <div className="space-y-6">
-      
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -593,13 +592,12 @@ export function PortfolioPage() {
         <>{viewMode === "table" ? <TableView /> : <GridView />}</>
       )}
 
-
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center">
           <Pagination>
             <PaginationContent>
-        {/* Previous */}
+              {/* Previous */}
               <PaginationItem>
                 <PaginationPrevious
                   href="#"
@@ -610,11 +608,10 @@ export function PortfolioPage() {
                   className={
                     currentPage === 1 ? "pointer-events-none opacity-50" : ""
                   }
-
                 />
               </PaginationItem>
 
-        {/* Page Numbers */}
+              {/* Page Numbers */}
               {[...Array(totalPages)].map((_, i) => (
                 <PaginationItem key={i}>
                   <PaginationLink
@@ -624,14 +621,14 @@ export function PortfolioPage() {
                       setCurrentPage(i + 1);
                     }}
                     isActive={currentPage === i + 1}
-              size="icon" 
+                    size="icon"
                   >
                     {i + 1}
                   </PaginationLink>
                 </PaginationItem>
               ))}
 
-        {/* Next */}
+              {/* Next */}
               <PaginationItem>
                 <PaginationNext
                   href="#"
@@ -645,13 +642,12 @@ export function PortfolioPage() {
                       ? "pointer-events-none opacity-50"
                       : ""
                   }
-              />
+                />
               </PaginationItem>
             </PaginationContent>
           </Pagination>
         </div>
       )}
-
 
       {/* Pass the callback function to the modal */}
       <AddPortfolioModal
