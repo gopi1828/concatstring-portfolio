@@ -106,6 +106,9 @@ export default function ImportPortfolio({
       const rows = parseCsv(text);
       
       if (rows.length === 0) {
+        setResult({ inserted: [], skipped: [] });
+        shouldOpenDialogRef.current = true;
+        setDialogOpen(true);
         return;
       }
 
@@ -151,6 +154,15 @@ export default function ImportPortfolio({
         if (!hasProjectName) missing.push('Project Name');
         if (!hasTechnology) missing.push('Technology');
         
+        setResult({ 
+          inserted: [], 
+          skipped: [{ 
+            projectName: "CSV Validation Error", 
+            reason: `Missing required columns: ${missing.join(", ")}. Found columns: ${headers.join(", ")}` 
+          }] 
+        });
+        shouldOpenDialogRef.current = true;
+        setDialogOpen(true);
         return;
       }
 
@@ -209,12 +221,16 @@ export default function ImportPortfolio({
         }
       }
 
-      if (normalized.length === 0) {
-        return;
-      }
-
       const inserted: ImportResultItem[] = [];
       const skipped: ImportResultItem[] = [...duplicates];
+
+      // If all projects are duplicates, show them in skipped section
+      if (normalized.length === 0) {
+        setResult({ inserted, skipped });
+        shouldOpenDialogRef.current = true;
+        setDialogOpen(true);
+        return;
+      }
 
       for (const p of normalized) {
         try {
