@@ -25,7 +25,6 @@ import {
   Layers,
   Code2,
 } from "lucide-react";
-import { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
 import api from "../lib/api";
 
@@ -138,8 +137,6 @@ export function MainLayout({ children }: MainLayoutProps) {
         navigate("/");
       }
     } catch (error) {
-      const err = error as AxiosError;
-      console.error(err.response?.data || err.message);
       toast.error("Failed to logout");
     }
   };

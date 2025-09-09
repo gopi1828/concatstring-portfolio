@@ -41,7 +41,7 @@ export function CategoriesPage() {
       }));
       setCategories(categoriesWithId);
     } catch (err: any) {
-      console.error(err);
+      // Error handled silently
     } finally {
       setLoading(false);
     }

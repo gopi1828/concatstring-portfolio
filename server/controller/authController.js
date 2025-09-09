@@ -50,7 +50,6 @@ exports.register = async function register(req, res) {
       },
     });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({
       message: "Something went wrong while registering",
       error: error.message,
@@ -98,7 +97,6 @@ exports.login = async function login(req, res) {
       .status(200)
       .json({ message: "Login Successfully", token, user: tokenPayload });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({
       message: "Something went wrong while logging",
       error: error.message,
@@ -119,7 +117,6 @@ exports.logout = async function logout(_req, res) {
       .status(200)
       .json({ message: "Logout Successfully", status: true });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({
       message: "Something went wrong while logout",
       error: error.message,
@@ -142,7 +139,6 @@ exports.getUserById = async function getUserById(req, res) {
 
     return res.status(200).json(user);
   } catch (error) {
-    console.error(error);
     return res.status(500).json({
       message: "Something went wrong while fetching user",
       error: error.message,
@@ -194,7 +190,6 @@ exports.updateUserById = async function updateUserById(req, res) {
       throw err;
     }
   } catch (error) {
-    console.error(error);
     return res.status(500).json({
       message: "Something went wrong while updating user",
       error: error.message,

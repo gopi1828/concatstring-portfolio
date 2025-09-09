@@ -7,7 +7,6 @@ exports.listTechnologies = async function listTechnologies(_req, res) {
 		const techs = await Technology.find({}).sort({ createdAt: -1 }).lean();
 		return res.status(200).json(techs);
 	} catch (error) {
-		console.error('List technologies error:', error);
 		return res.status(500).json({ message: error.message });
 	}
 };
@@ -32,7 +31,6 @@ exports.createTechnology = async function createTechnology(req, res) {
 		});
 		return res.status(201).json(tech);
 	} catch (error) {
-		console.error('Create technology error:', error);
 		return res.status(400).json({ message: error.message });
 	}
 };
@@ -60,7 +58,6 @@ exports.updateTechnology = async function updateTechnology(req, res) {
 		}
 		return res.status(200).json(updated);
 	} catch (error) {
-		console.error('Update technology error:', error);
 		return res.status(500).json({ message: error.message });
 	}
 };
@@ -75,7 +72,6 @@ exports.deleteTechnology = async function deleteTechnology(req, res) {
 		await Technology.findByIdAndDelete(id);
 		return res.status(200).json({ message: 'Technology deleted' });
 	} catch (error) {
-		console.error('Delete technology error:', error);
 		return res.status(400).json({ message: error.message });
 	}
 };

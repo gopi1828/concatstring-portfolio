@@ -67,14 +67,13 @@ export function EditCategoryModal({
 
     setLoading(true);
     try {
-      const response = await api.put(`/api/categories/${category.id}`, {
+      await api.put(`/api/categories/${category.id}`, {
         name,
         description,
         icon,
         color,
       });
 
-      console.log("category updated", response.data);
       // Update the category in the parent component
       const updatedCategory = {
         ...category,

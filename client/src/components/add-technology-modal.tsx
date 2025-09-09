@@ -156,7 +156,6 @@ export function AddTechnologyModal({
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to add technology";
-      console.error(errorMessage);
       toast.error(errorMessage);
     } finally {
       setLoading(false);

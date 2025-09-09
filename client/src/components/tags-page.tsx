@@ -48,7 +48,6 @@ const fetchTags = async () => {
       setNewTag("")
       fetchTags()
     } catch (error: any) {
-      console.error("Tag add error:", error)
       const errorMessage = error.response?.data?.error || error.message || "Error adding tag"
       toast.error(errorMessage)
     }
@@ -63,7 +62,6 @@ const fetchTags = async () => {
       setEditedName("")
       fetchTags()
     } catch (error: any) {
-      console.error("Tag update error:", error)
       const errorMessage = error.response?.data?.error || error.message || "Error updating tag"
       toast.error(errorMessage)
     }

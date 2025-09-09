@@ -178,7 +178,6 @@ export function EditTechnologyModal({
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to update technology";
-      console.error(errorMessage);
       toast.error(errorMessage);
     } finally {
       setLoading(false);

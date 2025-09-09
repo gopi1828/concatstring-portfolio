@@ -166,12 +166,10 @@ export function PortfolioPage() {
       });
 
       const data = response.data;
-      // console.log("data", data)
 
       const portfolios = Array.isArray(data) ? data : data.result || [];
       setPortfolioItems(portfolios);
     } catch (error) {
-      console.error("Failed to fetch portfolios:", error);
       toast.error("Failed to fetch portfolios");
       setPortfolioItems([]);
     } finally {
@@ -257,7 +255,6 @@ export function PortfolioPage() {
       );
       toast.success("Portfolio deleted successfully!");
     } catch (error) {
-      console.error("Failed to delete portfolio:", error);
       toast.error("Failed to delete portfolio");
     } finally {
       setDeleteConfirmOpen(false);
