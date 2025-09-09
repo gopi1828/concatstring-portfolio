@@ -45,7 +45,7 @@ type PortfolioItem = {
   projectName: string;
   description: string;
   websiteLink: string;
-  technology: string[];
+  technology: string;
   category: string;
   industry: string;
   pageBuilder: string;
@@ -270,14 +270,14 @@ export function PortfolioPage() {
   const filteredItems = portfolioItems.filter((item) => {
     const projectName = item.projectName?.toLowerCase() || "";
     const description = item.description?.toLowerCase() || "";
-    const technology = Array.isArray(item.technology) ? item.technology : [];
+    const technology = typeof item.technology === 'string' ? item.technology.toLowerCase() : "";
     const tag = Array.isArray(item.tag) ? item.tag : [];
     const search = searchTerm.toLowerCase();
 
     return (
       projectName.includes(search) ||
       description.includes(search) ||
-      technology.some((tech) => tech?.toLowerCase().includes(search)) ||
+      technology.includes(search) ||
       tag.some((t) => t?.toLowerCase().includes(search)) ||
       item.category?.toLowerCase().includes(search) ||
       item.industry?.toLowerCase().includes(search)
@@ -292,7 +292,7 @@ export function PortfolioPage() {
   );
 
   const getDisplayTags = (item: PortfolioItem) => {
-    const techTags = Array.isArray(item.technology) ? item.technology : [];
+    const techTags = typeof item.technology === 'string' ? [item.technology] : [];
     const tags = Array.isArray(item.tag) ? item.tag : [];
     return [...techTags, ...tags].filter(Boolean);
   };
