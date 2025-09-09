@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { AddCategoryModal } from "../components/add-category-modal";
 import { EditCategoryModal } from "../components/edit-category-modal";
 import { Search, Plus, Edit, Trash2, Layers } from "lucide-react";
-import { ConfirmDialog } from "./confirmDelete "
+import { ConfirmDialog } from "./ui/confirm-delete";
 import toast from "react-hot-toast";
 import { Skeleton } from "./ui/skeleton";
 
@@ -26,7 +26,9 @@ export function CategoriesPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(
+    null
+  );
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -160,7 +162,9 @@ export function CategoriesPage() {
                 {/* Fixed layout structure */}
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
-                    <div className="text-2xl flex-shrink-0">{category.icon}</div>
+                    <div className="text-2xl flex-shrink-0">
+                      {category.icon}
+                    </div>
                     <div className="flex-1 min-w-0">
                       <CardTitle className="text-lg text-gray-900 break-words">
                         {category.name}

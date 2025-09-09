@@ -1,15 +1,15 @@
-import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom'
-import { RequireAuth, RedirectIfAuth } from './lib/routeGuards'
-import { LoginPage } from './components/login-page'
-import { PortfolioPage } from './components/portfolio-page'
-import { MainLayout } from './components/main-layout'
-import { PortfolioDetailPage } from './components/portfolio-detail-page'
-import { RegisterPage } from './components/register-page'
-import { CategoriesPage } from './components/categories-page'
-import { TechnologiesPage } from './components/technologies-page'
-import { TagsPage } from './components/tags-page'
-import { EditUserForm } from './components/edit-user-form'
-import { Toaster } from 'react-hot-toast'
+import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
+import { RequireAuth, RedirectIfAuth } from "./lib/routeGuards";
+import { LoginPage } from "./components/login-page";
+import { PortfolioPage } from "./components/portfolio-page";
+import { MainLayout } from "./components/main-layout";
+import { PortfolioDetailPage } from "./components/portfolio-detail-page";
+import { RegisterPage } from "./components/register-page";
+import { CategoriesPage } from "./components/categories-page";
+import { TechnologiesPage } from "./components/technologies-page";
+import { TagsPage } from "./components/tags-page";
+import { EditUserForm } from "./components/edit-user-form";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   const PortfolioDetailRoute = () => {
@@ -17,21 +17,28 @@ const App = () => {
     return (
       <RequireAuth>
         <MainLayout>
-          <PortfolioDetailPage id={id ?? ''} />
+          <PortfolioDetailPage id={id ?? ""} />
         </MainLayout>
       </RequireAuth>
     );
   };
   return (
     <div>
-       <Toaster position="top-right" reverseOrder={false} />
+      <Toaster position="top-right" reverseOrder={false} />
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<RedirectIfAuth><LoginPage /></RedirectIfAuth>} />
+          <Route
+            path="/"
+            element={
+              <RedirectIfAuth>
+                <LoginPage />
+              </RedirectIfAuth>
+            }
+          />
 
           {/* Dashboard routes with shared layout */}
           <Route
-            path='/dashboard'
+            path="/dashboard"
             element={
               <RequireAuth>
                 <MainLayout>
@@ -40,9 +47,12 @@ const App = () => {
               </RequireAuth>
             }
           />
-          <Route path='/dashboard/portfolio/:id' element={<PortfolioDetailRoute />} />
           <Route
-            path='/dashboard/register'
+            path="/dashboard/portfolio/:id"
+            element={<PortfolioDetailRoute />}
+          />
+          <Route
+            path="/dashboard/register"
             element={
               <RequireAuth>
                 <MainLayout>
@@ -52,7 +62,7 @@ const App = () => {
             }
           />
           <Route
-            path='/dashboard/categories'
+            path="/dashboard/categories"
             element={
               <RequireAuth>
                 <MainLayout>
@@ -62,7 +72,7 @@ const App = () => {
             }
           />
           <Route
-            path='/dashboard/technologies'
+            path="/dashboard/technologies"
             element={
               <RequireAuth>
                 <MainLayout>
@@ -72,7 +82,7 @@ const App = () => {
             }
           />
           <Route
-            path='/dashboard/tags'
+            path="/dashboard/tags"
             element={
               <RequireAuth>
                 <MainLayout>
@@ -82,7 +92,7 @@ const App = () => {
             }
           />
           <Route
-            path='/dashboard/edit-user'
+            path="/dashboard/edit-user"
             element={
               <RequireAuth>
                 <MainLayout>
@@ -94,7 +104,7 @@ const App = () => {
         </Routes>
       </BrowserRouter>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;

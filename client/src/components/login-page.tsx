@@ -36,7 +36,6 @@ export function LoginPage() {
         .min(4, "Password must be at least 4 characters"),
     }),
     onSubmit: async (values) => {
-            
       setIsLoading(true);
 
       const trimmedValues = {
@@ -44,19 +43,18 @@ export function LoginPage() {
         password: values.password.trim(),
       };
 
-
       try {
         const response = await api.post("/api/auth/login", trimmedValues);
 
         if (response.status === 200) {
           toast.success("Login successful!");
           const { token, user } = response.data;
-          
+
           try {
             localStorage.setItem("token", token);
             if (user) {
               localStorage.setItem("user", JSON.stringify(user));
-              }
+            }
           } catch (e) {
             toast.error("Failed to save token. Please check browser settings.");
             return;
@@ -81,7 +79,6 @@ export function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
-      
       <Card className="w-full max-w-md shadow-xl border-0 bg-white/80 backdrop-blur-sm">
         <CardHeader className="text-center space-y-4">
           <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
