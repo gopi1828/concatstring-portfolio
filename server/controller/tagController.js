@@ -12,26 +12,9 @@ exports.createTag = async function createTag(req, res) {
 
     const existing = await Tag.findOne({ name: name.trim() });
     if (existing) {
-      return res.status(400).json({ error: "Tag already exists" });
+      return res.status(400).json({ error: `Tag "${name.trim()}" already exists` });
     }
 
-<<<<<<< Updated upstream
-		const newTag = await Tag.create({ name: name.trim() });
-		return res.status(201).json({ message: 'Tag created successfully', tag: newTag });
-	} catch (error) {
-		return res.status(500).json({ error: 'server error' });
-	}
-};
-
-exports.getTags = async function getTags(_req, res) {
-	try {
-		await connectToDatabase();
-		const tags = await Tag.find().sort({ createdAt: -1 }).lean();
-		return res.status(200).json(tags);
-	} catch (error) {
-		return res.status(500).json({ error: 'server error' });
-	}
-=======
     const newTag = await Tag.create({ name: name.trim() });
     return res
       .status(201)
@@ -51,7 +34,6 @@ exports.getTags = async function getTags(_req, res) {
     console.error("Get tags error:", error);
     return res.status(500).json({ error: "server error" });
   }
->>>>>>> Stashed changes
 };
 
 exports.updateTag = async function updateTag(req, res) {
@@ -72,27 +54,6 @@ exports.updateTag = async function updateTag(req, res) {
       return res.status(400).json({ error: "No valid fields to update" });
     }
 
-<<<<<<< Updated upstream
-		try {
-			const updated = await Tag.findByIdAndUpdate(
-				id,
-				{ $set: updates },
-				{ new: true, runValidators: true }
-			);
-			if (!updated) {
-				return res.status(404).json({ error: 'Tag not found' });
-			}
-			return res.status(200).json({ message: 'Tag updated successfully', tag: updated });
-		} catch (err) {
-			if (err && err.code === 11000) {
-				return res.status(400).json({ error: 'Tag already exists' });
-			}
-			throw err;
-		}
-	} catch (error) {
-		return res.status(500).json({ error: 'Failed to update tag' });
-	}
-=======
     try {
       const updated = await Tag.findByIdAndUpdate(
         id,
@@ -116,7 +77,6 @@ exports.updateTag = async function updateTag(req, res) {
     console.error("Update tag error:", error);
     return res.status(500).json({ error: "Failed to update tag" });
   }
->>>>>>> Stashed changes
 };
 
 exports.deleteTag = async function deleteTag(req, res) {
@@ -128,16 +88,6 @@ exports.deleteTag = async function deleteTag(req, res) {
       return res.status(400).json({ error: "Tag id is required" });
     }
 
-<<<<<<< Updated upstream
-		const deleted = await Tag.findByIdAndDelete(id);
-		if (!deleted) {
-			return res.status(404).json({ error: 'Tag not found' });
-		}
-		return res.status(200).json({ message: 'Tag deleted successfully' });
-	} catch (error) {
-		return res.status(500).json({ error: 'Failed to delete tag' });
-	}
-=======
     const deleted = await Tag.findByIdAndDelete(id);
     if (!deleted) {
       return res.status(404).json({ error: "Tag not found" });
@@ -147,5 +97,4 @@ exports.deleteTag = async function deleteTag(req, res) {
     console.error("Delete tag error:", error);
     return res.status(500).json({ error: "Failed to delete tag" });
   }
->>>>>>> Stashed changes
 };

@@ -6,15 +6,11 @@ const { authenticateToken } = require("../middleware/auth");
 const isCloudinaryConfigured = !!process.env.CLOUDINARY_URL;
 
 if (isCloudinaryConfigured) {
-<<<<<<< Updated upstream
-  cloudinary.config({ secure: true }); // uses process.env.CLOUDINARY_URL
-=======
   cloudinary.config({ secure: true });
 } else {
   console.error(
     "CLOUDINARY_URL not found in environment variables. File uploads are disabled."
   );
->>>>>>> Stashed changes
 }
 
 const upload = multer({ storage: multer.memoryStorage() });
