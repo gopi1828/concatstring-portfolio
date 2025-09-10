@@ -99,8 +99,8 @@ export default function ExportPortfolio({
 
     const source = items && items.length > 0 ? items : allItems ?? [];
     
-    // Debug log to see what data we're working with
-    console.log('Export data:', source);
+    
+  
 
     for (const p of source) {
       try {
@@ -131,7 +131,7 @@ export default function ExportPortfolio({
         ]);
       } catch (error) {
         console.error('Error processing portfolio item:', p, error);
-        // Add a row with error info instead of skipping
+        
         rows.push([
           p.projectName || "ERROR",
           "ERROR",
