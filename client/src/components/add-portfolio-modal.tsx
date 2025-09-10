@@ -36,6 +36,7 @@ export function AddPortfolioModal({
   const [techOptions, setTechOptions] = useState<any[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<any[]>([]);
   const [tagOptions, setTagOptions] = useState<any[]>([]);
+  const [industryOptions, setIndustryOptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
@@ -53,7 +54,6 @@ export function AddPortfolioModal({
         const res = await api.get("/api/technologies");
         setTechOptions(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
-        console.error("Failed to fetch techs:", err);
         setTechOptions([]);
       } finally {
         setIsLoading(false);
@@ -73,7 +73,6 @@ export function AddPortfolioModal({
         const res = await api.get("/api/categories");
         setCategoryOptions(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
-        console.error("Failed to fetch category:", err);
         setCategoryOptions([]);
       }
     };
@@ -89,13 +88,27 @@ export function AddPortfolioModal({
         const res = await api.get("/api/tags");
         setTagOptions(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
-        console.error("Failed to fetch tag:", err);
         setTagOptions([]);
       }
     };
 
     if (open) {
       fetchTag();
+    }
+  }, [open]);
+
+  useEffect(() => {
+    const fetchIndustry = async () => {
+      try {
+        const res = await api.get("/api/industry");
+        setIndustryOptions(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        setIndustryOptions([]);
+      }
+    };
+
+    if (open) {
+      fetchIndustry();
     }
   }, [open]);
 
@@ -129,20 +142,20 @@ export function AddPortfolioModal({
 
       async function uploadViaBackend(files: File[]): Promise<string[]> {
         const fd = new FormData();
-        files.forEach((f) => fd.append('files', f));
+        files.forEach((f) => fd.append("files", f));
         try {
           const res = await api.post("/api/upload", fd, {
             headers: { "Content-Type": "multipart/form-data" },
           });
-      
+
           // Axios puts parsed data here
           const data = res.data;
-      
+
           return Array.isArray(data.urls) ? data.urls : [];
         } catch (err: any) {
           throw new Error(err?.response?.data?.message || "Upload failed");
         }
-        }
+      }
 
       let uploadedInvoices: string[] = [];
       if (hasFiles) {
@@ -150,7 +163,7 @@ export function AddPortfolioModal({
           const onlyFiles = (values.clientInvoices as File[]).filter(Boolean);
           uploadedInvoices = await uploadViaBackend(onlyFiles);
         } catch (e: any) {
-          toast.error(e?.message || 'Failed to upload files');
+          toast.error(e?.message || "Failed to upload files");
         }
       }
 
@@ -167,7 +180,8 @@ export function AddPortfolioModal({
         bidPlatform: values.bidPlatform,
         bidPlatformUrl: values.bidPlatformUrl,
         invoiceAmount:
-          typeof values.invoiceAmount === "string" && values.invoiceAmount !== ""
+          typeof values.invoiceAmount === "string" &&
+          values.invoiceAmount !== ""
             ? Number(values.invoiceAmount)
             : values.invoiceAmount,
         startDate: values.startDate || undefined,
@@ -175,7 +189,9 @@ export function AddPortfolioModal({
         testimonials: values.testimonials,
         tag: selectedTags,
       };
-      Object.keys(payload).forEach((k) => payload[k] === undefined && delete payload[k]);
+      Object.keys(payload).forEach(
+        (k) => payload[k] === undefined && delete payload[k]
+      );
 
       try {
         const response = await api.post("/api/portfolios", payload);
@@ -186,7 +202,8 @@ export function AddPortfolioModal({
           navigate("/dashboard");
         }
       } catch (err: any) {
-        const message = err?.response?.data?.message || "Failed to add project.";
+        const message =
+          err?.response?.data?.message || "Failed to add project.";
         toast.error(message);
       }
     },
@@ -298,7 +315,6 @@ export function AddPortfolioModal({
               value={formik.values.projectName}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              required
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.projectName && formik.errors.projectName && (
@@ -385,25 +401,42 @@ export function AddPortfolioModal({
             </select>
           </div>
 
-          {/* Industry */}
+          {/* Industry Select */}
           <div className="space-y-2">
             <Label htmlFor="industry" className="text-sm font-medium">
               Industry
             </Label>
-            <Input
+            <select
               id="industry"
               name="industry"
-              placeholder="e.g. E-commerce, Finance"
               value={formik.values.industry}
               onChange={formik.handleChange}
-              className="border-gray-200"
-            />
+              onBlur={formik.handleBlur}
+              className="w-full h-11 border border-gray-200 rounded-md focus:outline-none focus:ring-blue-500/20 px-3"
+              disabled={isLoading}
+            >
+              <option value="">-- Select Industry --</option>
+              {Array.isArray(industryOptions) &&
+                industryOptions.map((industry, index) => (
+                  <option
+                    key={industry._id || industry.name || index}
+                    value={industry.name || industry}
+                  >
+                    {industry.name || industry}
+                  </option>
+                ))}
+            </select>
+            {formik.touched.industry && formik.errors.industry && (
+              <p className="text-sm text-red-600">
+                {formik.errors.industry}
+              </p>
+            )}
           </div>
 
           {/* Description */}
           <div className="space-y-2">
             <Label htmlFor="description" className="text-sm font-medium">
-              Description *
+              Description
             </Label>
             <Textarea
               id="description"
@@ -412,10 +445,14 @@ export function AddPortfolioModal({
               value={formik.values.description}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              required
               rows={4}
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
+            {formik.touched.description && formik.errors.description && (
+              <p className="text-sm text-red-600">
+                {formik.errors.description}
+              </p>
+            )}
           </div>
 
           {/* Page Builder */}
@@ -449,8 +486,14 @@ export function AddPortfolioModal({
               placeholder="Enter client name"
               value={formik.values.clientName}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="border-gray-200"
             />
+            {formik.touched.clientName && formik.errors.clientName && (
+              <p className="text-sm text-red-600">
+                {formik.errors.clientName}
+              </p>
+            )}
           </div>
 
           {/* Bid Platform */}
@@ -464,8 +507,14 @@ export function AddPortfolioModal({
               placeholder="Upwork, Freelancer, etc."
               value={formik.values.bidPlatform}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="border-gray-200"
             />
+            {formik.touched.bidPlatform && formik.errors.bidPlatform && (
+              <p className="text-sm text-red-600">
+                {formik.errors.bidPlatform}
+              </p>
+            )}
           </div>
 
           {/* Bid Platform URL */}
@@ -479,8 +528,14 @@ export function AddPortfolioModal({
               placeholder="https://example.com"
               value={formik.values.bidPlatformUrl}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="border-gray-200"
             />
+            {formik.touched.bidPlatformUrl && formik.errors.bidPlatformUrl && (
+              <p className="text-sm text-red-600">
+                {formik.errors.bidPlatformUrl}
+              </p>
+            )}
           </div>
 
           {/* Invoice Amount */}
@@ -557,8 +612,14 @@ export function AddPortfolioModal({
               rows={3}
               value={formik.values.testimonials}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="border-gray-200"
             />
+            {formik.touched.testimonials && formik.errors.testimonials && (
+              <p className="text-sm text-red-600">
+                {formik.errors.testimonials}
+              </p>
+            )}
           </div>
 
           {/* Tags */}

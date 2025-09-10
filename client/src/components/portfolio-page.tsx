@@ -32,7 +32,7 @@ import {
   FileText,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { ConfirmDialog } from "./confirmDelete ";
+import { ConfirmDialog } from "./ui/confirm-delete";
 
 import ExportPortfolio from "../components/export-portfolio";
 import ImportPortfolio from "../components/import-portfolio";
@@ -45,7 +45,7 @@ type PortfolioItem = {
   projectName: string;
   description: string;
   websiteLink: string;
-  technology: string[];
+  technology: string;
   category: string;
   industry: string;
   pageBuilder: string;
@@ -166,12 +166,10 @@ export function PortfolioPage() {
       });
 
       const data = response.data;
-      // console.log("data", data)
 
       const portfolios = Array.isArray(data) ? data : data.result || [];
       setPortfolioItems(portfolios);
     } catch (error) {
-      console.error("Failed to fetch portfolios:", error);
       toast.error("Failed to fetch portfolios");
       setPortfolioItems([]);
     } finally {
@@ -257,7 +255,6 @@ export function PortfolioPage() {
       );
       toast.success("Portfolio deleted successfully!");
     } catch (error) {
-      console.error("Failed to delete portfolio:", error);
       toast.error("Failed to delete portfolio");
     } finally {
       setDeleteConfirmOpen(false);
@@ -273,14 +270,14 @@ export function PortfolioPage() {
   const filteredItems = portfolioItems.filter((item) => {
     const projectName = item.projectName?.toLowerCase() || "";
     const description = item.description?.toLowerCase() || "";
-    const technology = Array.isArray(item.technology) ? item.technology : [];
+    const technology = typeof item.technology === 'string' ? item.technology.toLowerCase() : "";
     const tag = Array.isArray(item.tag) ? item.tag : [];
     const search = searchTerm.toLowerCase();
 
     return (
       projectName.includes(search) ||
       description.includes(search) ||
-      technology.some((tech) => tech?.toLowerCase().includes(search)) ||
+      technology.includes(search) ||
       tag.some((t) => t?.toLowerCase().includes(search)) ||
       item.category?.toLowerCase().includes(search) ||
       item.industry?.toLowerCase().includes(search)
@@ -295,7 +292,7 @@ export function PortfolioPage() {
   );
 
   const getDisplayTags = (item: PortfolioItem) => {
-    const techTags = Array.isArray(item.technology) ? item.technology : [];
+    const techTags = typeof item.technology === 'string' ? [item.technology] : [];
     const tags = Array.isArray(item.tag) ? item.tag : [];
     return [...techTags, ...tags].filter(Boolean);
   };
@@ -479,7 +476,7 @@ export function PortfolioPage() {
             <p className="text-gray-600 text-sm mb-4 line-clamp-2">
               {item.description}
             </p>
-            <div className= "flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-wrap gap-2 mb-4">
               {getDisplayTags(item).map((tag, index) => (
                 <Badge
                   key={`${tag}-${index}`}
@@ -522,7 +519,6 @@ export function PortfolioPage() {
 
   return (
     <div className="space-y-6">
-      
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -596,13 +592,12 @@ export function PortfolioPage() {
         <>{viewMode === "table" ? <TableView /> : <GridView />}</>
       )}
 
-
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center">
           <Pagination>
             <PaginationContent>
-        {/* Previous */}
+              {/* Previous */}
               <PaginationItem>
                 <PaginationPrevious
                   href="#"
@@ -613,11 +608,10 @@ export function PortfolioPage() {
                   className={
                     currentPage === 1 ? "pointer-events-none opacity-50" : ""
                   }
-            // ⛔ remove size="icon"
                 />
               </PaginationItem>
 
-        {/* Page Numbers */}
+              {/* Page Numbers */}
               {[...Array(totalPages)].map((_, i) => (
                 <PaginationItem key={i}>
                   <PaginationLink
@@ -627,14 +621,14 @@ export function PortfolioPage() {
                       setCurrentPage(i + 1);
                     }}
                     isActive={currentPage === i + 1}
-              size="icon" // ✅ keep icon size only for numbers
+                    size="icon"
                   >
                     {i + 1}
                   </PaginationLink>
                 </PaginationItem>
               ))}
 
-        {/* Next */}
+              {/* Next */}
               <PaginationItem>
                 <PaginationNext
                   href="#"
@@ -648,14 +642,12 @@ export function PortfolioPage() {
                       ? "pointer-events-none opacity-50"
                       : ""
                   }
-            // ⛔ remove size="icon"
                 />
               </PaginationItem>
             </PaginationContent>
           </Pagination>
         </div>
       )}
-
 
       {/* Pass the callback function to the modal */}
       <AddPortfolioModal

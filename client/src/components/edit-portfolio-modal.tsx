@@ -39,6 +39,7 @@ export default function EditPortfolioModal({
   const [techOptions, setTechOptions] = useState<any[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<any[]>([]);
   const [tagOptions, setTagOptions] = useState<any[]>([]);
+  const [industryOptions, setIndustryOptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>(
     initialValues?.tag || []
@@ -124,6 +125,18 @@ export default function EditPortfolioModal({
     if (open) fetchTag();
   }, [open]);
 
+  useEffect(() => {
+    const fetchIndustry = async () => {
+      try {
+        const res = await api.get("/api/industry");
+        setIndustryOptions(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        setIndustryOptions([]);
+      }
+    };
+    if (open) fetchIndustry();
+  }, [open]);
+
   const validationSchema = portfolioValidationSchema;
 
   const normalizeInitialValues = (iv: any) => ({
@@ -170,12 +183,15 @@ export default function EditPortfolioModal({
     validationSchema,
     onSubmit: async (values) => {
       const allUploads = (values.clientInvoices as Array<File | string>) || [];
-      const existingUrls = (allUploads.filter((item) => typeof item === "string") as string[]) || [];
-      const newFiles = (allUploads.filter((item) => item instanceof File) as File[]) || [];
+      const existingUrls =
+        (allUploads.filter((item) => typeof item === "string") as string[]) ||
+        [];
+      const newFiles =
+        (allUploads.filter((item) => item instanceof File) as File[]) || [];
 
       async function uploadViaBackend(files: File[]): Promise<string[]> {
         const fd = new FormData();
-        files.forEach((f) => fd.append('files', f));
+        files.forEach((f) => fd.append("files", f));
         const res = await api.post("/api/upload", fd, {
           headers: { "Content-Type": "multipart/form-data" },
         });
@@ -183,7 +199,8 @@ export default function EditPortfolioModal({
         return Array.isArray(data.urls) ? data.urls : [];
       }
 
-      const uploadedUrls = newFiles.length > 0 ? await uploadViaBackend(newFiles) : [];
+      const uploadedUrls =
+        newFiles.length > 0 ? await uploadViaBackend(newFiles) : [];
 
       const payload: any = {
         projectName: values.projectName,
@@ -198,7 +215,8 @@ export default function EditPortfolioModal({
         bidPlatform: values.bidPlatform,
         bidPlatformUrl: values.bidPlatformUrl,
         invoiceAmount:
-          typeof values.invoiceAmount === "string" && values.invoiceAmount !== ""
+          typeof values.invoiceAmount === "string" &&
+          values.invoiceAmount !== ""
             ? Number(values.invoiceAmount)
             : values.invoiceAmount,
         startDate: values.startDate || undefined,
@@ -208,10 +226,15 @@ export default function EditPortfolioModal({
       };
 
       // Remove undefined keys to avoid empty update
-      Object.keys(payload).forEach((k) => payload[k] === undefined && delete payload[k]);
+      Object.keys(payload).forEach(
+        (k) => payload[k] === undefined && delete payload[k]
+      );
 
       try {
-        const response = await api.put(`/api/portfolios/${portfolioId}`, payload);
+        const response = await api.put(
+          `/api/portfolios/${portfolioId}`,
+          payload
+        );
         if (response.status === 200) {
           // Notify parent to refresh its data without requiring a full page reload
           if (typeof onUpdated === "function") {
@@ -222,8 +245,10 @@ export default function EditPortfolioModal({
           toast.success("Project updated successfully!");
           handleCancel();
         }
-      } catch (error) {
-        toast.error("Failed to update project.");
+      } catch (error: any) {
+        const message =
+          error?.response?.data?.message || "Failed to update project.";
+        toast.error(message);
       }
     },
   });
@@ -326,7 +351,6 @@ export default function EditPortfolioModal({
               value={formik.values.projectName}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              required
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.projectName && formik.errors.projectName && (
@@ -415,25 +439,42 @@ export default function EditPortfolioModal({
             </select>
           </div>
 
-          {/* Industry */}
+          {/* Industry Select */}
           <div className="space-y-2">
             <Label htmlFor="industry" className="text-sm font-medium">
               Industry
             </Label>
-            <Input
+            <select
               id="industry"
               name="industry"
-              placeholder="e.g. E-commerce, Finance"
               value={formik.values.industry}
               onChange={formik.handleChange}
-              className="border-gray-200"
-            />
+              onBlur={formik.handleBlur}
+              className="w-full h-11 border border-gray-200 rounded-md focus:outline-none focus:ring-blue-500/20 px-3"
+              disabled={isLoading}
+            >
+              <option value="">-- Select Industry --</option>
+              {Array.isArray(industryOptions) &&
+                industryOptions.map((industry, index) => (
+                  <option
+                    key={industry._id || industry.name || index}
+                    value={industry.name || industry}
+                  >
+                    {industry.name || industry}
+                  </option>
+                ))}
+            </select>
+            {formik.touched.industry && formik.errors.industry && (
+              <p className="text-sm text-red-600">
+                {formik.errors.industry as string}
+              </p>
+            )}
           </div>
 
           {/* Description */}
           <div className="space-y-2">
             <Label htmlFor="description" className="text-sm font-medium">
-              Description *
+              Description
             </Label>
             <Textarea
               id="description"
@@ -442,10 +483,14 @@ export default function EditPortfolioModal({
               value={formik.values.description}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              required
               rows={4}
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
+            {formik.touched.description && formik.errors.description && (
+              <p className="text-sm text-red-600">
+                {formik.errors.description as string}
+              </p>
+            )}
           </div>
 
           {/* Page Builder */}
@@ -479,8 +524,14 @@ export default function EditPortfolioModal({
               placeholder="Enter client name"
               value={formik.values.clientName}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="border-gray-200"
             />
+            {formik.touched.clientName && formik.errors.clientName && (
+              <p className="text-sm text-red-600">
+                {formik.errors.clientName as string}
+              </p>
+            )}
           </div>
 
           {/* Bid Platform */}
@@ -494,8 +545,14 @@ export default function EditPortfolioModal({
               placeholder="Upwork, Freelancer, etc."
               value={formik.values.bidPlatform}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="border-gray-200"
             />
+            {formik.touched.bidPlatform && formik.errors.bidPlatform && (
+              <p className="text-sm text-red-600">
+                {formik.errors.bidPlatform as string}
+              </p>
+            )}
           </div>
 
           {/* Bid Platform URL */}
@@ -509,8 +566,14 @@ export default function EditPortfolioModal({
               placeholder="https://example.com"
               value={formik.values.bidPlatformUrl}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="border-gray-200"
             />
+            {formik.touched.bidPlatformUrl && formik.errors.bidPlatformUrl && (
+              <p className="text-sm text-red-600">
+                {formik.errors.bidPlatformUrl as string}
+              </p>
+            )}
           </div>
 
           {/* Invoice Amount */}
@@ -590,8 +653,14 @@ export default function EditPortfolioModal({
               rows={3}
               value={formik.values.testimonials}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="border-gray-200"
             />
+            {formik.touched.testimonials && formik.errors.testimonials && (
+              <p className="text-sm text-red-600">
+                {formik.errors.testimonials as string}
+              </p>
+            )}
           </div>
 
           {/* Tags */}

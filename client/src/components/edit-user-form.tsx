@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import { useFormik } from "formik";
@@ -89,7 +88,6 @@ export function EditUserForm() {
         }
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.error(error);
       } finally {
         setIsLoading(false);
       }

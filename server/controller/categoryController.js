@@ -1,6 +1,6 @@
-const dotenv = require('dotenv');
-const connectToDatabase = require('../database/config');
-const Category = require('../model/category');
+const dotenv = require("dotenv");
+const connectToDatabase = require("../database/config");
+const Category = require("../model/category");
 
 dotenv.config();
 
@@ -9,26 +9,31 @@ exports.createCategory = async function createCategory(req, res) {
     await connectToDatabase();
     const { name, description, icon, color, count } = req.body || {};
 
-    if (!name || typeof name !== 'string' || name.trim() === '') {
-      return res.status(400).json({ message: 'name is required' });
+    if (!name || typeof name !== "string" || name.trim() === "") {
+      return res.status(400).json({ message: "name is required" });
     }
 
     const existing = await Category.findOne({ name: name.trim() });
     if (existing) {
-      return res.status(400).json({ message: 'Category name already exists' });
+      return res.status(400).json({ message: "Category name already exists" });
     }
 
     const category = await Category.create({
       name: name.trim(),
-      description: typeof description === 'string' ? description.trim() : undefined,
-      icon: typeof icon === 'string' ? icon.trim() : undefined,
-      color: typeof color === 'string' ? color.trim() : undefined,
-      count: typeof count === 'number' ? count : undefined,
+      description:
+        typeof description === "string" ? description.trim() : undefined,
+      icon: typeof icon === "string" ? icon.trim() : undefined,
+      color: typeof color === "string" ? color.trim() : undefined,
+      count: typeof count === "number" ? count : undefined,
     });
 
-    return res.status(201).json({ message: 'Category created successfully', category });
+    return res
+      .status(201)
+      .json({ message: "Category created successfully", category });
   } catch (error) {
-    return res.status(500).json({ message: 'Failed to create category', error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to create category", error: error.message });
   }
 };
 
@@ -38,7 +43,9 @@ exports.getCategories = async function getCategories(_req, res) {
     const categories = await Category.find({}).sort({ createdAt: -1 });
     return res.status(200).json(categories);
   } catch (error) {
-    return res.status(500).json({ message: 'Failed to fetch categories', error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch categories", error: error.message });
   }
 };
 
@@ -47,15 +54,17 @@ exports.getCategoryById = async function getCategoryById(req, res) {
     await connectToDatabase();
     const { id } = req.params || {};
     if (!id) {
-      return res.status(400).json({ message: 'category id is required' });
+      return res.status(400).json({ message: "category id is required" });
     }
     const category = await Category.findById(id);
     if (!category) {
-      return res.status(404).json({ message: 'Category not found' });
+      return res.status(404).json({ message: "Category not found" });
     }
     return res.status(200).json(category);
   } catch (error) {
-    return res.status(500).json({ message: 'Failed to fetch category', error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch category", error: error.message });
   }
 };
 
@@ -64,19 +73,21 @@ exports.updateCategoryById = async function updateCategoryById(req, res) {
     await connectToDatabase();
     const { id } = req.params || {};
     if (!id) {
-      return res.status(400).json({ message: 'category id is required' });
+      return res.status(400).json({ message: "category id is required" });
     }
 
     const { name, description, icon, color, count } = req.body || {};
     const updates = {};
-    if (typeof name === 'string' && name.trim() !== '') updates.name = name.trim();
-    if (typeof description === 'string') updates.description = description.trim();
-    if (typeof icon === 'string') updates.icon = icon.trim();
-    if (typeof color === 'string') updates.color = color.trim();
-    if (typeof count === 'number') updates.count = count;
+    if (typeof name === "string" && name.trim() !== "")
+      updates.name = name.trim();
+    if (typeof description === "string")
+      updates.description = description.trim();
+    if (typeof icon === "string") updates.icon = icon.trim();
+    if (typeof color === "string") updates.color = color.trim();
+    if (typeof count === "number") updates.count = count;
 
     if (Object.keys(updates).length === 0) {
-      return res.status(400).json({ message: 'No valid fields to update' });
+      return res.status(400).json({ message: "No valid fields to update" });
     }
 
     try {
@@ -87,18 +98,24 @@ exports.updateCategoryById = async function updateCategoryById(req, res) {
       );
 
       if (!category) {
-        return res.status(404).json({ message: 'Category not found' });
+        return res.status(404).json({ message: "Category not found" });
       }
 
-      return res.status(200).json({ message: 'Category updated successfully', category });
+      return res
+        .status(200)
+        .json({ message: "Category updated successfully", category });
     } catch (err) {
       if (err && err.code === 11000) {
-        return res.status(400).json({ message: 'Category name already exists' });
+        return res
+          .status(400)
+          .json({ message: "Category name already exists" });
       }
       throw err;
     }
   } catch (error) {
-    return res.status(500).json({ message: 'Failed to update category', error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to update category", error: error.message });
   }
 };
 
@@ -107,16 +124,16 @@ exports.deleteCategoryById = async function deleteCategoryById(req, res) {
     await connectToDatabase();
     const { id } = req.params || {};
     if (!id) {
-      return res.status(400).json({ message: 'category id is required' });
+      return res.status(400).json({ message: "category id is required" });
     }
     const deleted = await Category.findByIdAndDelete(id);
     if (!deleted) {
-      return res.status(404).json({ message: 'Category not found' });
+      return res.status(404).json({ message: "Category not found" });
     }
-    return res.status(200).json({ message: 'Category deleted successfully' });
+    return res.status(200).json({ message: "Category deleted successfully" });
   } catch (error) {
-    return res.status(500).json({ message: 'Failed to delete category', error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to delete category", error: error.message });
   }
 };
-
-

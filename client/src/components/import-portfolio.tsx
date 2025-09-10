@@ -8,8 +8,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../components/ui/dialog";
-import { Loader2, Download } from "lucide-react";
-import { toast } from "../hooks/use-toast";
+import { Loader2, Download, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
+import api from "../lib/api";
 
 type ImportResultItem = {
   projectName: string;
@@ -85,11 +85,13 @@ export default function ImportPortfolio({
   const [isImporting, setIsImporting] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [result, setResult] = useState<ImportResult | null>(null);
+  const shouldOpenDialogRef = useRef(false);
 
   const isDisabled = useMemo(
     () => disabled || isImporting,
     [disabled, isImporting]
   );
+
 
   const handleClick = () => {
     if (!isDisabled) fileInputRef.current?.click();
@@ -102,11 +104,71 @@ export default function ImportPortfolio({
     try {
       const text = await file.text();
       const rows = parseCsv(text);
+      
+      if (rows.length === 0) {
+        setResult({ inserted: [], skipped: [] });
+        shouldOpenDialogRef.current = true;
+        setDialogOpen(true);
+        return;
+      }
+
+      // Validate required headers with flexible matching
+      const headers = Object.keys(rows[0] || {});
+      
+      // Create a flexible header mapping
+      const headerMap: Record<string, string> = {};
+      const possibleHeaders = {
+        'Project Name': ['project name', 'projectname', 'project_name', 'title', 'name'],
+        'Technology': ['technology', 'tech', 'technologies', 'stack'],
+        'Category': ['category', 'categories', 'type'],
+        'Industry': ['industry', 'sector', 'domain'],
+        'Description': ['description', 'desc', 'details', 'summary'],
+        'Page Builder': ['page builder', 'pagebuilder', 'page_builder', 'builder'],
+        'Client Name': ['client name', 'clientname', 'client_name', 'client'],
+        'Website Link': ['website link', 'websitelink', 'website_link', 'url', 'website', 'link'],
+        'Bid Platform': ['bid platform', 'bidplatform', 'bid_platform', 'platform'],
+        'Bid Platform URL': ['bid platform url', 'bidplatformurl', 'bid_platform_url', 'platform url'],
+        'Invoice Amount': ['invoice amount', 'invoiceamount', 'invoice_amount', 'amount', 'price', 'cost'],
+        'Start Date': ['start date', 'startdate', 'start_date', 'started', 'begin date'],
+        'Completion Date': ['completion date', 'completiondate', 'completion_date', 'end date', 'finished'],
+        'Testimonials': ['testimonials', 'testimonial', 'feedback', 'review'],
+        'Tag': ['tag', 'tags', 'keywords', 'labels']
+      };
+      
+      // Map headers to standard names
+      for (const [standardName, variations] of Object.entries(possibleHeaders)) {
+        for (const header of headers) {
+          if (variations.some(variation => header.toLowerCase().trim() === variation.toLowerCase())) {
+            headerMap[header] = standardName;
+            break;
+          }
+        }
+      }
+      
+      // Check for required fields
+      const hasProjectName = Object.values(headerMap).includes('Project Name');
+      const hasTechnology = Object.values(headerMap).includes('Technology');
+      
+      if (!hasProjectName || !hasTechnology) {
+        const missing = [];
+        if (!hasProjectName) missing.push('Project Name');
+        if (!hasTechnology) missing.push('Technology');
+        
+        setResult({ 
+          inserted: [], 
+          skipped: [{ 
+            projectName: "CSV Validation Error", 
+            reason: `Missing required columns: ${missing.join(", ")}. Found columns: ${headers.join(", ")}` 
+          }] 
+        });
+        shouldOpenDialogRef.current = true;
+        setDialogOpen(true);
+        return;
+      }
+
       // Fetch existing project names to avoid duplicate POSTs that cause 400
-      const existingRes = await fetch("/api/portfolio", { cache: "no-store" });
-      const existingData: Array<{ projectName?: string }> = existingRes.ok
-        ? await existingRes.json()
-        : [];
+      const existingRes = await api.get("/api/portfolios");
+      const existingData: Array<{ projectName?: string }> = existingRes.data || [];
       const existingNames = new Set(
         (existingData || [])
           .map((p) => (p.projectName || "").trim().toLowerCase())
@@ -114,23 +176,33 @@ export default function ImportPortfolio({
       );
       const seenInFile = new Set<string>();
       const normalizedAll = rows
-        .map((project) => ({
-          projectName: (project["Project Name"] || "").trim(),
-          technology: (project["Technology"] || "").trim(),
-          category: (project["Category"] || "").trim(),
-          industry: (project["Industry"] || "").trim(),
-          description: (project["Description"] || "").trim(),
-          pageBuilder: (project["Page Builder"] || "").trim(),
-          clientName: (project["Client Name"] || "").trim(),
-          websiteLink: (project["Website Link"] || "").trim(),
-          bidPlatform: (project["Bid Platform"] || "").trim(),
-          bidPlatformUrl: (project["Bid Platform URL"] || "").trim(),
-          invoiceAmount: project["Invoice Amount"] || "",
-          startDate: toIsoDate(project["Start Date"]),
-          completionDate: toIsoDate(project["Completion Date"]),
-          testimonials: (project["Testimonials"] || "").trim(),
-          tag: (project["Tag"] || "").trim(),
-        }))
+        .map((project) => {
+          // Helper function to get value using header mapping
+          const getValue = (standardName: string) => {
+            const originalHeader = Object.keys(headerMap).find(h => headerMap[h] === standardName);
+            return originalHeader ? (project[originalHeader] || "").trim() : "";
+          };
+          
+          const normalized = {
+            projectName: getValue("Project Name"),
+            technology: getValue("Technology"),
+            category: getValue("Category"),
+            industry: getValue("Industry"),
+            description: getValue("Description"),
+            pageBuilder: getValue("Page Builder"),
+            clientName: getValue("Client Name"),
+            websiteLink: getValue("Website Link"),
+            bidPlatform: getValue("Bid Platform"),
+            bidPlatformUrl: getValue("Bid Platform URL"),
+            invoiceAmount: getValue("Invoice Amount"),
+            startDate: toIsoDate(getValue("Start Date")),
+            completionDate: toIsoDate(getValue("Completion Date")),
+            testimonials: getValue("Testimonials"),
+            tag: getValue("Tag"),
+          };
+          
+          return normalized;
+        })
         .filter((p) => p.projectName && p.technology);
 
       const duplicates: ImportResultItem[] = [];
@@ -149,89 +221,91 @@ export default function ImportPortfolio({
         }
       }
 
-      if (normalized.length === 0) {
-        toast({
-          title: "Import",
-          description: "No valid projects found in CSV.",
-        });
-        return;
-      }
-
       const inserted: ImportResultItem[] = [];
       const skipped: ImportResultItem[] = [...duplicates];
 
+      // If all projects are duplicates, show them in skipped section
+      if (normalized.length === 0) {
+        setResult({ inserted, skipped });
+        shouldOpenDialogRef.current = true;
+        setDialogOpen(true);
+        return;
+      }
+
       for (const p of normalized) {
         try {
-          const formData = new FormData();
-          formData.append("projectName", p.projectName);
-          formData.append("websiteLink", p.websiteLink);
-          formData.append("technology", p.technology);
-          formData.append("category", p.category);
-          formData.append("industry", p.industry);
-          formData.append("description", p.description);
-          formData.append("pageBuilder", p.pageBuilder);
-          formData.append("clientName", p.clientName);
-          formData.append("bidPlatform", p.bidPlatform);
-          formData.append("bidPlatformUrl", p.bidPlatformUrl);
-          if (p.invoiceAmount !== "")
-            formData.append("invoiceAmount", String(p.invoiceAmount));
-          if (p.startDate) formData.append("startDate", p.startDate);
-          if (p.completionDate)
-            formData.append("completionDate", p.completionDate);
-          formData.append("testimonials", p.testimonials);
+          // Validate required fields before sending
+          if (!p.projectName.trim()) {
+            skipped.push({ 
+              projectName: p.projectName || "Unknown", 
+              reason: "Missing project name" 
+            });
+            continue;
+          }
+
+          if (!p.technology.trim()) {
+            skipped.push({ 
+              projectName: p.projectName, 
+              reason: "Missing technology" 
+            });
+            continue;
+          }
+
           const tagsArray = p.tag
             ? p.tag
                 .split(",")
                 .map((t) => t.trim())
                 .filter(Boolean)
             : [];
-          formData.append("tags", JSON.stringify(tagsArray));
 
-          const res = await fetch("/api/portfolio", {
-            method: "POST",
-            body: formData,
-          });
-          if (!res.ok) {
-            const reasonText = await res.text();
-            const reason = reasonText || "Failed";
-            skipped.push({ projectName: p.projectName, reason });
-            if (/same name/i.test(reason)) {
-              toast({
-                title: "Duplicate project",
-                description: `${p.projectName} already exists`,
-              });
-            }
-          } else {
+          const portfolioData = {
+            projectName: p.projectName,
+            websiteLink: p.websiteLink,
+            technology: p.technology,
+            category: p.category,
+            industry: p.industry,
+            description: p.description,
+            pageBuilder: p.pageBuilder,
+            clientName: p.clientName,
+            bidPlatform: p.bidPlatform,
+            bidPlatformUrl: p.bidPlatformUrl,
+            invoiceAmount: p.invoiceAmount !== "" ? parseFloat(p.invoiceAmount) : undefined,
+            startDate: p.startDate || undefined,
+            completionDate: p.completionDate || undefined,
+            testimonials: p.testimonials,
+            tag: tagsArray,
+          };
+
+          await api.post("/api/portfolios", portfolioData);
             inserted.push({ projectName: p.projectName });
+        } catch (err: any) {
+          let reason = "Failed to create project";
+          
+          // Categorize different types of errors
+          if (err.response?.status === 400) {
+            reason = "Invalid data format";
+          } else if (err.response?.status === 409) {
+            reason = "Project already exists";
+          } else if (err.response?.status === 422) {
+            reason = "Validation error";
+          } else if (err.response?.data?.message) {
+            reason = err.response.data.message;
+          } else if (err.message) {
+            reason = err.message;
           }
-        } catch (err) {
-          skipped.push({ projectName: p.projectName, reason: "Network error" });
+          
+          skipped.push({ projectName: p.projectName, reason });
+          console.error(`Failed to import project ${p.projectName}:`, err);
         }
       }
 
       setResult({ inserted, skipped });
+      shouldOpenDialogRef.current = true;
+      
+      // Open dialog immediately
       setDialogOpen(true);
-      const duplicateCount = duplicates.length;
-      if (duplicateCount > 0) {
-        const sample = duplicates
-          .slice(0, 3)
-          .map((d) => d.projectName)
-          .join(", ");
-        const more =
-          duplicateCount > 3 ? ` and ${duplicateCount - 3} more` : "";
-        toast({
-          title: "Duplicates skipped",
-          description: `${duplicateCount} project(s) with same name: ${sample}${more}`,
-        });
-      } else {
-        toast({
-          title: "Import completed",
-          description: `${inserted.length} inserted, ${skipped.length} skipped`,
-        });
-      }
-      onImported?.();
-    } catch (err) {
-      toast({ title: "Import failed", description: "Unable to read CSV file" });
+    } catch (err: any) {
+      console.error("Import failed:", err);
     } finally {
       setIsImporting(false);
       if (e.target) e.target.value = "";
@@ -260,36 +334,109 @@ export default function ImportPortfolio({
         )}
         {isImporting ? "Importing..." : "Import"}
       </Button>
+      
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
+      <Dialog open={dialogOpen} onOpenChange={(open) => {
+        setDialogOpen(open);
+        if (!open) {
+          shouldOpenDialogRef.current = false;
+          // Call onImported when dialog is closed
+          onImported?.();
+        }
+      }}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-auto">
           <DialogHeader>
-            <DialogTitle>Import Results</DialogTitle>
+            <DialogTitle className="text-xl font-semibold">Import Results</DialogTitle>
             <DialogDescription>
-              {result
-                ? `${result.inserted.length} inserted, ${result.skipped.length} skipped`
-                : "No results"}
+              {result ? `Import completed with ${result.inserted.length} successful and ${result.skipped.length} skipped projects.` : "No results available"}
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-3 max-h-64 overflow-auto">
-            {result?.skipped?.length ? (
-              <div>
-                <p className="text-sm text-gray-600 mb-2">Skipped items</p>
-                <ul className="list-disc ml-5 space-y-1">
-                  {result.skipped.map((s, idx) => (
-                    <li key={idx} className="text-sm text-gray-700">
-                      <span className="font-medium">{s.projectName}</span>{" "}
-                      <span className="text-gray-500">
-                        - {s.reason || "Already exists"}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+          
+          {result && (
+            <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
+              <div className="text-lg font-medium text-gray-900">Import Summary</div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span>Success: <strong className="text-green-600">{result.inserted.length}</strong></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-yellow-600" />
+                  <span>Skipped: <strong className="text-yellow-600">{result.skipped.length}</strong></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+                  <span>Total: <strong>{result.inserted.length + result.skipped.length}</strong></span>
+                </div>
               </div>
-            ) : null}
+              {result.inserted.length > 0 && (
+                <div className="text-sm text-green-700 bg-green-50 p-2 rounded mt-3">
+                  ✓ Your portfolio has been updated with {result.inserted.length} new project{result.inserted.length !== 1 ? 's' : ''}.
+                </div>
+              )}
+            </div>
+          )}
+          
+          <div className="space-y-6 max-h-96 overflow-auto">
+            
+            {/* Successfully Imported */}
+            <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+              <h4 className="text-base font-semibold text-green-800 mb-3 flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-green-600" />
+                Successfully Imported ({result?.inserted?.length || 0})
+              </h4>
+              {result?.inserted && result.inserted.length > 0 ? (
+                <div className="space-y-2 max-h-32 overflow-y-auto">
+                  {result.inserted.map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-2 text-sm bg-white p-2 rounded border border-green-100">
+                      <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
+                      <span className="text-gray-800 font-medium">{item.projectName}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-600">No projects were successfully imported.</p>
+              )}
+            </div>
+
+            {/* Skipped Items */}
+            <div className="border border-yellow-200 rounded-lg p-4 bg-yellow-50">
+              <h4 className="text-base font-semibold text-yellow-800 mb-3 flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-yellow-600" />
+                Skipped Projects ({result?.skipped?.length || 0})
+              </h4>
+              {result?.skipped && result.skipped.length > 0 ? (
+                <div className="space-y-2 max-h-32 overflow-y-auto">
+                  {result.skipped.map((item, idx) => (
+                    <div key={idx} className="bg-white p-3 rounded border border-yellow-100">
+                      <div className="flex items-start gap-2">
+                        <div className="w-2 h-2 bg-yellow-500 rounded-full flex-shrink-0 mt-1"></div>
+                        <div className="flex-1">
+                          <div className="font-medium text-gray-800 text-sm">{item.projectName}</div>
+                          <div className="text-xs text-yellow-700 mt-1">{item.reason || "Already exists"}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-600">No projects were skipped.</p>
+              )}
+            </div>
+
+            {/* Empty state */}
+            {result && result.inserted.length === 0 && result.skipped.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                <XCircle className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                <p>No projects were processed. Please check your CSV file and try again.</p>
+              </div>
+            )}
           </div>
-          <DialogFooter>
-            <Button onClick={() => setDialogOpen(false)}>Close</Button>
+          
+          <DialogFooter className="border-t pt-4">
+            <Button onClick={() => setDialogOpen(false)} className="min-w-[100px]">
+              Close
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

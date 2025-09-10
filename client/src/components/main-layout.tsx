@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,12 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "./ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 import {
   UserPlus,
   FolderOpen,
@@ -25,8 +19,8 @@ import {
   Edit,
   Layers,
   Code2,
+  Building2,
 } from "lucide-react";
-import { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
 import api from "../lib/api";
 
@@ -36,6 +30,7 @@ const navigation = [
   { name: "Categories", href: "/dashboard/categories", icon: Layers },
   { name: "Technologies", href: "/dashboard/technologies", icon: Code2 },
   { name: "Tags", href: "/dashboard/tags", icon: Tag },
+  { name: "Industries", href: "/dashboard/industries", icon: Building2 },
 ];
 
 interface MainLayoutProps {
@@ -46,6 +41,8 @@ export function MainLayout({ children }: MainLayoutProps) {
   const [user, setUser] = useState<any>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -56,7 +53,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
       const jsonPayload = decodeURIComponent(
         atob(base64)
-            .split("")
+          .split("")
           .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
           .join("")
       );
@@ -68,15 +65,18 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
+
     if (userData) {
-      setUser(JSON.parse(userData));
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
     }
 
-    // derive role for admin check
     let detectedRole: string | null = null;
+    let detectedUsername: string | null = null;
     const token = localStorage.getItem("token");
     if (token) {
       const payload = decodeJwtPayload(token);
+
       const roleFromToken = (payload?.role ??
         payload?.user?.role ??
         (Array.isArray(payload?.roles) ? payload.roles[0] : null)) as
@@ -84,6 +84,12 @@ export function MainLayout({ children }: MainLayoutProps) {
         | null;
       if (typeof roleFromToken === "string") {
         detectedRole = roleFromToken;
+      }
+
+      // Extract username from token
+      const usernameFromToken = payload?.username || payload?.user?.username;
+      if (typeof usernameFromToken === "string") {
+        detectedUsername = usernameFromToken;
       }
     }
     if (!detectedRole && userData) {
@@ -103,6 +109,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       }
     }
     setUserRole(detectedRole ? detectedRole.toUpperCase() : null);
+    setUsername(detectedUsername);
   }, []);
 
   const isAdmin = (userRole ?? "").toUpperCase() === "ADMIN";
@@ -120,14 +127,13 @@ export function MainLayout({ children }: MainLayoutProps) {
 
         // Clear user state so UI updates immediately
         setUser(null);
+        setUsername(null);
 
         // Redirect
         toast.success("Logged out");
         navigate("/");
       }
     } catch (error) {
-      const err = error as AxiosError;
-      console.error(err.response?.data || err.message);
       toast.error("Failed to logout");
     }
   };
@@ -175,7 +181,6 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-     
       {/* Desktop Sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <Sidebar />
@@ -207,24 +212,26 @@ export function MainLayout({ children }: MainLayoutProps) {
 
             <div className="flex-1 lg:flex-none" />
 
-            <DropdownMenu>
+            <DropdownMenu onOpenChange={setIsProfileDropdownOpen}>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="relative h-10 w-10 rounded-full hover:bg-gray-100"
+                  className={`relative p-0 rounded-full hover:bg-gray-100 focus:outline-none ${
+                    isProfileDropdownOpen
+                      ? "ring-2 ring-black ring-offset-2"
+                      : ""
+                  }`}
                 >
-                  <Avatar className="h-10 w-10 border-2 border-gray-200">
-                    <AvatarImage
-                      src={user?.avatar || "/placeholder.svg"}
-                      alt={user?.name}
-                    />
-                    <AvatarFallback className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
-                      {user?.name
-                        ?.split(" ")
-                        .map((n: string) => n[0])
-                        .join("") || "U"}
-                    </AvatarFallback>
-                  </Avatar>
+                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 text-white font-semibold text-lg select-none">
+                    {(() => {
+                      const displayChar =
+                        username?.[0]?.toUpperCase() ||
+                        user?.username?.[0]?.toUpperCase() ||
+                        user?.name?.[0]?.toUpperCase() ||
+                        "U";
+                      return displayChar;
+                    })()}
+                  </div>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -265,5 +272,3 @@ export function MainLayout({ children }: MainLayoutProps) {
     </div>
   );
 }
-
-
