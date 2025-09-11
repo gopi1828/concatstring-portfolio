@@ -1,5 +1,6 @@
-import type { FormEvent } from "react";
-import { useState, useEffect } from "react";
+import { useFormik } from "formik";
+import { useEffect } from "react";
+import { tagValidationSchema } from "../lib/tagValidation";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -30,50 +31,48 @@ export function EditTagModal({
   onTagUpdated,
   tag,
 }: EditTagModalProps) {
-  const [name, setName] = useState("");
-  const [loading, setLoading] = useState(false);
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      name: tag?.name || "",
+    },
+    validationSchema: tagValidationSchema,
+    validateOnBlur: false,
+    onSubmit: async (values) => {
+      if (!tag) return;
 
-  // Reset form when modal opens or tag changes
-  useEffect(() => {
-    if (open && tag) {
-      setName(tag.name);
-    } else if (!open) {
-      setName("");
-    }
-  }, [open, tag]);
+      try {
+        await api.put(`/api/tags/${tag._id}`, {
+          name: values.name,
+        });
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!tag) return;
-    
-    setLoading(true);
+        onOpenChange(false);
 
-    try {
-      await api.put(`/api/tags/${tag._id}`, {
-        name,
-      });
-
-      onOpenChange(false);
-
-      // Refresh the tags list
-      if (onTagUpdated) {
-        onTagUpdated();
+        // Refresh the tags list
+        if (onTagUpdated) {
+          onTagUpdated();
+        }
+        toast.success("Tag updated successfully!");
+      } catch (error: any) {
+        console.error("Tag update error:", error);
+        const errorMessage = 
+          error.response?.data?.error || 
+          error.message || 
+          "Failed to update tag";
+        toast.error(errorMessage);
       }
-      toast.success("Tag updated successfully!");
-    } catch (error: any) {
-      console.error("Tag update error:", error);
-      const errorMessage = 
-        error.response?.data?.error || 
-        error.message || 
-        "Failed to update tag";
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
+    },
+  });
+
+  // Reset form when modal opens
+  useEffect(() => {
+    if (open) {
+      formik.resetForm();
     }
-  };
+  }, [open]);
 
   const handleCancel = () => {
-    setName(tag?.name || "");
+    formik.resetForm();
     onOpenChange(false);
   };
 
@@ -89,7 +88,7 @@ export function EditTagModal({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={formik.handleSubmit} className="space-y-6">
           {/* Name */}
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-medium">
@@ -97,13 +96,19 @@ export function EditTagModal({
             </Label>
             <Input
               id="name"
+              name="name"
               placeholder="e.g., React, Frontend, E-commerce"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              disabled={loading}
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              disabled={formik.isSubmitting}
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
+            {formik.touched.name && formik.errors.name && (
+              <p className="text-sm text-red-600">
+                {formik.errors.name}
+              </p>
+            )}
           </div>
 
           <DialogFooter className="gap-2">
@@ -111,17 +116,17 @@ export function EditTagModal({
               type="button"
               variant="outline"
               onClick={handleCancel}
-              disabled={loading}
+              disabled={formik.isSubmitting}
               className="border-gray-200 hover:bg-gray-50 bg-transparent"
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              disabled={loading}
+              disabled={formik.isSubmitting}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
             >
-              {loading ? "Updating..." : "Update Tag"}
+              {formik.isSubmitting ? "Updating..." : "Update Tag"}
             </Button>
           </DialogFooter>
         </form>

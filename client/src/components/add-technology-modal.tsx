@@ -1,10 +1,10 @@
-import type { FormEvent } from "react";
 import { useState, useEffect } from "react";
+import { useFormik } from "formik";
+import { technologyValidationSchema } from "../lib/technologyValidation";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
-import { Slider } from "./ui/slider";
 import {
   Dialog,
   DialogContent,
@@ -29,29 +29,6 @@ interface AddTechnologyModalProps {
   onTechnologyAdded?: () => void;
 }
 
-const techCategories = [
-  "Frontend Framework",
-  "Backend Framework",
-  "Full-stack Framework",
-  "Programming Language",
-  "CSS Framework",
-  "UI Library",
-  "Backend Runtime",
-  "Database",
-  "DevOps",
-  "Cloud Service",
-  "Testing Framework",
-  "Build Tool",
-  "Package Manager",
-  "Version Control",
-  "API",
-  "Mobile Framework",
-  "Desktop Framework",
-  "Game Engine",
-  "Machine Learning",
-  "Blockchain",
-];
-
 const techIcons = [
   { value: "⚛️", label: "React (⚛️)" },
   { value: "▲", label: "Next.js (▲)" },
@@ -71,99 +48,81 @@ const techIcons = [
   { value: "⚡", label: "Performance (⚡)" },
 ];
 
-const colorOptions = [
-  { value: "bg-blue-100 text-blue-800", label: "Blue", preview: "bg-blue-100" },
-  {
-    value: "bg-green-100 text-green-800",
-    label: "Green",
-    preview: "bg-green-100",
-  },
-  {
-    value: "bg-purple-100 text-purple-800",
-    label: "Purple",
-    preview: "bg-purple-100",
-  },
-  { value: "bg-cyan-100 text-cyan-800", label: "Cyan", preview: "bg-cyan-100" },
-  {
-    value: "bg-yellow-100 text-yellow-800",
-    label: "Yellow",
-    preview: "bg-yellow-100",
-  },
-  { value: "bg-red-100 text-red-800", label: "Red", preview: "bg-red-100" },
-  {
-    value: "bg-indigo-100 text-indigo-800",
-    label: "Indigo",
-    preview: "bg-indigo-100",
-  },
-  { value: "bg-pink-100 text-pink-800", label: "Pink", preview: "bg-pink-100" },
-  { value: "bg-gray-100 text-gray-800", label: "Gray", preview: "bg-gray-100" },
-];
 
 export function AddTechnologyModal({
   open,
   onOpenChange,
   onTechnologyAdded,
 }: AddTechnologyModalProps) {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [icon, setIcon] = useState("");
-  const [color, setColor] = useState("");
-  const [website, setWebsite] = useState("");
-  const [popularity, setPopularity] = useState([75]);
-  const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoadingCategories(true);
+        const res = await api.get("/api/categories");
+        const mapped = res.data.map((cat: any) => ({
+          id: cat._id || cat.id,
+          name: cat.name,
+        }));
+        setCategories(mapped);
+      } catch (err) {
+        toast.error("Failed to fetch categories");
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      description: "",
+      category: "",
+      icon: "",
+    },
+    validationSchema: technologyValidationSchema,
+    validateOnBlur: false,
+    onSubmit: async (values) => {
+      setIsSubmitting(true);
+      try {
+        await api.post("/api/technologies", {
+          name: values.name,
+          description: values.description,
+          category: values.category,
+          icon: values.icon,
+        });
+
+        formik.resetForm();
+        onOpenChange(false);
+
+        // Refresh the technologies list
+        if (onTechnologyAdded) {
+          onTechnologyAdded();
+        }
+        toast.success("Technology added successfully!");
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to add technology";
+        toast.error(errorMessage);
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+  });
 
   // Reset form when modal opens
   useEffect(() => {
     if (open) {
-      resetForm();
+      formik.resetForm();
     }
   }, [open]);
 
-  const resetForm = () => {
-    setName("");
-    setDescription("");
-    setCategory("");
-    setIcon("");
-    setColor("");
-    setWebsite("");
-    setPopularity([75]);
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      await api.post("/api/technologies", {
-        name,
-        description,
-        category,
-        icon,
-        color,
-        website,
-        popularity: popularity[0],
-      });
-
-      resetForm();
-      onOpenChange(false);
-
-      // Refresh the technologies list
-      if (onTechnologyAdded) {
-        onTechnologyAdded();
-      }
-      toast.success("Technology added successfully!");
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to add technology";
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleCancel = () => {
-    resetForm();
+    formik.resetForm();
     onOpenChange(false);
   };
 
@@ -179,7 +138,7 @@ export function AddTechnologyModal({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={formik.handleSubmit} className="space-y-6">
           {/* Name */}
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-medium">
@@ -187,13 +146,17 @@ export function AddTechnologyModal({
             </Label>
             <Input
               id="name"
+              name="name"
               placeholder="e.g., React, Node.js, PostgreSQL"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              disabled={loading}
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              disabled={isSubmitting}
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
+            {formik.touched.name && formik.errors.name && (
+              <p className="text-sm text-red-600">{formik.errors.name}</p>
+            )}
           </div>
 
           {/* Description */}
@@ -203,148 +166,102 @@ export function AddTechnologyModal({
             </Label>
             <Textarea
               id="description"
+              name="description"
               placeholder="Brief description of the technology..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={formik.values.description}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               rows={3}
-              disabled={loading}
+              disabled={isSubmitting}
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
+            {formik.touched.description && formik.errors.description && (
+              <p className="text-sm text-red-600">{formik.errors.description}</p>
+            )}
           </div>
 
           {/* Category */}
           <div className="space-y-2">
             <Label className="text-sm font-medium">Category *</Label>
             <Select
-              value={category}
-              onValueChange={setCategory}
-              required
-              disabled={loading}
+              value={formik.values.category}
+              onValueChange={(value) => formik.setFieldValue("category", value)}
+              disabled={isSubmitting || loadingCategories}
             >
               <SelectTrigger className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20">
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
-                {techCategories.map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    {cat}
+                {loadingCategories ? (
+        <SelectItem value="loading" disabled>
+          Loading...
+        </SelectItem>
+      ) : categories.length > 0 ? (
+        categories.map((cat) => (
+          <SelectItem key={cat.id} value={cat.id}>
+            {cat.name}
+          </SelectItem>
+        ))
+      ) : (
+        <SelectItem value="empty" disabled>
+          No categories available
+        </SelectItem>
+      )}
+    </SelectContent>
+  </Select>
+  {formik.touched.category && formik.errors.category && (
+    <p className="text-sm text-red-600">{formik.errors.category}</p>
+  )}
+</div>
+
+          {/* Icon */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Icon *</Label>
+            <Select 
+              value={formik.values.icon} 
+              onValueChange={(value) => formik.setFieldValue("icon", value)}
+              required
+              disabled={isSubmitting}
+            >
+              <SelectTrigger className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20">
+                <SelectValue placeholder="Select icon" />
+              </SelectTrigger>
+              <SelectContent>
+                {techIcons.map((iconOption) => (
+                  <SelectItem key={iconOption.value} value={iconOption.value}>
+                    {iconOption.label}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            {/* Icon */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Icon</Label>
-              <Select value={icon} onValueChange={setIcon} disabled={loading}>
-                <SelectTrigger className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20">
-                  <SelectValue placeholder="Select icon" />
-                </SelectTrigger>
-                <SelectContent>
-                  {techIcons.map((iconOption) => (
-                    <SelectItem key={iconOption.value} value={iconOption.value}>
-                      {iconOption.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Color */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Color Theme</Label>
-              <Select value={color} onValueChange={setColor} disabled={loading}>
-                <SelectTrigger className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20">
-                  <SelectValue placeholder="Select color" />
-                </SelectTrigger>
-                <SelectContent>
-                  {colorOptions.map((colorOption) => (
-                    <SelectItem
-                      key={colorOption.value}
-                      value={colorOption.value}
-                    >
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-4 h-4 rounded ${colorOption.preview}`}
-                        ></div>
-                        {colorOption.label}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Website */}
-          <div className="space-y-2">
-            <Label htmlFor="website" className="text-sm font-medium">
-              Official Website
-            </Label>
-            <Input
-              id="website"
-              type="url"
-              placeholder="https://example.com"
-              value={website}
-              onChange={(e) => setWebsite(e.target.value)}
-              disabled={loading}
-              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
-            />
-          </div>
-
-          {/* Popularity */}
-          <div className="space-y-3">
-            <Label className="text-sm font-medium">
-              Popularity Score: {popularity[0]}%
-            </Label>
-            <Slider
-              value={popularity}
-              onValueChange={setPopularity}
-              max={100}
-              min={0}
-              step={5}
-              className="w-full"
-              disabled={loading}
-            />
-            <div className="flex justify-between text-xs text-gray-500">
-              <span>0%</span>
-              <span>50%</span>
-              <span>100%</span>
-            </div>
+            {formik.touched.icon && formik.errors.icon && (
+              <p className="text-sm text-red-600">{formik.errors.icon}</p>
+            )}
           </div>
 
           {/* Preview */}
-          {(name || icon || color) && (
+          {(formik.values.name || formik.values.icon) && (
             <div className="space-y-2">
               <Label className="text-sm font-medium">Preview</Label>
               <div className="p-4 border rounded-lg bg-gray-50">
                 <div className="flex items-start gap-3 mb-3">
-                  <div className="text-2xl flex-shrink-0">{icon || "🔧"}</div>
+                  <div className="text-2xl flex-shrink-0">{formik.values.icon || "🔧"}</div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-medium text-gray-900 break-words leading-tight">
-                      {name || "Technology Name"}
+                      {formik.values.name || "Technology Name"}
                     </h3>
                     <p className="text-sm text-gray-500 break-words">
-                      {category || "Category"}
+                      {categories.find(cat => cat.id === formik.values.category)?.name || "Category"}
                     </p>
                   </div>
                 </div>
-                {description && (
-                  <p className="text-sm text-gray-600 mb-3">{description}</p>
+                {formik.values.description && (
+                  <p className="text-sm text-gray-600 mb-3">{formik.values.description}</p>
                 )}
                 <div className="flex items-center justify-between">
-                  {color && (
-                    <span
-                      className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${color}`}
-                    >
-                      0 projects
-                    </span>
-                  )}
-                  <div className="text-sm text-gray-600">
-                    Popularity: {popularity[0]}%
-                  </div>
+                  <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                    0 projects
+                  </span>
                 </div>
               </div>
             </div>
@@ -355,17 +272,17 @@ export function AddTechnologyModal({
               type="button"
               variant="outline"
               onClick={handleCancel}
-              disabled={loading}
+              disabled={isSubmitting}
               className="border-gray-200 hover:bg-gray-50 bg-transparent"
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              disabled={loading}
+              disabled={isSubmitting}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
             >
-              {loading ? "Adding..." : "Add Technology"}
+              {isSubmitting ? "Adding..." : "Add Technology"}
             </Button>
           </DialogFooter>
         </form>

@@ -12,10 +12,7 @@ const technologySchema = new mongoose.Schema(
     description: { type: String },
     category: { type: String },
     icon: { type: String },
-    color: { type: String },
     count: { type: Number, default: 0 },
-    popularity: { type: Number, min: 0, max: 100 },
-    website: { type: String },
   },
   { timestamps: true }
 );

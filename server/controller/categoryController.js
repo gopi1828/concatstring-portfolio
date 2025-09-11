@@ -7,7 +7,7 @@ dotenv.config();
 exports.createCategory = async function createCategory(req, res) {
   try {
     await connectToDatabase();
-    const { name, description, icon, color, count } = req.body || {};
+    const { name, description, icon, count } = req.body || {};
 
     if (!name || typeof name !== "string" || name.trim() === "") {
       return res.status(400).json({ message: "name is required" });
@@ -23,7 +23,6 @@ exports.createCategory = async function createCategory(req, res) {
       description:
         typeof description === "string" ? description.trim() : undefined,
       icon: typeof icon === "string" ? icon.trim() : undefined,
-      color: typeof color === "string" ? color.trim() : undefined,
       count: typeof count === "number" ? count : undefined,
     });
 
@@ -76,14 +75,13 @@ exports.updateCategoryById = async function updateCategoryById(req, res) {
       return res.status(400).json({ message: "category id is required" });
     }
 
-    const { name, description, icon, color, count } = req.body || {};
+    const { name, description, icon, count } = req.body || {};
     const updates = {};
     if (typeof name === "string" && name.trim() !== "")
       updates.name = name.trim();
     if (typeof description === "string")
       updates.description = description.trim();
     if (typeof icon === "string") updates.icon = icon.trim();
-    if (typeof color === "string") updates.color = color.trim();
     if (typeof count === "number") updates.count = count;
 
     if (Object.keys(updates).length === 0) {

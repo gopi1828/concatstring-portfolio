@@ -13,7 +13,7 @@ router.use(authenticateToken);
 
 router.get("/", listTechnologies);
 router.post("/", createTechnology);
-router.patch("/:id", updateTechnology);
+router.put("/:id", updateTechnology);
 router.delete("/:id", deleteTechnology);
 
 module.exports = router;
