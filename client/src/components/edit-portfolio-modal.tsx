@@ -139,6 +139,13 @@ export default function EditPortfolioModal({
 
   const validationSchema = portfolioValidationSchema;
 
+  const formatDateForInput = (date: any) => {
+    if (!date) return "";
+    const dateObj = new Date(date);
+    if (isNaN(dateObj.getTime())) return "";
+    return dateObj.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+  };
+
   const normalizeInitialValues = (iv: any) => ({
     projectName: iv?.projectName ?? "",
     websiteLink: iv?.websiteLink ?? "",
@@ -152,8 +159,8 @@ export default function EditPortfolioModal({
     bidPlatform: iv?.bidPlatform ?? "",
     bidPlatformUrl: iv?.bidPlatformUrl ?? "",
     invoiceAmount: iv?.invoiceAmount ?? "",
-    startDate: iv?.startDate ?? "",
-    completionDate: iv?.completionDate ?? "",
+    startDate: formatDateForInput(iv?.startDate),
+    completionDate: formatDateForInput(iv?.completionDate),
     testimonials: iv?.testimonials ?? "",
     tag: iv?.tag ?? "",
   });

@@ -25,12 +25,13 @@ import { toast } from "react-hot-toast";
 import api from "../lib/api";
 
 const navigation = [
-  { name: "Add User", href: "/dashboard/register", icon: UserPlus },
+  { name: "User", href: "/dashboard/users", icon: UserPlus },
   { name: "Portfolio", href: "/dashboard", icon: FolderOpen },
   { name: "Categories", href: "/dashboard/categories", icon: Layers },
+  { name: "Industries", href: "/dashboard/industries", icon: Building2 },
   { name: "Technologies", href: "/dashboard/technologies", icon: Code2 },
   { name: "Tags", href: "/dashboard/tags", icon: Tag },
-  { name: "Industries", href: "/dashboard/industries", icon: Building2 },
+  
 ];
 
 interface MainLayoutProps {
