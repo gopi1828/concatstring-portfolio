@@ -36,6 +36,7 @@ export function AddPortfolioModal({
   const [techOptions, setTechOptions] = useState<any[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<any[]>([]);
   const [tagOptions, setTagOptions] = useState<any[]>([]);
+  const [industryOptions, setIndustryOptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
@@ -93,6 +94,21 @@ export function AddPortfolioModal({
 
     if (open) {
       fetchTag();
+    }
+  }, [open]);
+
+  useEffect(() => {
+    const fetchIndustry = async () => {
+      try {
+        const res = await api.get("/api/industry");
+        setIndustryOptions(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        setIndustryOptions([]);
+      }
+    };
+
+    if (open) {
+      fetchIndustry();
     }
   }, [open]);
 
@@ -299,7 +315,6 @@ export function AddPortfolioModal({
               value={formik.values.projectName}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              required
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.projectName && formik.errors.projectName && (
@@ -386,25 +401,42 @@ export function AddPortfolioModal({
             </select>
           </div>
 
-          {/* Industry */}
+          {/* Industry Select */}
           <div className="space-y-2">
             <Label htmlFor="industry" className="text-sm font-medium">
               Industry
             </Label>
-            <Input
+            <select
               id="industry"
               name="industry"
-              placeholder="e.g. E-commerce, Finance"
               value={formik.values.industry}
               onChange={formik.handleChange}
-              className="border-gray-200"
-            />
+              onBlur={formik.handleBlur}
+              className="w-full h-11 border border-gray-200 rounded-md focus:outline-none focus:ring-blue-500/20 px-3"
+              disabled={isLoading}
+            >
+              <option value="">-- Select Industry --</option>
+              {Array.isArray(industryOptions) &&
+                industryOptions.map((industry, index) => (
+                  <option
+                    key={industry._id || industry.name || index}
+                    value={industry.name || industry}
+                  >
+                    {industry.name || industry}
+                  </option>
+                ))}
+            </select>
+            {formik.touched.industry && formik.errors.industry && (
+              <p className="text-sm text-red-600">
+                {formik.errors.industry}
+              </p>
+            )}
           </div>
 
           {/* Description */}
           <div className="space-y-2">
             <Label htmlFor="description" className="text-sm font-medium">
-              Description *
+              Description
             </Label>
             <Textarea
               id="description"
@@ -413,10 +445,14 @@ export function AddPortfolioModal({
               value={formik.values.description}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              required
               rows={4}
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
+            {formik.touched.description && formik.errors.description && (
+              <p className="text-sm text-red-600">
+                {formik.errors.description}
+              </p>
+            )}
           </div>
 
           {/* Page Builder */}
@@ -450,8 +486,14 @@ export function AddPortfolioModal({
               placeholder="Enter client name"
               value={formik.values.clientName}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="border-gray-200"
             />
+            {formik.touched.clientName && formik.errors.clientName && (
+              <p className="text-sm text-red-600">
+                {formik.errors.clientName}
+              </p>
+            )}
           </div>
 
           {/* Bid Platform */}
@@ -465,8 +507,14 @@ export function AddPortfolioModal({
               placeholder="Upwork, Freelancer, etc."
               value={formik.values.bidPlatform}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="border-gray-200"
             />
+            {formik.touched.bidPlatform && formik.errors.bidPlatform && (
+              <p className="text-sm text-red-600">
+                {formik.errors.bidPlatform}
+              </p>
+            )}
           </div>
 
           {/* Bid Platform URL */}
@@ -480,8 +528,14 @@ export function AddPortfolioModal({
               placeholder="https://example.com"
               value={formik.values.bidPlatformUrl}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="border-gray-200"
             />
+            {formik.touched.bidPlatformUrl && formik.errors.bidPlatformUrl && (
+              <p className="text-sm text-red-600">
+                {formik.errors.bidPlatformUrl}
+              </p>
+            )}
           </div>
 
           {/* Invoice Amount */}
@@ -558,8 +612,14 @@ export function AddPortfolioModal({
               rows={3}
               value={formik.values.testimonials}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="border-gray-200"
             />
+            {formik.touched.testimonials && formik.errors.testimonials && (
+              <p className="text-sm text-red-600">
+                {formik.errors.testimonials}
+              </p>
+            )}
           </div>
 
           {/* Tags */}

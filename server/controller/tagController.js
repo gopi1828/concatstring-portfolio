@@ -12,7 +12,7 @@ exports.createTag = async function createTag(req, res) {
 
     const existing = await Tag.findOne({ name: name.trim() });
     if (existing) {
-      return res.status(400).json({ error: "Tag already exists" });
+      return res.status(400).json({ error: `Tag "${name.trim()}" already exists` });
     }
 
     const newTag = await Tag.create({ name: name.trim() });

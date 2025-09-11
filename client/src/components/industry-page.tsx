@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Search, Plus, Edit, Trash2, Tag } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Building2 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -14,54 +14,63 @@ import {
 import toast from "react-hot-toast";
 import { ConfirmDialog } from "./ui/confirm-delete";
 import { Skeleton } from "./ui/skeleton";
-import { AddTagModal } from "./add-tag-modal";
-import { EditTagModal } from "./edit-tag-modal";
+import { AddIndustryModal } from "./add-industry-modal";
+import { EditIndustryModal } from "./edit-industry-modal";
 
-type TagType = {
+type IndustryType = {
   _id: string;
   name: string;
 };
 
-export function TagsPage() {
-  const [tags, setTags] = useState<TagType[]>([]);
+export function IndustryPage() {
+  const [industries, setIndustries] = useState<IndustryType[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [tagToDelete, setTagToDelete] = useState<TagType | null>(null);
-  const [tagToEdit, setTagToEdit] = useState<TagType | null>(null);
+  const [industryToDelete, setIndustryToDelete] = useState<IndustryType | null>(null);
+  const [industryToEdit, setIndustryToEdit] = useState<IndustryType | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const fetchTags = async () => {
+  const fetchIndustries = async () => {
     try {
       setLoading(true);
-      const res = await api.get("/api/tags");
-      setTags(res.data);
+      const res = await api.get("/api/industry");
+      setIndustries(res.data);
     } catch (error) {
-      toast.error("Error fetching tags");
+      toast.error("Error fetching industries");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchTags();
+    fetchIndustries();
   }, []);
 
-  const handleTagAdded = () => {
-    fetchTags();
+  const handleIndustryAdded = () => {
+    fetchIndustries();
   };
 
-  const handleTagUpdated = () => {
-    fetchTags();
-  };
-
-  const handleEditClick = (tag: TagType) => {
-    setTagToEdit(tag);
+  const handleEditIndustry = (industry: IndustryType) => {
+    setIndustryToEdit(industry);
     setIsEditModalOpen(true);
   };
 
-  const filteredTags = tags.filter((tag) =>
-    tag.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const handleDelete = async () => {
+    if (!industryToDelete) return;
+    try {
+      await api.delete(`/api/industry/${industryToDelete._id}`);
+      toast.success("Industry deleted successfully");
+      fetchIndustries();
+    } catch (error) {
+      toast.error("Failed to delete industry");
+    } finally {
+      setIndustryToDelete(null);
+    }
+  };
+
+  const filteredIndustries = industries.filter((industry) =>
+    industry.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -69,15 +78,15 @@ export function TagsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tags</h1>
-          <p className="text-gray-600">Manage your portfolio tags</p>
+          <h1 className="text-2xl font-bold text-gray-900">Industries</h1>
+          <p className="text-gray-600">Manage industries for your portfolio projects</p>
         </div>
         <Button
           onClick={() => setIsAddModalOpen(true)}
           className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
         >
           <Plus className="mr-2 h-4 w-4" />
-          Add Tag
+          Add Industry
         </Button>
       </div>
 
@@ -85,14 +94,14 @@ export function TagsPage() {
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
         <Input
-          placeholder="Search tags..."
+          placeholder="Search industries..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
         />
       </div>
 
-      {/* Loader / Tags Grid */}
+      
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, i) => (
@@ -113,26 +122,26 @@ export function TagsPage() {
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTags.map((tag) => (
+            {filteredIndustries.map((industry) => (
               <Card
-                key={tag._id}
+                key={industry._id}
                 className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-white"
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-start gap-3 min-w-0 flex-1">
-                      <div className="text-2xl flex-shrink-0">🏷️</div>
+                      <div className="text-2xl flex-shrink-0">🏢</div>
                       <div className="flex-1 min-w-0">
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <CardTitle className="text-lg text-gray-900 break-words leading-tight cursor-help">
-                                {tag.name}
+                                {industry.name}
                               </CardTitle>
                             </TooltipTrigger>
                             <TooltipContent>
                               <p className="max-w-xs break-words">
-                                {tag.name}
+                                {industry.name}
                               </p>
                             </TooltipContent>
                           </Tooltip>
@@ -146,7 +155,7 @@ export function TagsPage() {
                         size="icon"
                         variant="ghost"
                         className="h-8 w-8 hover:bg-accent"
-                        onClick={() => handleEditClick(tag)}
+                        onClick={() => handleEditIndustry(industry)}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -154,7 +163,7 @@ export function TagsPage() {
                         size="icon"
                         variant="ghost"
                         className="h-8 w-8 hover:bg-accent"
-                        onClick={() => setTagToDelete(tag)}
+                        onClick={() => setIndustryToDelete(industry)}
                       >
                         <Trash2 className="h-4 w-4 text-red-600" />
                       </Button>
@@ -163,25 +172,25 @@ export function TagsPage() {
                 </CardHeader>
 
                 <CardContent className="pt-0">
-                  <Badge className="bg-gray-100 text-gray-700">0 items</Badge>
+                  <Badge className="bg-gray-100 text-gray-700">0 projects</Badge>
                 </CardContent>
               </Card>
             ))}
           </div>
 
           {/* Empty State */}
-          {filteredTags.length === 0 && (
+          {filteredIndustries.length === 0 && (
             <div className="text-center py-12">
               <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                <Tag className="h-12 w-12 text-gray-400" />
+                <Building2 className="h-12 w-12 text-gray-400" />
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No tags found
+                No industries found
               </h3>
               <p className="text-gray-600 mb-4">
                 {searchTerm
                   ? "Try adjusting your search criteria"
-                  : "Get started by creating your first tag"}
+                  : "Get started by creating your first industry"}
               </p>
             </div>
           )}
@@ -189,39 +198,28 @@ export function TagsPage() {
       )}
 
       <ConfirmDialog
-        isOpen={!!tagToDelete}
-        title="Delete Tag"
-        description={`Are you sure you want to delete "${tagToDelete?.name}"?`}
-        onCancel={() => setTagToDelete(null)}
-        onConfirm={async () => {
-          if (!tagToDelete) return;
-          try {
-            await api.delete(`/api/tags/${tagToDelete._id}`);
-            toast.success("Deleted successfully");
-            fetchTags();
-          } catch (error) {
-            toast.error("Failed to delete");
-          } finally {
-            setTagToDelete(null);
-          }
-        }}
+        isOpen={!!industryToDelete}
+        title="Delete Industry"
+        description={`Are you sure you want to delete "${industryToDelete?.name}"?`}
+        onCancel={() => setIndustryToDelete(null)}
+        onConfirm={handleDelete}
         confirmText="Delete"
         cancelText="Cancel"
       />
 
-      {/* Add Tag Modal */}
-      <AddTagModal
+      {/* Add Industry Modal */}
+      <AddIndustryModal
         open={isAddModalOpen}
         onOpenChange={setIsAddModalOpen}
-        onTagAdded={handleTagAdded}
+        onIndustryAdded={handleIndustryAdded}
       />
 
-      {/* Edit Tag Modal */}
-      <EditTagModal
+      {/* Edit Industry Modal */}
+      <EditIndustryModal
         open={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
-        onTagUpdated={handleTagUpdated}
-        tag={tagToEdit}
+        onIndustryUpdated={handleIndustryAdded}
+        industry={industryToEdit}
       />
     </div>
   );

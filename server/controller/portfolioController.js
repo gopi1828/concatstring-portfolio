@@ -141,6 +141,19 @@ exports.updatePortfolioById = async function updatePortfolioById(req, res) {
       tag,
     } = req.body || {};
 
+    // Check for duplicate project name if projectName is being updated
+    if (projectName && typeof projectName === "string" && projectName.trim() !== "") {
+      const existing = await Portfolio.findOne({
+        projectName: projectName.trim(),
+        _id: { $ne: id } // Exclude current portfolio from duplicate check
+      });
+      if (existing) {
+        return res
+          .status(400)
+          .json({ message: "Project with same name already exists" });
+      }
+    }
+
     const updates = {};
     if (typeof projectName === "string" && projectName.trim() !== "")
       updates.projectName = projectName.trim();
@@ -232,11 +245,9 @@ exports.getPortfoliosByCategory = async function getPortfoliosByCategory(
     );
     return res.status(200).json(portfolios);
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        message: "Failed to fetch portfolios by category",
-        error: error.message,
-      });
+    return res.status(500).json({
+      message: "Failed to fetch portfolios by category",
+      error: error.message,
+    });
   }
 };
