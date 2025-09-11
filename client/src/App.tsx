@@ -3,7 +3,6 @@ import { Toaster } from "react-hot-toast";
 import { RequireAuth, RedirectIfAuth } from "./lib/routeGuards";
 import { MainLayout } from "./components/main-layout";
 import { LoginPage } from "./components/login-page";
-import { RegisterPage } from "./components/register-page";
 import { PortfolioPage } from "./components/portfolio-page";
 import { CategoriesPage } from "./components/categories-page";
 import { TechnologiesPage } from "./components/technologies-page";
@@ -11,6 +10,7 @@ import { TagsPage } from "./components/tags-page";
 import { IndustryPage } from "./components/industry-page";
 import { EditUserForm } from "./components/edit-user-form";
 import { PortfolioDetailPage } from "./components/portfolio-detail-page";
+import { UsersPage } from "./components/users-page";
 
 // Wrapper component to extract id from URL params
 function PortfolioDetailPageWrapper() {
@@ -71,16 +71,7 @@ function App() {
             </RedirectIfAuth>
           }
         />
-        <Route
-          path="/register"
-          element={
-            <RedirectIfAuth>
-              <RegisterPage />
-            </RedirectIfAuth>
-          }
-        />
-
-        {/* Protected dashboard routes */}
+            {/* Protected dashboard routes */}
         <Route
           path="/dashboard"
           element={
@@ -131,17 +122,17 @@ function App() {
             </RequireAuth>
           }
         />
-        <Route
-          path="/dashboard/register"
+         <Route
+          path="/dashboard/users"
           element={
             <RequireAuth>
               <MainLayout>
-                <RegisterPage />
+                <UsersPage />
               </MainLayout>
             </RequireAuth>
           }
         />
-        <Route
+         <Route
           path="/dashboard/edit-user"
           element={
             <RequireAuth>

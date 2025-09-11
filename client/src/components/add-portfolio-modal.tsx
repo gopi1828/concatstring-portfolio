@@ -280,7 +280,7 @@ export function AddPortfolioModal({
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
-            Add Portfolio Item
+            Add Project
           </DialogTitle>
           <DialogDescription>
             Create a new portfolio item to showcase your work.

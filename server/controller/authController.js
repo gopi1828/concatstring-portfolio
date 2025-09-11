@@ -145,6 +145,24 @@ exports.getUserById = async function getUserById(req, res) {
   }
 };
 
+exports.getUser = async function getUser(req, res) {
+  try {
+    await connectToDatabase();
+    
+    const users = await User.find();
+    if (!users) {
+      return res.status(404).json({ message: "Users not found" });
+    }
+
+    return res.status(200).json(users);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Something went wrong while fetching user",
+      error: error.message,
+    });
+  }
+};
+
 exports.updateUserById = async function updateUserById(req, res) {
   try {
     await connectToDatabase();
@@ -191,6 +209,31 @@ exports.updateUserById = async function updateUserById(req, res) {
   } catch (error) {
     return res.status(500).json({
       message: "Something went wrong while updating user",
+      error: error.message,
+    });
+  }
+};
+
+exports.deleteUserById = async function deleteUserById(req, res) {
+  try {
+    await connectToDatabase();
+    const { id } = req.params || {};
+    if (!id) {
+      return res.status(400).json({ message: "User id is required" });
+    }
+
+    const deletedUser = await User.findByIdAndDelete(id);
+    if (!deletedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({ 
+      message: "User deleted successfully", 
+      success: true 
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Something went wrong while deleting user",
       error: error.message,
     });
   }
