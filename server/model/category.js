@@ -19,11 +19,6 @@ const CategorySchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
-    color: {
-      type: String,
-      default: "",
-      trim: true,
-    },
     count: {
       type: Number,
       default: 0,

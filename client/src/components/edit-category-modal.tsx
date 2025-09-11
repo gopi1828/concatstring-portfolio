@@ -1,5 +1,6 @@
-import type { FormEvent } from "react";
-import { useState, useEffect } from "react";
+import { useFormik } from "formik";
+import { useEffect } from "react";
+import { categoryValidationSchema } from "../lib/categoryValidation";
 import api from "../lib/api";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -20,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { categoryIcons, colorOptions } from "../lib/category-config";
+import { categoryIcons } from "../lib/category-config";
 import toast from "react-hot-toast";
 
 interface Category {
@@ -28,7 +29,6 @@ interface Category {
   name: string;
   description?: string;
   icon: string;
-  color: string;
   count: number;
 }
 
@@ -45,61 +45,50 @@ export function EditCategoryModal({
   category,
   onCategoryUpdated,
 }: EditCategoryModalProps) {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [icon, setIcon] = useState("");
-  const [color, setColor] = useState("");
-  const [loading, setLoading] = useState(false);
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      name: category?.name || "",
+      description: category?.description || "",
+      icon: category?.icon || "",
+    },
+    validationSchema: categoryValidationSchema,
+    validateOnBlur: false,
+    onSubmit: async (values) => {
+      if (!category) return;
 
-  // Populate form when category changes
+      try {
+        await api.put(`/api/categories/${category.id}`, {
+          name: values.name,
+          description: values.description,
+          icon: values.icon,
+        });
+
+        // Update the category in the parent component
+        const updatedCategory = {
+          ...category,
+          name: values.name,
+          description: values.description,
+          icon: values.icon,
+        };
+        onCategoryUpdated(updatedCategory);
+        onOpenChange(false);
+        toast.success("Category updated successfully!");
+      } catch (error) {
+        toast.error("Error updating category");
+      }
+    },
+  });
+
+  // Reset form when modal opens
   useEffect(() => {
-    if (category) {
-      setName(category.name);
-      setDescription(category.description || "");
-      setIcon(category.icon);
-      setColor(category.color);
+    if (open) {
+      formik.resetForm();
     }
-  }, [category]);
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!category) return;
-
-    setLoading(true);
-    try {
-      await api.put(`/api/categories/${category.id}`, {
-        name,
-        description,
-        icon,
-        color,
-      });
-
-      // Update the category in the parent component
-      const updatedCategory = {
-        ...category,
-        name,
-        description,
-        icon,
-        color,
-      };
-      onCategoryUpdated(updatedCategory);
-      onOpenChange(false);
-      toast.success("Category updated successfuly!");
-    } catch (error) {
-      toast.error("Error updating category");
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [open]);
 
   const handleCancel = () => {
-    // Reset form to original values
-    if (category) {
-      setName(category.name);
-      setDescription(category.description || "");
-      setIcon(category.icon);
-      setColor(category.color);
-    }
+    formik.resetForm();
     onOpenChange(false);
   };
 
@@ -117,7 +106,7 @@ export function EditCategoryModal({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={formik.handleSubmit} className="space-y-6">
           {/* Name */}
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-medium">
@@ -125,12 +114,18 @@ export function EditCategoryModal({
             </Label>
             <Input
               id="name"
+              name="name"
               placeholder="Enter category name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
+            {formik.touched.name && formik.errors.name && (
+              <p className="text-sm text-red-600">
+                {formik.errors.name}
+              </p>
+            )}
           </div>
 
           {/* Description */}
@@ -140,82 +135,69 @@ export function EditCategoryModal({
             </Label>
             <Textarea
               id="description"
+              name="description"
               placeholder="Describe this category..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={formik.values.description}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               rows={3}
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
+            {formik.touched.description && formik.errors.description && (
+              <p className="text-sm text-red-600">
+                {formik.errors.description}
+              </p>
+            )}
           </div>
 
           {/* Icon */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Icon</Label>
-            <Select value={icon} onValueChange={setIcon}>
+            <Label className="text-sm font-medium">Icon *</Label>
+            <Select 
+              value={formik.values.icon} 
+              onValueChange={(value) => formik.setFieldValue("icon", value)}
+            >
               <SelectTrigger className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20">
                 <SelectValue placeholder="Select an icon" />
               </SelectTrigger>
               <SelectContent>
-                {categoryIcons.map((iconOption, index) => (
-                  <SelectItem
-                    key={`${iconOption.value}-${index}`}
-                    value={iconOption.value}
-                  >
+                {categoryIcons.map((iconOption) => (
+                  <SelectItem key={iconOption.id} value={iconOption.value}>
                     {iconOption.label}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            {formik.touched.icon && formik.errors.icon && (
+              <p className="text-sm text-red-600">
+                {formik.errors.icon}
+              </p>
+            )}
           </div>
 
-          {/* Color */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Color Theme</Label>
-            <Select value={color} onValueChange={setColor}>
-              <SelectTrigger className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20">
-                <SelectValue placeholder="Select a color" />
-              </SelectTrigger>
-              <SelectContent>
-                {colorOptions.map((colorOption) => (
-                  <SelectItem key={colorOption.value} value={colorOption.value}>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`w-4 h-4 rounded ${colorOption.preview}`}
-                      ></div>
-                      {colorOption.label}
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
 
           {/* Preview */}
-          {(name || icon || color) && (
+          {(formik.values.name || formik.values.icon) && (
             <div className="space-y-2">
               <Label className="text-sm font-medium">Preview</Label>
               <div className="p-4 border rounded-lg bg-gray-50">
                 <div className="flex items-center gap-3">
-                  <div className="text-2xl">{icon || "📁"}</div>
+                  <div className="text-2xl">{formik.values.icon || "📁"}</div>
                   <div>
                     <h3 className="font-medium text-gray-900">
-                      {name || "Category Name"}
+                      {formik.values.name || "Category Name"}
                     </h3>
                     <p className="text-sm text-gray-500">
-                      {description || "Category description"}
+                      {formik.values.description || "Category description"}
                     </p>
                   </div>
                 </div>
-                {color && (
-                  <div className="mt-3">
-                    <span
-                      className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${color}`}
-                    >
-                      {category.count}{" "}
-                      {category.count === 1 ? "project" : "projects"}
-                    </span>
-                  </div>
-                )}
+                <div className="mt-3">
+                  <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                    {category.count}{" "}
+                    {category.count === 1 ? "project" : "projects"}
+                  </span>
+                </div>
               </div>
             </div>
           )}
@@ -231,10 +213,10 @@ export function EditCategoryModal({
             </Button>
             <Button
               type="submit"
-              disabled={loading}
+              disabled={formik.isSubmitting}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
             >
-              {loading ? "Updating..." : "Update Category"}
+              {formik.isSubmitting ? "Updating..." : "Update Category"}
             </Button>
           </DialogFooter>
         </form>

@@ -1,5 +1,6 @@
-import type { FormEvent } from "react";
-import { useState, useEffect } from "react";
+import { useFormik } from "formik";
+import { useEffect } from "react";
+import { tagValidationSchema } from "../lib/tagValidation";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -25,51 +26,46 @@ export function AddTagModal({
   onOpenChange,
   onTagAdded,
 }: AddTagModalProps) {
-  const [name, setName] = useState("");
-  const [loading, setLoading] = useState(false);
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+    },
+    validationSchema: tagValidationSchema,
+    validateOnBlur: false,
+    onSubmit: async (values) => {
+      try {
+        await api.post("/api/tags", {
+          name: values.name,
+        });
+
+        formik.resetForm();
+        onOpenChange(false);
+
+        // Refresh the tags list
+        if (onTagAdded) {
+          onTagAdded();
+        }
+        toast.success("Tag added successfully!");
+      } catch (error: any) {
+        console.error("Tag add error:", error);
+        const errorMessage = 
+          error.response?.data?.error || 
+          error.message || 
+          "Failed to add tag";
+        toast.error(errorMessage);
+      }
+    },
+  });
 
   // Reset form when modal opens
   useEffect(() => {
     if (open) {
-      resetForm();
+      formik.resetForm();
     }
   }, [open]);
 
-  const resetForm = () => {
-    setName("");
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      await api.post("/api/tags", {
-        name,
-      });
-
-      resetForm();
-      onOpenChange(false);
-
-      // Refresh the tags list
-      if (onTagAdded) {
-        onTagAdded();
-      }
-      toast.success("Tag added successfully!");
-    } catch (error: any) {
-      console.error("Tag add error:", error);
-      const errorMessage = 
-        error.response?.data?.error || 
-        error.message || 
-        "Failed to add tag";
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleCancel = () => {
-    resetForm();
+    formik.resetForm();
     onOpenChange(false);
   };
 
@@ -85,7 +81,7 @@ export function AddTagModal({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={formik.handleSubmit} className="space-y-6">
           {/* Name */}
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-medium">
@@ -93,13 +89,19 @@ export function AddTagModal({
             </Label>
             <Input
               id="name"
+              name="name"
               placeholder="e.g., React, Frontend, E-commerce"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              disabled={loading}
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              disabled={formik.isSubmitting}
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
+            {formik.touched.name && formik.errors.name && (
+              <p className="text-sm text-red-600">
+                {formik.errors.name}
+              </p>
+            )}
           </div>
 
           <DialogFooter className="gap-2">
@@ -107,17 +109,17 @@ export function AddTagModal({
               type="button"
               variant="outline"
               onClick={handleCancel}
-              disabled={loading}
+              disabled={formik.isSubmitting}
               className="border-gray-200 hover:bg-gray-50 bg-transparent"
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              disabled={loading}
+              disabled={formik.isSubmitting}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
             >
-              {loading ? "Adding..." : "Add Tag"}
+              {formik.isSubmitting ? "Adding..." : "Add Tag"}
             </Button>
           </DialogFooter>
         </form>
