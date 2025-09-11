@@ -9,8 +9,7 @@ dotenv.config();
 
 function signAuthToken(payload) {
   const secret =
-    process.env.JWT_SECRETKEY ||
-    process.env.JWT_SECRET ||
+    process.env.JWT_SECRETKEY
     "dev_secret_key_change_me";
   return jwt.sign(payload, secret, { expiresIn: "2h" });
 }

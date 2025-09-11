@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 const connectToDatabase = require("./database/config");
 const authRoutes = require("./routes/authRoutes");
 const tagRoutes = require("./routes/tagRoutes");
+const industryRoutes = require("./routes/industryRoutes");
 const technologyRoutes = require("./routes/technologyRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const portfolioRoutes = require("./routes/portfolioRoutes");
@@ -28,6 +29,7 @@ app.get("/", (_req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/tags", tagRoutes);
+app.use("/api/industry", industryRoutes);
 app.use("/api/technologies", technologyRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/portfolios", portfolioRoutes);

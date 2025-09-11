@@ -19,6 +19,7 @@ import {
   Edit,
   Layers,
   Code2,
+  Building2,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import api from "../lib/api";
@@ -29,6 +30,7 @@ const navigation = [
   { name: "Categories", href: "/dashboard/categories", icon: Layers },
   { name: "Technologies", href: "/dashboard/technologies", icon: Code2 },
   { name: "Tags", href: "/dashboard/tags", icon: Tag },
+  { name: "Industries", href: "/dashboard/industries", icon: Building2 },
 ];
 
 interface MainLayoutProps {
