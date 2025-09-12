@@ -1,11 +1,22 @@
 const connectToDatabase = require("../database/config");
+const Portfolio = require("../model/portfolio");
 const Technology = require("../model/Technology");
 
 exports.listTechnologies = async function listTechnologies(_req, res) {
   try {
     await connectToDatabase();
     const techs = await Technology.find({}).sort({ createdAt: -1 }).lean();
-    return res.status(200).json(techs);
+
+    const techWithCounts = await Promise.all(
+      techs.map(async (tech) => {
+        const count = await Portfolio.countDocuments({ technology: tech.name })
+        return {
+          ...tech,
+          count,
+        }
+      })
+    );
+    return res.status(200).json(techWithCounts);
   } catch (error) {
     console.error("List technologies error:", error);
     return res.status(500).json({ message: error.message });

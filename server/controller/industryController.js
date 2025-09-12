@@ -1,5 +1,6 @@
 const connectToDatabase = require("../database/config");
 const Industry = require("../model/Industry");
+const Portfolio = require("../model/portfolio");
 
 
 exports.createIndustry = async function createIndustry(req, res) {
@@ -30,8 +31,17 @@ exports.getIndustry = async function getIndustry(_req, res) {
   try {
     await connectToDatabase();
     const industry = await Industry.find().sort({ createdAt: -1 }).lean();
-    return res.status(200).json(industry);
-  } catch (error) {
+    const industryWithCounts = await Promise.all(
+      industry.map(async(ind) => {
+        const count = await Portfolio.countDocuments({ industry: ind.name})
+        return{
+          ...ind,
+          count,
+        } 
+      })
+    )
+    return res.status(200).json(industryWithCounts);
+  } catch (error) { 
     console.error("Get industry error:", error);
     return res.status(500).json({ error: "server error" });
   }
