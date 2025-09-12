@@ -20,6 +20,7 @@ import { EditTagModal } from "./edit-tag-modal";
 type TagType = {
   _id: string;
   name: string;
+  count: number;
 };
 
 export function TagsPage() {
@@ -163,7 +164,10 @@ export function TagsPage() {
                 </CardHeader>
 
                 <CardContent className="pt-0">
-                  <Badge className="bg-gray-100 text-gray-700">0 items</Badge>
+                <Badge className="bg-blue-100 text-blue-800">
+                    {tag.count ?? 0}{" "}
+                    {tag.count === 1 ? "project" : "projects"}
+                  </Badge>
                 </CardContent>
               </Card>
             ))}

@@ -20,6 +20,7 @@ import { EditIndustryModal } from "./edit-industry-modal";
 type IndustryType = {
   _id: string;
   name: string;
+  count: number;
 };
 
 export function IndustryPage() {
@@ -172,7 +173,10 @@ export function IndustryPage() {
                 </CardHeader>
 
                 <CardContent className="pt-0">
-                  <Badge className="bg-gray-100 text-gray-700">0 projects</Badge>
+                <Badge className="bg-blue-100 text-blue-800">
+                    {industry.count ?? 0}{" "}
+                    {industry.count === 1 ? "project" : "projects"}
+                  </Badge>
                 </CardContent>
               </Card>
             ))}

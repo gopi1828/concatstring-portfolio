@@ -1,4 +1,5 @@
 const connectToDatabase = require("../database/config");
+const portfolio = require("../model/portfolio");
 const Tag = require("../model/Tag");
 
 exports.createTag = async function createTag(req, res) {
@@ -29,7 +30,17 @@ exports.getTags = async function getTags(_req, res) {
   try {
     await connectToDatabase();
     const tags = await Tag.find().sort({ createdAt: -1 }).lean();
-    return res.status(200).json(tags);
+
+    const tagsWithCounts = await Promise.all(
+      tags.map(async(tag)=>{
+        const count = await portfolio.countDocuments({ tag: tag.name })
+        return{
+          ...tag,
+          count,
+        }
+      })
+    )
+    return res.status(200).json(tagsWithCounts);
   } catch (error) {
     console.error("Get tags error:", error);
     return res.status(500).json({ error: "server error" });

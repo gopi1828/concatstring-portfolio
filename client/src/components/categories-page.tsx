@@ -36,7 +36,6 @@ export function CategoriesPage() {
     try {
       setLoading(true);
       const response = await api.get("/api/categories");
-      console.log("API categories response:", response.data);
       const categoriesWithId = response.data.map((cat: any) => ({
         ...cat,
         id: cat._id || cat.id,

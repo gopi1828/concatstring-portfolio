@@ -44,14 +44,13 @@ exports.getCategories = async function getCategories(_req, res) {
 
     const categoriesWithCount = await Promise.all(
       categories.map(async (cat) => {
-        const count = await portfolio.countDocuments({ category: cat.name });
+        const count = await Portfolio.countDocuments({ category: cat.name });
         return {
           ...cat.toObject(),
           count,
         }
       })
     );
-    console.log(categoriesWithCount);
     return res.status(200).json(categoriesWithCount);
   } catch (error) {
     return res
