@@ -75,14 +75,20 @@ export function TechnologiesPage() {
         name: cat.name,
       }));
       setCategories(data);
+      return data; // Return the data for potential use
     } catch (err) {
       console.error("Error fetching categories:", err);
+      return []; // Return empty array on error
     }
   };
 
   useEffect(() => {
-    fetchTechnologies();
-    fetchCategories();
+    const loadData = async () => {
+      // First fetch categories, then technologies
+      await fetchCategories();
+      await fetchTechnologies();
+    };
+    loadData();
   }, []);
 
   const getCategoryName = (categoryId: string) => {

@@ -1,6 +1,7 @@
 const dotenv = require("dotenv");
 const connectToDatabase = require("../database/config");
 const Category = require("../model/category");
+const Portfolio = require("../model/portfolio");
 
 dotenv.config();
 
@@ -40,7 +41,18 @@ exports.getCategories = async function getCategories(_req, res) {
   try {
     await connectToDatabase();
     const categories = await Category.find({}).sort({ createdAt: -1 });
-    return res.status(200).json(categories);
+
+    const categoriesWithCount = await Promise.all(
+      categories.map(async (cat) => {
+        const count = await portfolio.countDocuments({ category: cat.name });
+        return {
+          ...cat.toObject(),
+          count,
+        }
+      })
+    );
+    console.log(categoriesWithCount);
+    return res.status(200).json(categoriesWithCount);
   } catch (error) {
     return res
       .status(500)
