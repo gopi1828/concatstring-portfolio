@@ -88,7 +88,7 @@ export function AddIndustryModal({
               Industry Name *
             </Label>
             <Input
-              id="name"
+              id="name" 
               name="name"
               placeholder="e.g., E-commerce, Finance, Healthcare"
               value={formik.values.name}

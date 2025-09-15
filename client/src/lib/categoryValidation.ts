@@ -3,10 +3,5 @@ import * as Yup from "yup";
 export const categoryValidationSchema = Yup.object().shape({
   name: Yup.string()
     .required("Category name is required")
-    .min(2, "Category name must be at least 2 characters"),    
-  description: Yup.string()
-    .max(200, "Description must be less than 200 characters")
-    .optional(),
-  icon: Yup.string()
-    .required("Icon is required"),
+    .min(2, "Category name must be at least 2 characters"),
 });

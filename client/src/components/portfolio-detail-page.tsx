@@ -506,7 +506,7 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
           {/* Tags */}
           <Card>
             <CardHeader>
-              <CardTitle>Technologies</CardTitle>
+              <CardTitle>Tags</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
