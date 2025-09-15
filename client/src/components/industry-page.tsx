@@ -131,7 +131,6 @@ export function IndustryPage() {
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-start gap-3 min-w-0 flex-1">
-                      <div className="text-2xl flex-shrink-0">🏢</div>
                       <div className="flex-1 min-w-0">
                         <TooltipProvider>
                           <Tooltip>

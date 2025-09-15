@@ -20,9 +20,7 @@ import api from "../lib/api";
 interface Technology {
   _id: string;
   name: string;
-  description: string;
   category: string;
-  icon: string;
   count?: number;
 }
 
@@ -53,7 +51,6 @@ export function TechnologiesPage() {
       const cleaned = data.filter(
         (tech) =>
           typeof tech.name === "string" &&
-          typeof tech.description === "string" &&
           typeof tech.category === "string"
       );
 
@@ -128,10 +125,9 @@ export function TechnologiesPage() {
 
   const filteredTechnologies = technologies.filter((tech) => {
     const name = (tech.name || "").toLowerCase();
-    const description = (tech.description || "").toLowerCase();
     const search = searchTerm.toLowerCase();
 
-    const matchesSearch = name.includes(search) || description.includes(search);
+    const matchesSearch = name.includes(search);
 
     const categoryName = getCategoryName(tech.category);
     const matchesCategory =
@@ -238,7 +234,6 @@ export function TechnologiesPage() {
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-start gap-3 min-w-0 flex-1">
-                    <div className="text-2xl flex-shrink-0">{tech.icon}</div>
                     <div className="flex-1 min-w-0">
                       <CardTitle className="text-lg text-gray-900 break-words leading-tight">
                         {tech.name || "Unnamed"}
@@ -272,9 +267,6 @@ export function TechnologiesPage() {
               </CardHeader>
 
               <CardContent className="space-y-4">
-                <p className="text-sm text-gray-600 line-clamp-2">
-                  {tech.description}
-                </p>
 
                 <div className="flex items-center justify-between">
                   <Badge className="bg-blue-100 text-blue-800">

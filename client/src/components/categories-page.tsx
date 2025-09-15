@@ -14,8 +14,6 @@ import { Skeleton } from "./ui/skeleton";
 interface Category {
   id: string;
   name: string;
-  description?: string;
-  icon: string;
   count: number;
 }
 
@@ -99,8 +97,7 @@ export function CategoriesPage() {
 
   const filteredCategories = categories.filter(
     (category) =>
-      category?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      category?.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      category?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -163,18 +160,10 @@ export function CategoriesPage() {
                 {/* Fixed layout structure */}
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
-                    <div className="text-2xl flex-shrink-0">
-                      {category.icon}
-                    </div>
                     <div className="flex-1 min-w-0">
                       <CardTitle className="text-lg text-gray-900 break-words">
                         {category.name}
                       </CardTitle>
-                      {category.description && (
-                        <p className="text-sm text-gray-500 mt-1 break-words">
-                          {category.description}
-                        </p>
-                      )}
                     </div>
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1 flex-shrink-0">
                       <Button
