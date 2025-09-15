@@ -81,8 +81,21 @@ export default function EditPortfolioModal({
       try {
         setIsLoading(true);
         const res = await api.get("/api/technologies");
-        setTechOptions(Array.isArray(res.data) ? res.data : []);
+        const data = res.data;
+        
+        // Filter technologies to only include valid ones
+        const cleaned = Array.isArray(data) ? data.filter(
+          (tech) =>
+            typeof tech.name === "string" &&
+            typeof tech.description === "string" &&
+            typeof tech.category === "string"
+        ) : [];
+        
+        console.log("Raw technologies data (edit):", data);
+        console.log("Filtered technologies (edit):", cleaned);
+        setTechOptions(cleaned);
       } catch (err) {
+        console.error("Error fetching technologies:", err);
         setTechOptions([]);
       } finally {
         setIsLoading(false);
@@ -403,15 +416,20 @@ export default function EditPortfolioModal({
               disabled={isLoading}
             >
               <option value="">-- Select Technology --</option>
-              {Array.isArray(techOptions) &&
+              {Array.isArray(techOptions) && techOptions.length > 0 ? (
                 techOptions.map((tech, index) => (
                   <option
-                    key={tech.id || tech.name || index}
+                    key={tech._id || tech.id || tech.name || index}
                     value={tech.name || tech}
                   >
                     {tech.name || tech}
                   </option>
-                ))}
+                ))
+              ) : (
+                <option value="" disabled>
+                  {isLoading ? "Loading technologies..." : "No technologies available"}
+                </option>
+              )}
             </select>
             {formik.touched.technology && formik.errors.technology && (
               <p className="text-sm text-red-600">
