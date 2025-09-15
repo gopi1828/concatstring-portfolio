@@ -36,12 +36,8 @@ const userValidationSchema = Yup.object({
     .test("no-spaces", "Username cannot contain spaces", (value) => !/\s/.test(value)),
   password: Yup.string()
     .required("Password is required")
-    .min(6, "Password must be at least 6 characters")
-    .max(100, "Password must be less than 100 characters")
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      "Password must contain at least one uppercase letter, one lowercase letter, and one number"
-    ),
+    .min(4, "Password must be at least 4 characters")
+    .max(100, "Password must be less than 100 characters"),
   role: Yup.string()
     .required("Role is required")
     .oneOf(["user", "admin"], "Role must be either user or admin"),

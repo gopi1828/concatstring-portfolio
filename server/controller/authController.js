@@ -9,7 +9,7 @@ dotenv.config();
 
 function signAuthToken(payload) {
   const secret =
-    process.env.JWT_SECRETKEY
+    process.env.JWT_SECRETKEY ||
     "dev_secret_key_change_me";
   return jwt.sign(payload, secret, { expiresIn: "2h" });
 }
@@ -17,7 +17,7 @@ function signAuthToken(payload) {
 exports.register = async function register(req, res) {
   try {
     await connectToDatabase();
-    const { name, username, password } = req.body || {};
+    const { name, username, password, role } = req.body || {};
 
     if (!name || !username || !password) {
       return res
@@ -33,11 +33,19 @@ exports.register = async function register(req, res) {
     const salt = await bcryptjs.genSalt(12);
     const hashedPassword = await bcryptjs.hash(password, salt);
 
-    const newUser = await User.create({
+    const userData = {
       name,
       username,
       password: hashedPassword,
-    });
+      role: role || "user", // Use provided role or default to "user"
+    };
+
+    // Validate role
+    if (role && !["user", "admin"].includes(role)) {
+      return res.status(400).json({ message: "Invalid role. Must be 'user' or 'admin'" });
+    }
+
+    const newUser = await User.create(userData);
 
     return res.status(201).json({
       message: "User registered successfully",
