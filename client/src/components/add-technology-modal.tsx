@@ -22,6 +22,7 @@ import {
 } from "./ui/select";
 import toast from "react-hot-toast";
 import api from "../lib/api";
+import { technologyIcons } from "../lib/technology-config";
 
 interface AddTechnologyModalProps {
   open: boolean;
@@ -29,24 +30,6 @@ interface AddTechnologyModalProps {
   onTechnologyAdded?: () => void;
 }
 
-const techIcons = [
-  { value: "⚛️", label: "React (⚛️)" },
-  { value: "▲", label: "Next.js (▲)" },
-  { value: "🔷", label: "TypeScript (🔷)" },
-  { value: "🎨", label: "CSS/Design (🎨)" },
-  { value: "🟢", label: "Node.js (🟢)" },
-  { value: "🐍", label: "Python (🐍)" },
-  { value: "☕", label: "Java (☕)" },
-  { value: "🐘", label: "PostgreSQL (🐘)" },
-  { value: "🍃", label: "MongoDB (🍃)" },
-  { value: "🐳", label: "Docker (🐳)" },
-  { value: "☁️", label: "Cloud (☁️)" },
-  { value: "🔧", label: "Tools (🔧)" },
-  { value: "📱", label: "Mobile (📱)" },
-  { value: "🎮", label: "Games (🎮)" },
-  { value: "🤖", label: "AI/ML (🤖)" },
-  { value: "⚡", label: "Performance (⚡)" },
-];
 
 
 export function AddTechnologyModal({
@@ -227,7 +210,7 @@ export function AddTechnologyModal({
                 <SelectValue placeholder="Select icon" />
               </SelectTrigger>
               <SelectContent>
-                {techIcons.map((iconOption) => (
+                {technologyIcons.map((iconOption) => (
                   <SelectItem key={iconOption.value} value={iconOption.value}>
                     {iconOption.label}
                   </SelectItem>
