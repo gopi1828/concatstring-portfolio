@@ -135,6 +135,7 @@ export function PortfolioPage() {
   const [editItem, setEditItem] = useState<PortfolioItem | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [itemToDeleteName, setItemToDeleteName] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const itemsPerPage = 10;
@@ -229,8 +230,9 @@ export function PortfolioPage() {
     fetchPortfolios();
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, projectName: string) => {
     setItemToDelete(id);
+    setItemToDeleteName(projectName);
     setDeleteConfirmOpen(true);
   };
 
@@ -259,12 +261,14 @@ export function PortfolioPage() {
     } finally {
       setDeleteConfirmOpen(false);
       setItemToDelete(null);
+      setItemToDeleteName(null);
     }
   };
 
   const cancelDelete = () => {
     setDeleteConfirmOpen(false);
     setItemToDelete(null);
+    setItemToDeleteName(null);
   };
 
   const filteredItems = portfolioItems.filter((item) => {
@@ -396,7 +400,7 @@ export function PortfolioPage() {
                         size="icon"
                         variant="ghost"
                         className="h-8 w-8 text-red-600"
-                        onClick={() => handleDelete(item._id)}
+                        onClick={() => handleDelete(item._id, item.projectName)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -456,7 +460,7 @@ export function PortfolioPage() {
                         className="h-8 w-8 bg-white/90 hover:bg-white text-red-600"
                         onClick={(e) => {
                           e.preventDefault();
-                          handleDelete(item._id);
+                          handleDelete(item._id, item.projectName);
                         }}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -659,7 +663,7 @@ export function PortfolioPage() {
       <ConfirmDialog
         isOpen={deleteConfirmOpen}
         title="Delete Portfolio Item"
-        description="Are you sure you want to delete this portfolio item? This action cannot be undone."
+        description={`Are you sure you want to delete "${itemToDeleteName}"?`}
         confirmText="Delete"
         cancelText="Cancel"
         onConfirm={confirmDelete}

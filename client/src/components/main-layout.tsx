@@ -24,8 +24,15 @@ import {
 import { toast } from "react-hot-toast";
 import api from "../lib/api";
 
-const navigation = [
-  { name: "User", href: "/dashboard/users", icon: UserPlus },
+interface NavigationItem {
+  name: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  adminOnly?: boolean;
+}
+
+const navigation: NavigationItem[] = [
+  { name: "Users", href: "/dashboard/users", icon: UserPlus, adminOnly: true },
   { name: "Portfolio", href: "/dashboard", icon: FolderOpen },
   { name: "Categories", href: "/dashboard/categories", icon: Layers },
   { name: "Industries", href: "/dashboard/industries", icon: Building2 },
@@ -153,10 +160,9 @@ export function MainLayout({ children }: MainLayoutProps) {
       </div>
       <nav className="flex-1 px-4 py-6">
         <ul className="space-y-2">
-          {(isAdmin
-            ? navigation
-            : navigation.filter((item) => item.name !== "Add User")
-          ).map((item) => {
+          {navigation
+            .filter((item) => !item.adminOnly || isAdmin)
+            .map((item) => {
             const isActive = location.pathname === item.href;
             return (
               <li key={item.name}>
