@@ -15,8 +15,7 @@ exports.listTechnologies = async function listTechnologies(_req, res) {
 exports.createTechnology = async function createTechnology(req, res) {
   try {
     await connectToDatabase();
-    const { name, description, category, icon, color, website, popularity } =
-      req.body || {};
+    const { name, description, category, icon } = req.body || {};
 
     if (!name || typeof name !== "string" || name.trim() === "") {
       return res.status(400).json({ message: "Technology name is required" });
@@ -27,9 +26,6 @@ exports.createTechnology = async function createTechnology(req, res) {
       description,
       category,
       icon,
-      color,
-      website,
-      popularity,
     });
     return res.status(201).json(tech);
   } catch (error) {
@@ -42,8 +38,7 @@ exports.updateTechnology = async function updateTechnology(req, res) {
   try {
     await connectToDatabase();
     const { id } = req.params || {};
-    const { name, description, category, icon, color, website, popularity } =
-      req.body || {};
+    const { name, description, category, icon } = req.body || {};
 
     if (!id) {
       return res.status(400).json({ message: "Technology id is required" });
@@ -59,9 +54,6 @@ exports.updateTechnology = async function updateTechnology(req, res) {
         description,
         category,
         icon,
-        color,
-        website,
-        popularity,
       },
       { new: true }
     );

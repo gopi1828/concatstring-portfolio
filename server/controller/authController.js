@@ -9,7 +9,7 @@ dotenv.config();
 
 function signAuthToken(payload) {
   const secret =
-    process.env.JWT_SECRETKEY
+    process.env.JWT_SECRETKEY ||
     "dev_secret_key_change_me";
   return jwt.sign(payload, secret, { expiresIn: "2h" });
 }
@@ -17,7 +17,7 @@ function signAuthToken(payload) {
 exports.register = async function register(req, res) {
   try {
     await connectToDatabase();
-    const { name, username, password } = req.body || {};
+    const { name, username, password, role } = req.body || {};
 
     if (!name || !username || !password) {
       return res
@@ -33,11 +33,19 @@ exports.register = async function register(req, res) {
     const salt = await bcryptjs.genSalt(12);
     const hashedPassword = await bcryptjs.hash(password, salt);
 
-    const newUser = await User.create({
+    const userData = {
       name,
       username,
       password: hashedPassword,
-    });
+      role: role || "user", // Use provided role or default to "user"
+    };
+
+    // Validate role
+    if (role && !["user", "admin"].includes(role)) {
+      return res.status(400).json({ message: "Invalid role. Must be 'user' or 'admin'" });
+    }
+
+    const newUser = await User.create(userData);
 
     return res.status(201).json({
       message: "User registered successfully",
@@ -145,6 +153,24 @@ exports.getUserById = async function getUserById(req, res) {
   }
 };
 
+exports.getUser = async function getUser(req, res) {
+  try {
+    await connectToDatabase();
+    
+    const users = await User.find();
+    if (!users) {
+      return res.status(404).json({ message: "Users not found" });
+    }
+
+    return res.status(200).json(users);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Something went wrong while fetching user",
+      error: error.message,
+    });
+  }
+};
+
 exports.updateUserById = async function updateUserById(req, res) {
   try {
     await connectToDatabase();
@@ -191,6 +217,31 @@ exports.updateUserById = async function updateUserById(req, res) {
   } catch (error) {
     return res.status(500).json({
       message: "Something went wrong while updating user",
+      error: error.message,
+    });
+  }
+};
+
+exports.deleteUserById = async function deleteUserById(req, res) {
+  try {
+    await connectToDatabase();
+    const { id } = req.params || {};
+    if (!id) {
+      return res.status(400).json({ message: "User id is required" });
+    }
+
+    const deletedUser = await User.findByIdAndDelete(id);
+    if (!deletedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({ 
+      message: "User deleted successfully", 
+      success: true 
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Something went wrong while deleting user",
       error: error.message,
     });
   }

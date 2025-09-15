@@ -36,7 +36,6 @@ export function AddPortfolioModal({
   const [techOptions, setTechOptions] = useState<any[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<any[]>([]);
   const [tagOptions, setTagOptions] = useState<any[]>([]);
-  const [industryOptions, setIndustryOptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
@@ -94,21 +93,6 @@ export function AddPortfolioModal({
 
     if (open) {
       fetchTag();
-    }
-  }, [open]);
-
-  useEffect(() => {
-    const fetchIndustry = async () => {
-      try {
-        const res = await api.get("/api/industry");
-        setIndustryOptions(Array.isArray(res.data) ? res.data : []);
-      } catch (err) {
-        setIndustryOptions([]);
-      }
-    };
-
-    if (open) {
-      fetchIndustry();
     }
   }, [open]);
 
@@ -296,7 +280,7 @@ export function AddPortfolioModal({
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
-            Add Portfolio Item
+            Add Project
           </DialogTitle>
           <DialogDescription>
             Create a new portfolio item to showcase your work.
@@ -401,42 +385,25 @@ export function AddPortfolioModal({
             </select>
           </div>
 
-          {/* Industry Select */}
+          {/* Industry */}
           <div className="space-y-2">
             <Label htmlFor="industry" className="text-sm font-medium">
               Industry
             </Label>
-            <select
+            <Input
               id="industry"
               name="industry"
+              placeholder="e.g. E-commerce, Finance"
               value={formik.values.industry}
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className="w-full h-11 border border-gray-200 rounded-md focus:outline-none focus:ring-blue-500/20 px-3"
-              disabled={isLoading}
-            >
-              <option value="">-- Select Industry --</option>
-              {Array.isArray(industryOptions) &&
-                industryOptions.map((industry, index) => (
-                  <option
-                    key={industry._id || industry.name || index}
-                    value={industry.name || industry}
-                  >
-                    {industry.name || industry}
-                  </option>
-                ))}
-            </select>
-            {formik.touched.industry && formik.errors.industry && (
-              <p className="text-sm text-red-600">
-                {formik.errors.industry}
-              </p>
-            )}
+              className="border-gray-200"
+            />
           </div>
 
           {/* Description */}
           <div className="space-y-2">
             <Label htmlFor="description" className="text-sm font-medium">
-              Description
+              Description 
             </Label>
             <Textarea
               id="description"
@@ -486,14 +453,8 @@ export function AddPortfolioModal({
               placeholder="Enter client name"
               value={formik.values.clientName}
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
               className="border-gray-200"
             />
-            {formik.touched.clientName && formik.errors.clientName && (
-              <p className="text-sm text-red-600">
-                {formik.errors.clientName}
-              </p>
-            )}
           </div>
 
           {/* Bid Platform */}
@@ -507,14 +468,8 @@ export function AddPortfolioModal({
               placeholder="Upwork, Freelancer, etc."
               value={formik.values.bidPlatform}
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
               className="border-gray-200"
             />
-            {formik.touched.bidPlatform && formik.errors.bidPlatform && (
-              <p className="text-sm text-red-600">
-                {formik.errors.bidPlatform}
-              </p>
-            )}
           </div>
 
           {/* Bid Platform URL */}

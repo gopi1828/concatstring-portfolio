@@ -1,5 +1,6 @@
-import type { FormEvent } from "react";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useFormik } from "formik";
+import { industryValidationSchema } from "../lib/industryValidation";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -30,47 +31,48 @@ export function EditIndustryModal({
   onIndustryUpdated,
   industry,
 }: EditIndustryModalProps) {
-  const [name, setName] = useState("");
-  const [loading, setLoading] = useState(false);
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      name: industry?.name || "",
+    },
+    validationSchema: industryValidationSchema,
+    validateOnBlur: false,
+    onSubmit: async (values) => {
+      if (!industry) return;
 
-  // Reset form when modal opens or industry changes
-  useEffect(() => {
-    if (open && industry) {
-      setName(industry.name);
-    } else if (!open) {
-      setName("");
-    }
-  }, [open, industry]);
+      try {
+        await api.put(`/api/industry/${industry._id}`, {
+          name: values.name,
+        });
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!industry) return;
-    
-    setLoading(true);
+        onOpenChange(false);
 
-    try {
-      await api.put(`/api/industry/${industry._id}`, {
-        name,
-      });
-
-      onOpenChange(false);
-
-      // Refresh the industries list
-      if (onIndustryUpdated) {
-        onIndustryUpdated();
+        // Refresh the industries list
+        if (onIndustryUpdated) {
+          onIndustryUpdated();
+        }
+        toast.success("Industry updated successfully!");
+      } catch (error: any) {
+        console.error("Industry update error:", error);
+        const errorMessage =
+          error.response?.data?.error ||
+          error.message ||
+          "Failed to update industry";
+        toast.error(errorMessage);
       }
-      toast.success("Industry updated successfully!");
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to update industry";
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
+    },
+  });
+
+  // Reset form when modal opens
+  useEffect(() => {
+    if (open) {
+      formik.resetForm();
     }
-  };
+  }, [open]);
 
   const handleCancel = () => {
-    setName(industry?.name || "");
+    formik.resetForm();
     onOpenChange(false);
   };
 
@@ -88,7 +90,7 @@ export function EditIndustryModal({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={formik.handleSubmit} className="space-y-6">
           {/* Name */}
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-medium">
@@ -96,13 +98,17 @@ export function EditIndustryModal({
             </Label>
             <Input
               id="name"
+              name="name"
               placeholder="e.g., E-commerce, Finance, Healthcare"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              disabled={loading}
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              disabled={formik.isSubmitting}
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
+            {formik.touched.name && formik.errors.name && (
+              <p className="text-sm text-red-600">{formik.errors.name}</p>
+            )}
           </div>
 
           <DialogFooter className="gap-2">
@@ -110,17 +116,17 @@ export function EditIndustryModal({
               type="button"
               variant="outline"
               onClick={handleCancel}
-              disabled={loading}
+              disabled={formik.isSubmitting}
               className="border-gray-200 hover:bg-gray-50 bg-transparent"
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              disabled={loading}
+              disabled={formik.isSubmitting}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
             >
-              {loading ? "Updating..." : "Update Industry"}
+              {formik.isSubmitting ? "Updating..." : "Update Industry"}
             </Button>
           </DialogFooter>
         </form>

@@ -12,8 +12,6 @@ import {
   Edit,
   Trash2,
   Code2,
-  Star,
-  TrendingUp,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { Skeleton } from "./ui/skeleton";
@@ -25,22 +23,9 @@ interface Technology {
   description: string;
   category: string;
   icon: string;
-  color: string;
-  website: string;
-  popularity: number;
   count?: number;
 }
 
-const categories = [
-  "All",
-  "Frontend Framework",
-  "Full-stack Framework",
-  "Programming Language",
-  "CSS Framework",
-  "Backend Runtime",
-  "Database",
-  "DevOps",
-];
 
 export function TechnologiesPage() {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -51,6 +36,7 @@ export function TechnologiesPage() {
     null
   );
   const [technologies, setTechnologies] = useState<Technology[]>([]);
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -81,9 +67,28 @@ export function TechnologiesPage() {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await api.get("/api/categories");
+      const data = response.data.map((cat: any) => ({
+        id: cat._id || cat.id,
+        name: cat.name,
+      }));
+      setCategories(data);
+    } catch (err) {
+      console.error("Error fetching categories:", err);
+    }
+  };
+
   useEffect(() => {
     fetchTechnologies();
+    fetchCategories();
   }, []);
+
+  const getCategoryName = (categoryId: string) => {
+    const category = categories.find(cat => cat.id === categoryId);
+    return category ? category.name : categoryId;
+  };
 
   const handleEditTechnology = (technology: Technology) => {
     setTechnologyToEdit(technology);
@@ -122,8 +127,9 @@ export function TechnologiesPage() {
 
     const matchesSearch = name.includes(search) || description.includes(search);
 
+    const categoryName = getCategoryName(tech.category);
     const matchesCategory =
-      selectedCategory === "All" || tech.category === selectedCategory;
+      selectedCategory === "All" || categoryName === selectedCategory;
 
     return matchesSearch && matchesCategory;
   });
@@ -162,19 +168,32 @@ export function TechnologiesPage() {
 
         {/* Filter Buttons */}
         <div className="flex flex-wrap gap-2 overflow-x-auto pb-2">
+          <Button
+            key="All"
+            variant={selectedCategory === "All" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSelectedCategory("All")}
+            className={`whitespace-nowrap ${
+              selectedCategory === "All"
+                ? "bg-blue-600 hover:bg-blue-700 text-white"
+                : "border-gray-200 hover:bg-gray-50 bg-transparent"
+            }`}
+          >
+            All
+          </Button>
           {categories.map((category) => (
             <Button
-              key={category}
-              variant={selectedCategory === category ? "default" : "outline"}
+              key={category.id}
+              variant={selectedCategory === category.name ? "default" : "outline"}
               size="sm"
-              onClick={() => setSelectedCategory(category)}
+              onClick={() => setSelectedCategory(category.name)}
               className={`whitespace-nowrap ${
-                selectedCategory === category
+                selectedCategory === category.name
                   ? "bg-blue-600 hover:bg-blue-700 text-white"
                   : "border-gray-200 hover:bg-gray-50 bg-transparent"
               }`}
             >
-              {category}
+              {category.name}
             </Button>
           ))}
         </div>
@@ -219,7 +238,7 @@ export function TechnologiesPage() {
                         {tech.name || "Unnamed"}
                       </CardTitle>
                       <p className="text-sm text-gray-500 mt-1 break-words">
-                        {tech.category || "Unknown"}
+                        {getCategoryName(tech.category) || "Unknown"}
                       </p>
                     </div>
                   </div>
@@ -251,39 +270,11 @@ export function TechnologiesPage() {
                   {tech.description}
                 </p>
 
-                {/* Popularity Bar */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Popularity</span>
-                    <span className="font-medium">{tech.popularity}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${tech.popularity}%` }}
-                    ></div>
-                  </div>
-                </div>
-
                 <div className="flex items-center justify-between">
-                  <Badge className={tech.color}>
+                  <Badge className="bg-blue-100 text-blue-800">
                     {tech.count ?? 0}{" "}
                     {tech.count === 1 ? "project" : "projects"}
                   </Badge>
-                  <div className="flex items-center gap-2">
-                    {tech.popularity >= 90 && (
-                      <div className="flex items-center gap-1 text-yellow-600">
-                        <Star className="h-3 w-3 fill-current" />
-                        <span className="text-xs">Popular</span>
-                      </div>
-                    )}
-                    {tech.popularity >= 85 && tech.popularity < 90 && (
-                      <div className="flex items-center gap-1 text-green-600">
-                        <TrendingUp className="h-3 w-3" />
-                        <span className="text-xs">Trending</span>
-                      </div>
-                    )}
-                  </div>
                 </div>
               </CardContent>
             </Card>
