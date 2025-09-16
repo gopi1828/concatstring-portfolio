@@ -106,17 +106,22 @@ export function IndustryPage() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, i) => (
-            <Card key={i} className="p-4 border-0 shadow-md">
-              <div className="flex items-center gap-3 mb-4">
-                <Skeleton className="h-10 w-10 rounded-full" />
-                <div className="flex-1">
-                  <Skeleton className="h-5 w-32 mb-2" />
-                  <Skeleton className="h-4 w-24" />
+            <Card
+              key={i}
+              className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-white"
+            >
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-start gap-3 min-w-0 flex-1">
+                    <div className="flex-1 min-w-0">
+                      <Skeleton className="h-5 w-32 mb-2" /> {/* industry name */}
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <Skeleton className="h-3 w-full mb-2" />
-              <Skeleton className="h-3 w-3/4 mb-2" />
-              <Skeleton className="h-3 w-1/2" />
+              </CardHeader>
+              <CardContent className="pt-0">
+                <Skeleton className="h-6 w-20 rounded-md" /> {/* projects badge */}
+              </CardContent>
             </Card>
           ))}
         </div>
@@ -135,7 +140,7 @@ export function IndustryPage() {
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <CardTitle className="text-lg text-gray-900 break-words leading-tight cursor-help">
+                              <CardTitle className="text-lg text-gray-900 break-words leading-tight">
                                 {industry.name}
                               </CardTitle>
                             </TooltipTrigger>
