@@ -167,13 +167,14 @@ export default function EditPortfolioModal({
     industry: iv?.industry ?? "",
     description: iv?.description ?? "",
     pageBuilder: iv?.pageBuilder ?? "",
-    clientName: iv?.clientName ?? "",
     clientInvoices: Array.isArray(iv?.clientInvoices) ? iv.clientInvoices : [],
     bidPlatform: iv?.bidPlatform ?? "",
     bidPlatformUrl: iv?.bidPlatformUrl ?? "",
     invoiceAmount: iv?.invoiceAmount ?? "",
     startDate: formatDateForInput(iv?.startDate),
     completionDate: formatDateForInput(iv?.completionDate),
+    salesPerson: iv?.salesPerson ?? "",
+    clientName: iv?.clientName ?? "",
     testimonials: iv?.testimonials ?? "",
     tag: iv?.tag ?? "",
   });
@@ -190,13 +191,14 @@ export default function EditPortfolioModal({
           industry: "",
           description: "",
           pageBuilder: "",
-          clientName: "",
           clientInvoices: [] as (File | string)[],
           bidPlatform: "",
           bidPlatformUrl: "",
           invoiceAmount: "",
           startDate: "",
           completionDate: "",
+          salesPerson:"",
+          clientName: "",
           testimonials: "",
           tag: "",
         },
@@ -230,7 +232,6 @@ export default function EditPortfolioModal({
         industry: values.industry,
         description: values.description,
         pageBuilder: values.pageBuilder,
-        clientName: values.clientName,
         clientInvoices: [...existingUrls, ...uploadedUrls],
         bidPlatform: values.bidPlatform,
         bidPlatformUrl: values.bidPlatformUrl,
@@ -241,6 +242,8 @@ export default function EditPortfolioModal({
             : values.invoiceAmount,
         startDate: values.startDate || undefined,
         completionDate: values.completionDate || undefined,
+        salesPerson:values.salesPerson,
+        clientName: values.clientName,
         testimonials: values.testimonials,
         tag: selectedTags,
       };
@@ -538,28 +541,7 @@ export default function EditPortfolioModal({
             </select>
           </div>
 
-          {/* Client Name */}
-          <div className="space-y-2">
-            <Label htmlFor="clientName" className="text-sm font-medium">
-              Client Name
-            </Label>
-            <Input
-              id="clientName"
-              name="clientName"
-              placeholder="Enter client name"
-              value={formik.values.clientName}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className="border-gray-200"
-            />
-            {formik.touched.clientName && formik.errors.clientName && (
-              <p className="text-sm text-red-600">
-                {formik.errors.clientName as string}
-              </p>
-            )}
-          </div>
-
-          {/* Bid Platform */}
+         {/* Bid Platform */}
           <div className="space-y-2">
             <Label htmlFor="bidPlatform" className="text-sm font-medium">
               Bid Platform
@@ -662,6 +644,48 @@ export default function EditPortfolioModal({
             {formik.touched.completionDate && formik.errors.completionDate && (
               <p className="text-sm text-red-600">
                 {formik.errors.completionDate as string}
+              </p>
+            )}
+          </div>
+
+           {/* Client Name */}
+          <div className="space-y-2">
+            <Label htmlFor="salesPerson" className="text-sm font-medium">
+              Sales Person
+            </Label>
+            <Input
+              id="salesPerson"
+              name="salesPerson"
+              placeholder="Enter sales person name"
+              value={formik.values.salesPerson}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              className="border-gray-200"
+            />
+            {formik.touched.salesPerson && formik.errors.salesPerson && (
+              <p className="text-sm text-red-600">
+                {formik.errors.salesPerson as string}
+              </p>
+            )}
+          </div>
+
+           {/* Client Name */}
+          <div className="space-y-2">
+            <Label htmlFor="clientName" className="text-sm font-medium">
+              Client Name
+            </Label>
+            <Input
+              id="clientName"
+              name="clientName"
+              placeholder="Enter client name"
+              value={formik.values.clientName}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              className="border-gray-200"
+            />
+            {formik.touched.clientName && formik.errors.clientName && (
+              <p className="text-sm text-red-600">
+                {formik.errors.clientName as string}
               </p>
             )}
           </div>
