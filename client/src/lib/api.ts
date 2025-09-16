@@ -6,7 +6,9 @@ const baseURL =
   //   /\/$/,
   //   ""
   // ) ||
-   "http://localhost:5000";
+  //  "http://localhost:5000";
+  import.meta.env.VITE_API_BASE_URL
+
 
 const api = axios.create({
   baseURL,
