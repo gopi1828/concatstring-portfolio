@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Search, Plus, Edit, Trash2, Tag } from "lucide-react";
+import { Search, Plus, Edit, Trash2 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -122,7 +122,6 @@ export function TagsPage() {
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-start gap-3 min-w-0 flex-1">
-                      <div className="text-2xl flex-shrink-0">🏷️</div>
                       <div className="flex-1 min-w-0">
                         <TooltipProvider>
                           <Tooltip>
@@ -164,7 +163,7 @@ export function TagsPage() {
                 </CardHeader>
 
                 <CardContent className="pt-0">
-                <Badge className="bg-blue-100 text-blue-800">
+                <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white transition-colors duration-200">
                     {tag.count ?? 0}{" "}
                     {tag.count === 1 ? "project" : "projects"}
                   </Badge>
@@ -177,7 +176,7 @@ export function TagsPage() {
           {filteredTags.length === 0 && (
             <div className="text-center py-12">
               <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                <Tag className="h-12 w-12 text-gray-400" />
+                <div className="text-4xl">📝</div>
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">
                 No tags found

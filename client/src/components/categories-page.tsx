@@ -188,7 +188,7 @@ export function CategoriesPage() {
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="flex items-center justify-between">
-                  <Badge className="bg-blue-100 text-blue-800">
+                  <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white transition-colors duration-200">
                     {category.count ?? 0}{" "}
                     {category.count === 1 ? "project" : "projects"}
                   </Badge>

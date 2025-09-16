@@ -172,7 +172,7 @@ export function IndustryPage() {
                 </CardHeader>
 
                 <CardContent className="pt-0">
-                <Badge className="bg-blue-100 text-blue-800">
+                <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white transition-colors duration-200">
                     {industry.count ?? 0}{" "}
                     {industry.count === 1 ? "project" : "projects"}
                   </Badge>
