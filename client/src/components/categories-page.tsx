@@ -132,20 +132,26 @@ export function CategoriesPage() {
 
       {/* Loader / Categories Grid */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
           {Array.from({ length: 6 }).map((_, i) => (
             <Card
               key={i}
-              className="border-0 shadow-md bg-white rounded-xl p-4 space-y-4"
+              className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-white"
             >
-              <div className="flex items-start gap-3">
-                <Skeleton className="h-10 w-10 rounded-md" /> {/* fake icon */}
-                <div className="flex-1 space-y-2">
-                  <Skeleton className="h-4 w-32" /> {/* title */}
-                  <Skeleton className="h-3 w-48" /> {/* description */}
+              <CardHeader className="pb-3">
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-1 min-w-0">
+                      <Skeleton className="h-5 w-32 mb-2" /> {/* category name */}
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <Skeleton className="h-6 w-20 rounded-md" /> {/* badge */}
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-6 w-20 rounded-md" /> {/* projects badge */}
+                </div>
+              </CardContent>
             </Card>
           ))}
         </div>
