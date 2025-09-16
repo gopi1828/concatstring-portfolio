@@ -36,6 +36,7 @@ export function AddPortfolioModal({
   const [techOptions, setTechOptions] = useState<any[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<any[]>([]);
   const [tagOptions, setTagOptions] = useState<any[]>([]);
+  const [userOptions, setUserOptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
@@ -105,6 +106,21 @@ export function AddPortfolioModal({
 
     if (open) {
       fetchTag();
+    }
+  }, [open]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await api.get("/api/auth/users");
+        setUserOptions(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        setUserOptions([]);
+      }
+    };
+
+    if (open) {
+      fetchUsers();
     }
   }, [open]);
 
@@ -561,19 +577,41 @@ export function AddPortfolioModal({
             )}
           </div>
 
-          {/* salesPerson */}
+          {/* Sales Person Select */}
           <div className="space-y-2">
             <Label htmlFor="salesPerson" className="text-sm font-medium">
               Sales Person
             </Label>
-            <Input
+            <select
               id="salesPerson"
               name="salesPerson"
-              placeholder="Enter sales person name"
               value={formik.values.salesPerson}
               onChange={formik.handleChange}
-              className="border-gray-200"
-            />
+              onBlur={formik.handleBlur}
+              className="w-full h-11 border border-gray-200 rounded-md focus:outline-none focus:ring-blue-500/20 px-3"
+              disabled={isLoading}
+            >
+              <option value="">-- Select Sales Person --</option>
+              {Array.isArray(userOptions) && userOptions.length > 0 ? (
+                userOptions.map((user, index) => (
+                  <option
+                    key={user._id || user.id || index}
+                    value={user.name || user.username}
+                  >
+                    {user.name || user.username}
+                  </option>
+                ))
+              ) : (
+                <option value="" disabled>
+                  {isLoading ? "Loading users..." : "No users available"}
+                </option>
+              )}
+            </select>
+            {formik.touched.salesPerson && formik.errors.salesPerson && (
+              <p className="text-sm text-red-600">
+                {formik.errors.salesPerson}
+              </p>
+            )}
           </div>
 
           {/* Client Name */}
