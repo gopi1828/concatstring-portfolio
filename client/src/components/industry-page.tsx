@@ -5,12 +5,6 @@ import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Search, Plus, Edit, Trash2, Building2 } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "./ui/tooltip";
 import toast from "react-hot-toast";
 import { ConfirmDialog } from "./ui/confirm-delete";
 import { Skeleton } from "./ui/skeleton";
@@ -137,20 +131,9 @@ export function IndustryPage() {
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-start gap-3 min-w-0 flex-1">
                       <div className="flex-1 min-w-0">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <CardTitle className="text-lg text-gray-900 break-words leading-tight">
-                                {industry.name}
-                              </CardTitle>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="max-w-xs break-words">
-                                {industry.name}
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <CardTitle className="text-lg text-gray-900 break-words leading-tight">
+                          {industry.name}
+                        </CardTitle>
                       </div>
                     </div>
 
