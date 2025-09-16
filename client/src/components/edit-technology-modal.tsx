@@ -4,7 +4,6 @@ import { technologyValidationSchema } from "../lib/technologyValidation";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { Textarea } from "./ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -26,9 +25,7 @@ import api from "../lib/api";
 interface Technology {
   _id: string;
   name: string;
-  description: string;
   category: string;
-  icon: string;
 }
 
 interface EditTechnologyModalProps {
@@ -40,24 +37,6 @@ interface EditTechnologyModalProps {
 
 
 
-const techIcons = [
-  { value: "⚛️", label: "React (⚛️)" },
-  { value: "▲", label: "Next.js (▲)" },
-  { value: "🔷", label: "TypeScript (🔷)" },
-  { value: "🎨", label: "CSS/Design (🎨)" },
-  { value: "🟢", label: "Node.js (🟢)" },
-  { value: "🐍", label: "Python (🐍)" },
-  { value: "☕", label: "Java (☕)" },
-  { value: "🐘", label: "PostgreSQL (🐘)" },
-  { value: "🍃", label: "MongoDB (🍃)" },
-  { value: "🐳", label: "Docker (🐳)" },
-  { value: "☁️", label: "Cloud (☁️)" },
-  { value: "🔧", label: "Tools (🔧)" },
-  { value: "📱", label: "Mobile (📱)" },
-  { value: "🎮", label: "Games (🎮)" },
-  { value: "🤖", label: "AI/ML (🤖)" },
-  { value: "⚡", label: "Performance (⚡)" },
-];
 
 
 export function EditTechnologyModal({
@@ -81,9 +60,7 @@ export function EditTechnologyModal({
     enableReinitialize: true,
     initialValues: {
       name: technology?.name || "",
-      description: technology?.description || "",
       category: technology?.category || "",
-      icon: technology?.icon || "",
     },
     validationSchema: technologyValidationSchema,
     validateOnBlur: false,
@@ -94,9 +71,7 @@ export function EditTechnologyModal({
       try {
         await api.put(`/api/technologies/${technology._id}`, {
           name: values.name,
-          description: values.description,
           category: values.category,
-          icon: values.icon,
         });
 
         onOpenChange(false);
@@ -106,9 +81,11 @@ export function EditTechnologyModal({
           onTechnologyUpdated();
         }
         toast.success("Technology updated successfully!");
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Failed to update technology";
+      } catch (error: any) {
+        const errorMessage = 
+          error.response?.data?.message || 
+          error.message || 
+          "Failed to update technology";
         toast.error(errorMessage);
       } finally {
         setIsSubmitting(false);
@@ -137,10 +114,6 @@ export function EditTechnologyModal({
     }
   };
 
-  const getCategoryName = (categoryId: string) => {
-    const category = categories.find(cat => cat.id === categoryId);
-    return category ? category.name : categoryId;
-  };
 
   const handleCancel = () => {
     formik.resetForm();
@@ -174,33 +147,11 @@ export function EditTechnologyModal({
               value={formik.values.name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              required
               disabled={isSubmitting}
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.name && formik.errors.name && (
               <p className="text-sm text-red-600">{formik.errors.name}</p>
-            )}
-          </div>
-
-          {/* Description */}
-          <div className="space-y-2">
-            <Label htmlFor="description" className="text-sm font-medium">
-              Description
-            </Label>
-            <Textarea
-              id="description"
-              name="description"
-              placeholder="Brief description of the technology..."
-              value={formik.values.description}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              rows={3}
-              disabled={isSubmitting}
-              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
-            />
-            {formik.touched.description && formik.errors.description && (
-              <p className="text-sm text-red-600">{formik.errors.description}</p>
             )}
           </div>
 
@@ -210,7 +161,6 @@ export function EditTechnologyModal({
             <Select
               value={formik.values.category}
               onValueChange={(value) => formik.setFieldValue("category", value)}
-              required
               disabled={isSubmitting || loadingCategories}
             >
               <SelectTrigger className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20">
@@ -239,58 +189,6 @@ export function EditTechnologyModal({
             )}
           </div>
 
-          {/* Icon */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Icon *</Label>
-            <Select 
-              value={formik.values.icon} 
-              onValueChange={(value) => formik.setFieldValue("icon", value)}
-              required
-              disabled={isSubmitting}
-            >
-              <SelectTrigger className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20">
-                <SelectValue placeholder="Select icon" />
-              </SelectTrigger>
-              <SelectContent>
-                {techIcons.map((iconOption) => (
-                  <SelectItem key={iconOption.value} value={iconOption.value}>
-                    {iconOption.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {formik.touched.icon && formik.errors.icon && (
-              <p className="text-sm text-red-600">{formik.errors.icon}</p>
-            )}
-          </div>
-
-          {/* Preview */}
-          {(formik.values.name || formik.values.icon || formik.values.category) && (
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Preview</Label>
-              <div className="p-4 border rounded-lg bg-gray-50">
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="text-2xl flex-shrink-0">{formik.values.icon || "🔧"}</div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-gray-900 break-words leading-tight">
-                      {formik.values.name || "Technology Name"}
-                    </h3>
-                    <p className="text-sm text-gray-500 break-words">
-                      {getCategoryName(formik.values.category) || "Category"}
-                    </p>
-                  </div>
-                </div>
-                {formik.values.description && (
-                  <p className="text-sm text-gray-600 mb-3">{formik.values.description}</p>
-                )}
-                <div className="flex items-center justify-between">
-                  <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
-                    0 projects
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
 
           <DialogFooter className="gap-2">
             <Button

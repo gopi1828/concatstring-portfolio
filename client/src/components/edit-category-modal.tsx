@@ -5,7 +5,6 @@ import api from "../lib/api";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { Textarea } from "./ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -14,21 +13,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
-import { categoryIcons } from "../lib/category-config";
 import toast from "react-hot-toast";
 
 interface Category {
   id: string;
   name: string;
-  description?: string;
-  icon: string;
   count: number;
 }
 
@@ -49,8 +38,6 @@ export function EditCategoryModal({
     enableReinitialize: true,
     initialValues: {
       name: category?.name || "",
-      description: category?.description || "",
-      icon: category?.icon || "",
     },
     validationSchema: categoryValidationSchema,
     validateOnBlur: false,
@@ -60,22 +47,22 @@ export function EditCategoryModal({
       try {
         await api.put(`/api/categories/${category.id}`, {
           name: values.name,
-          description: values.description,
-          icon: values.icon,
         });
 
         // Update the category in the parent component
         const updatedCategory = {
           ...category,
           name: values.name,
-          description: values.description,
-          icon: values.icon,
         };
         onCategoryUpdated(updatedCategory);
         onOpenChange(false);
         toast.success("Category updated successfully!");
-      } catch (error) {
-        toast.error("Error updating category");
+      } catch (error: any) {
+        const errorMessage = 
+          error.response?.data?.message || 
+          error.message || 
+          "Error updating category";
+        toast.error(errorMessage);
       }
     },
   });
@@ -127,80 +114,6 @@ export function EditCategoryModal({
               </p>
             )}
           </div>
-
-          {/* Description */}
-          <div className="space-y-2">
-            <Label htmlFor="description" className="text-sm font-medium">
-              Description
-            </Label>
-            <Textarea
-              id="description"
-              name="description"
-              placeholder="Describe this category..."
-              value={formik.values.description}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              rows={3}
-              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
-            />
-            {formik.touched.description && formik.errors.description && (
-              <p className="text-sm text-red-600">
-                {formik.errors.description}
-              </p>
-            )}
-          </div>
-
-          {/* Icon */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Icon *</Label>
-            <Select 
-              value={formik.values.icon} 
-              onValueChange={(value) => formik.setFieldValue("icon", value)}
-            >
-              <SelectTrigger className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20">
-                <SelectValue placeholder="Select an icon" />
-              </SelectTrigger>
-              <SelectContent>
-                {categoryIcons.map((iconOption) => (
-                  <SelectItem key={iconOption.id} value={iconOption.value}>
-                    {iconOption.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {formik.touched.icon && formik.errors.icon && (
-              <p className="text-sm text-red-600">
-                {formik.errors.icon}
-              </p>
-            )}
-          </div>
-
-
-          {/* Preview */}
-          {(formik.values.name || formik.values.icon) && (
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Preview</Label>
-              <div className="p-4 border rounded-lg bg-gray-50">
-                <div className="flex items-center gap-3">
-                  <div className="text-2xl">{formik.values.icon || "📁"}</div>
-                  <div>
-                    <h3 className="font-medium text-gray-900">
-                      {formik.values.name || "Category Name"}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      {formik.values.description || "Category description"}
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-3">
-                  <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                    {category.count}{" "}
-                    {category.count === 1 ? "project" : "projects"}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
 
           <DialogFooter className="gap-2">
             <Button

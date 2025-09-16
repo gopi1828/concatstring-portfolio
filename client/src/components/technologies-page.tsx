@@ -20,9 +20,7 @@ import api from "../lib/api";
 interface Technology {
   _id: string;
   name: string;
-  description: string;
   category: string;
-  icon: string;
   count?: number;
 }
 
@@ -53,7 +51,6 @@ export function TechnologiesPage() {
       const cleaned = data.filter(
         (tech) =>
           typeof tech.name === "string" &&
-          typeof tech.description === "string" &&
           typeof tech.category === "string"
       );
 
@@ -75,14 +72,20 @@ export function TechnologiesPage() {
         name: cat.name,
       }));
       setCategories(data);
+      return data; // Return the data for potential use
     } catch (err) {
       console.error("Error fetching categories:", err);
+      return []; // Return empty array on error
     }
   };
 
   useEffect(() => {
-    fetchTechnologies();
-    fetchCategories();
+    const loadData = async () => {
+      // First fetch categories, then technologies
+      await fetchCategories();
+      await fetchTechnologies();
+    };
+    loadData();
   }, []);
 
   const getCategoryName = (categoryId: string) => {
@@ -122,10 +125,9 @@ export function TechnologiesPage() {
 
   const filteredTechnologies = technologies.filter((tech) => {
     const name = (tech.name || "").toLowerCase();
-    const description = (tech.description || "").toLowerCase();
     const search = searchTerm.toLowerCase();
 
-    const matchesSearch = name.includes(search) || description.includes(search);
+    const matchesSearch = name.includes(search);
 
     const categoryName = getCategoryName(tech.category);
     const matchesCategory =
@@ -203,17 +205,25 @@ export function TechnologiesPage() {
       {loading && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, i) => (
-            <Card key={i} className="p-4 border-0 shadow-md">
-              <div className="flex items-center gap-3 mb-4">
-                <Skeleton className="h-10 w-10 rounded-full" />
-                <div className="flex-1">
-                  <Skeleton className="h-5 w-32 mb-2" />
-                  <Skeleton className="h-4 w-24" />
+            <Card
+              key={i}
+              className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-white"
+            >
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-start gap-3 min-w-0 flex-1">
+                    <div className="flex-1 min-w-0">
+                      <Skeleton className="h-5 w-32 mb-2" /> {/* technology name */}
+                      <Skeleton className="h-4 w-24" /> {/* category name */}
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <Skeleton className="h-3 w-full mb-2" />
-              <Skeleton className="h-3 w-3/4 mb-2" />
-              <Skeleton className="h-3 w-1/2" />
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-6 w-20 rounded-md" /> {/* projects badge */}
+                </div>
+              </CardContent>
             </Card>
           ))}
         </div>
@@ -232,7 +242,6 @@ export function TechnologiesPage() {
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-start gap-3 min-w-0 flex-1">
-                    <div className="text-2xl flex-shrink-0">{tech.icon}</div>
                     <div className="flex-1 min-w-0">
                       <CardTitle className="text-lg text-gray-900 break-words leading-tight">
                         {tech.name || "Unnamed"}
@@ -266,12 +275,9 @@ export function TechnologiesPage() {
               </CardHeader>
 
               <CardContent className="space-y-4">
-                <p className="text-sm text-gray-600 line-clamp-2">
-                  {tech.description}
-                </p>
 
                 <div className="flex items-center justify-between">
-                  <Badge className="bg-blue-100 text-blue-800">
+                  <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white transition-colors duration-200">
                     {tech.count ?? 0}{" "}
                     {tech.count === 1 ? "project" : "projects"}
                   </Badge>

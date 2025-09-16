@@ -4,13 +4,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Search, Plus, Edit, Trash2, Tag } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "./ui/tooltip";
+import { Search, Plus, Edit, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { ConfirmDialog } from "./ui/confirm-delete";
 import { Skeleton } from "./ui/skeleton";
@@ -20,6 +14,7 @@ import { EditTagModal } from "./edit-tag-modal";
 type TagType = {
   _id: string;
   name: string;
+  count: number;
 };
 
 export function TagsPage() {
@@ -96,22 +91,27 @@ export function TagsPage() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, i) => (
-            <Card key={i} className="p-4 border-0 shadow-md">
-              <div className="flex items-center gap-3 mb-4">
-                <Skeleton className="h-10 w-10 rounded-full" />
-                <div className="flex-1">
-                  <Skeleton className="h-5 w-32 mb-2" />
-                  <Skeleton className="h-4 w-24" />
+            <Card
+              key={i}
+              className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-white"
+            >
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-start gap-3 min-w-0 flex-1">
+                    <div className="flex-1 min-w-0">
+                      <Skeleton className="h-5 w-32 mb-2" /> {/* tag name */}
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <Skeleton className="h-3 w-full mb-2" />
-              <Skeleton className="h-3 w-3/4 mb-2" />
-              <Skeleton className="h-3 w-1/2" />
+              </CardHeader>
+              <CardContent className="pt-0">
+                <Skeleton className="h-6 w-20 rounded-md" /> {/* projects badge */}
+              </CardContent>
             </Card>
           ))}
         </div>
       ) : (
-        <>
+        <>  
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredTags.map((tag) => (
               <Card
@@ -121,22 +121,10 @@ export function TagsPage() {
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-start gap-3 min-w-0 flex-1">
-                      <div className="text-2xl flex-shrink-0">🏷️</div>
                       <div className="flex-1 min-w-0">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <CardTitle className="text-lg text-gray-900 break-words leading-tight cursor-help">
-                                {tag.name}
-                              </CardTitle>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="max-w-xs break-words">
-                                {tag.name}
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <CardTitle className="text-lg text-gray-900 break-words leading-tight">
+                          {tag.name}
+                        </CardTitle>
                       </div>
                     </div>
 
@@ -163,7 +151,10 @@ export function TagsPage() {
                 </CardHeader>
 
                 <CardContent className="pt-0">
-                  <Badge className="bg-gray-100 text-gray-700">0 items</Badge>
+                <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white transition-colors duration-200">
+                    {tag.count ?? 0}{" "}
+                    {tag.count === 1 ? "project" : "projects"}
+                  </Badge>
                 </CardContent>
               </Card>
             ))}
@@ -173,7 +164,7 @@ export function TagsPage() {
           {filteredTags.length === 0 && (
             <div className="text-center py-12">
               <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                <Tag className="h-12 w-12 text-gray-400" />
+                <div className="text-4xl">📝</div>
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">
                 No tags found

@@ -2,11 +2,12 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 
 const baseURL =
-  // (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(
-  //   /\/$/,
-  //   ""
-  // ) ||
+  (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(
+    /\/$/,
+    ""
+  ) ||
    "http://localhost:5000";
+
 
 const api = axios.create({
   baseURL,

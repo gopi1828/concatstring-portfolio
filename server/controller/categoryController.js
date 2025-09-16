@@ -1,13 +1,14 @@
 const dotenv = require("dotenv");
 const connectToDatabase = require("../database/config");
 const Category = require("../model/category");
+const Portfolio = require("../model/portfolio");
 
 dotenv.config();
 
 exports.createCategory = async function createCategory(req, res) {
   try {
     await connectToDatabase();
-    const { name, description, icon, count } = req.body || {};
+    const { name, count } = req.body || {};
 
     if (!name || typeof name !== "string" || name.trim() === "") {
       return res.status(400).json({ message: "name is required" });
@@ -20,9 +21,6 @@ exports.createCategory = async function createCategory(req, res) {
 
     const category = await Category.create({
       name: name.trim(),
-      description:
-        typeof description === "string" ? description.trim() : undefined,
-      icon: typeof icon === "string" ? icon.trim() : undefined,
       count: typeof count === "number" ? count : undefined,
     });
 
@@ -40,7 +38,17 @@ exports.getCategories = async function getCategories(_req, res) {
   try {
     await connectToDatabase();
     const categories = await Category.find({}).sort({ createdAt: -1 });
-    return res.status(200).json(categories);
+
+    const categoriesWithCount = await Promise.all(
+      categories.map(async (cat) => {
+        const count = await Portfolio.countDocuments({ category: cat.name });
+        return {
+          ...cat.toObject(),
+          count,
+        }
+      })
+    );
+    return res.status(200).json(categoriesWithCount);
   } catch (error) {
     return res
       .status(500)
@@ -75,13 +83,10 @@ exports.updateCategoryById = async function updateCategoryById(req, res) {
       return res.status(400).json({ message: "category id is required" });
     }
 
-    const { name, description, icon, count } = req.body || {};
+    const { name, count } = req.body || {};
     const updates = {};
     if (typeof name === "string" && name.trim() !== "")
       updates.name = name.trim();
-    if (typeof description === "string")
-      updates.description = description.trim();
-    if (typeof icon === "string") updates.icon = icon.trim();
     if (typeof count === "number") updates.count = count;
 
     if (Object.keys(updates).length === 0) {

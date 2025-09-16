@@ -9,9 +9,7 @@ const technologySchema = new mongoose.Schema(
       trim: true,
       index: true,
     },
-    description: { type: String },
     category: { type: String },
-    icon: { type: String },
     count: { type: Number, default: 0 },
   },
   { timestamps: true }

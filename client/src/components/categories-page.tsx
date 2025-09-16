@@ -14,8 +14,6 @@ import { Skeleton } from "./ui/skeleton";
 interface Category {
   id: string;
   name: string;
-  description?: string;
-  icon: string;
   count: number;
 }
 
@@ -39,9 +37,11 @@ export function CategoriesPage() {
       const categoriesWithId = response.data.map((cat: any) => ({
         ...cat,
         id: cat._id || cat.id,
+        count: cat.count ?? 0,
       }));
       setCategories(categoriesWithId);
     } catch (err: any) {
+      console.error("Error fetching categories:", err);
       // Error handled silently
     } finally {
       setLoading(false);
@@ -97,8 +97,7 @@ export function CategoriesPage() {
 
   const filteredCategories = categories.filter(
     (category) =>
-      category?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      category?.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      category?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -133,20 +132,26 @@ export function CategoriesPage() {
 
       {/* Loader / Categories Grid */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
           {Array.from({ length: 6 }).map((_, i) => (
             <Card
               key={i}
-              className="border-0 shadow-md bg-white rounded-xl p-4 space-y-4"
+              className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-white"
             >
-              <div className="flex items-start gap-3">
-                <Skeleton className="h-10 w-10 rounded-md" /> {/* fake icon */}
-                <div className="flex-1 space-y-2">
-                  <Skeleton className="h-4 w-32" /> {/* title */}
-                  <Skeleton className="h-3 w-48" /> {/* description */}
+              <CardHeader className="pb-3">
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-1 min-w-0">
+                      <Skeleton className="h-5 w-32 mb-2" /> {/* category name */}
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <Skeleton className="h-6 w-20 rounded-md" /> {/* badge */}
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-6 w-20 rounded-md" /> {/* projects badge */}
+                </div>
+              </CardContent>
             </Card>
           ))}
         </div>
@@ -161,18 +166,10 @@ export function CategoriesPage() {
                 {/* Fixed layout structure */}
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
-                    <div className="text-2xl flex-shrink-0">
-                      {category.icon}
-                    </div>
                     <div className="flex-1 min-w-0">
                       <CardTitle className="text-lg text-gray-900 break-words">
                         {category.name}
                       </CardTitle>
-                      {category.description && (
-                        <p className="text-sm text-gray-500 mt-1 break-words">
-                          {category.description}
-                        </p>
-                      )}
                     </div>
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1 flex-shrink-0">
                       <Button
@@ -197,7 +194,7 @@ export function CategoriesPage() {
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="flex items-center justify-between">
-                  <Badge className="bg-blue-100 text-blue-800">
+                  <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white transition-colors duration-200">
                     {category.count ?? 0}{" "}
                     {category.count === 1 ? "project" : "projects"}
                   </Badge>

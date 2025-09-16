@@ -84,6 +84,7 @@ export function UsersPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
+  const [usernameToDelete, setUsernameToDelete] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const itemsPerPage = 10;
@@ -178,7 +179,9 @@ export function UsersPage() {
   };
 
   const handleDelete = async (id: string) => {
+    const user = users.find(u => u._id === id);
     setUserToDelete(id);
+    setUsernameToDelete(user?.username || null);
     setDeleteConfirmOpen(true);
   };
 
@@ -207,12 +210,14 @@ export function UsersPage() {
     } finally {
       setDeleteConfirmOpen(false);
       setUserToDelete(null);
+      setUsernameToDelete(null);
     }
   };
 
   const cancelDelete = () => {
     setDeleteConfirmOpen(false);
     setUserToDelete(null);
+    setUsernameToDelete(null);
   };
 
   const filteredUsers = users.filter((user) => {
@@ -436,7 +441,7 @@ export function UsersPage() {
       <ConfirmDialog
         isOpen={deleteConfirmOpen}
         title="Delete User"
-        description="Are you sure you want to delete this user? This action cannot be undone."
+        description={`Are you sure you want to delete the user "${usernameToDelete || 'Unknown'}"?`}
         confirmText="Delete"
         cancelText="Cancel"
         onConfirm={confirmDelete}

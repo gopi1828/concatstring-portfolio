@@ -51,8 +51,21 @@ export function AddPortfolioModal({
       try {
         setIsLoading(true);
         const res = await api.get("/api/technologies");
-        setTechOptions(Array.isArray(res.data) ? res.data : []);
+        const data = res.data;
+        
+        // Filter technologies to only include valid ones
+        const cleaned = Array.isArray(data) ? data.filter(
+          (tech) =>
+            typeof tech.name === "string" &&
+            typeof tech.description === "string" &&
+            typeof tech.category === "string"
+        ) : [];
+        
+        console.log("Raw technologies data:", data);
+        console.log("Filtered technologies:", cleaned);
+        setTechOptions(cleaned);
       } catch (err) {
+        console.error("Error fetching technologies:", err);
         setTechOptions([]);
       } finally {
         setIsLoading(false);
@@ -61,7 +74,6 @@ export function AddPortfolioModal({
 
     if (open) {
       fetchTech();
-      // Reset form when modal opens
       resetFormState();
     }
   }, [open]);
@@ -106,13 +118,14 @@ export function AddPortfolioModal({
     industry: "",
     description: "",
     pageBuilder: "",
-    clientName: "",
     clientInvoices: [] as File[],
     bidPlatform: "",
     bidPlatformUrl: "",
     invoiceAmount: "",
     startDate: "",
     completionDate: "",
+    salesPerson: "",
+    clientName: "",
     testimonials: "",
     tag: "",
   };
@@ -122,6 +135,7 @@ export function AddPortfolioModal({
     validationSchema,
     validateOnBlur: false,
     onSubmit: async (values) => {
+                
       const hasFiles = (values.clientInvoices?.length ?? 0) > 0;
 
       async function uploadViaBackend(files: File[]): Promise<string[]> {
@@ -132,8 +146,9 @@ export function AddPortfolioModal({
             headers: { "Content-Type": "multipart/form-data" },
           });
 
-          // Axios puts parsed data here
           const data = res.data;
+          
+          
 
           return Array.isArray(data.urls) ? data.urls : [];
         } catch (err: any) {
@@ -159,7 +174,6 @@ export function AddPortfolioModal({
         industry: values.industry,
         description: values.description,
         pageBuilder: values.pageBuilder,
-        clientName: values.clientName,
         clientInvoices: uploadedInvoices,
         bidPlatform: values.bidPlatform,
         bidPlatformUrl: values.bidPlatformUrl,
@@ -170,6 +184,8 @@ export function AddPortfolioModal({
             : values.invoiceAmount,
         startDate: values.startDate || undefined,
         completionDate: values.completionDate || undefined,
+        salesPerson: values.salesPerson,
+        clientName: values.clientName,
         testimonials: values.testimonials,
         tag: selectedTags,
       };
@@ -344,15 +360,20 @@ export function AddPortfolioModal({
               disabled={isLoading}
             >
               <option value="">-- Select Technology --</option>
-              {Array.isArray(techOptions) &&
+              {Array.isArray(techOptions) && techOptions.length > 0 ? (
                 techOptions.map((tech, index) => (
                   <option
-                    key={tech.id || tech.name || index}
+                    key={tech._id || tech.id || tech.name || index}
                     value={tech.name || tech}
                   >
                     {tech.name || tech}
                   </option>
-                ))}
+                ))
+              ) : (
+                <option value="" disabled>
+                  {isLoading ? "Loading technologies..." : "No technologies available"}
+                </option>
+              )}
             </select>
             {formik.touched.technology && formik.errors.technology && (
               <p className="text-sm text-red-600">{formik.errors.technology}</p>
@@ -440,21 +461,6 @@ export function AddPortfolioModal({
               <option value="WordPress">WordPress</option>
               <option value="Custom">Custom</option>
             </select>
-          </div>
-
-          {/* Client Name */}
-          <div className="space-y-2">
-            <Label htmlFor="clientName" className="text-sm font-medium">
-              Client Name
-            </Label>
-            <Input
-              id="clientName"
-              name="clientName"
-              placeholder="Enter client name"
-              value={formik.values.clientName}
-              onChange={formik.handleChange}
-              className="border-gray-200"
-            />
           </div>
 
           {/* Bid Platform */}
@@ -553,6 +559,36 @@ export function AddPortfolioModal({
                 {formik.errors.completionDate}
               </p>
             )}
+          </div>
+
+          {/* salesPerson */}
+          <div className="space-y-2">
+            <Label htmlFor="salesPerson" className="text-sm font-medium">
+              Sales Person
+            </Label>
+            <Input
+              id="salesPerson"
+              name="salesPerson"
+              placeholder="Enter sales person name"
+              value={formik.values.salesPerson}
+              onChange={formik.handleChange}
+              className="border-gray-200"
+            />
+          </div>
+
+          {/* Client Name */}
+          <div className="space-y-2">
+            <Label htmlFor="clientName" className="text-sm font-medium">
+              Client Name
+            </Label>
+            <Input
+              id="clientName"
+              name="clientName"
+              placeholder="Enter client name"
+              value={formik.values.clientName}
+              onChange={formik.handleChange}
+              className="border-gray-200"
+            />
           </div>
 
           {/* Testimonials */}

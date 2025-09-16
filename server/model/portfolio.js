@@ -32,10 +32,7 @@ const portfolioSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    clientName: {
-      type: String,
-      trim: true,
-    },
+    
     clientInvoices: {
       type: [String],
       default: [],
@@ -57,6 +54,14 @@ const portfolioSchema = new mongoose.Schema(
     },
     completionDate: {
       type: Date,
+    },
+    salesPerson: {
+      type: String,
+      trim: true,
+    },
+    clientName: {
+      type: String,
+      trim: true,
     },
     testimonials: {
       type: String,

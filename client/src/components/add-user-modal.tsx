@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import api from "../lib/api";
@@ -13,7 +13,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Eye, EyeOff } from "lucide-react";
 
 interface AddUserModalProps {
@@ -32,8 +31,15 @@ const userValidationSchema = Yup.object({
     .required("Username is required")
     .min(3, "Username must be at least 3 characters")
     .max(30, "Username must be less than 30 characters")
-    .matches(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores")
-    .test("no-spaces", "Username cannot contain spaces", (value) => !/\s/.test(value)),
+    .matches(
+      /^[a-zA-Z0-9_]+$/,
+      "Username can only contain letters, numbers, and underscores"
+    )
+    .test(
+      "no-spaces",
+      "Username cannot contain spaces",
+      (value) => !/\s/.test(value)
+    ),
   password: Yup.string()
     .required("Password is required")
     .min(4, "Password must be at least 4 characters")
@@ -59,11 +65,12 @@ export function AddUserModal({
       role: "user",
     },
     validationSchema: userValidationSchema,
+    validateOnBlur: false,
     onSubmit: async (values) => {
       setIsLoading(true);
       try {
         const response = await api.post("/api/auth/register", values);
-        
+
         if (response.data) {
           toast.success("User created successfully!");
           formik.resetForm();
@@ -71,7 +78,8 @@ export function AddUserModal({
           onUserAdded?.();
         }
       } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "Failed to create user";
+        const errorMessage =
+          error.response?.data?.message || "Failed to create user";
         toast.error(errorMessage);
       } finally {
         setIsLoading(false);
@@ -79,14 +87,22 @@ export function AddUserModal({
     },
   });
 
-  const handleClose = () => {
+  
+  useEffect(() => {
+    if (open) {
+      formik.resetForm();
+      setShowPassword(false);
+    }
+  }, [open]);
+
+  const handleCancel = () => {
     formik.resetForm();
     setShowPassword(false);
     onOpenChange(false);
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add New User</DialogTitle>
@@ -96,10 +112,7 @@ export function AddUserModal({
         </DialogHeader>
         <form onSubmit={formik.handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label
-              htmlFor="name"
-              className="text-sm font-medium text-gray-700"
-            >
+            <Label htmlFor="name" className="text-sm font-medium text-gray-700">
               Name
             </Label>
             <Input
@@ -177,24 +190,36 @@ export function AddUserModal({
           </div>
 
           <div className="space-y-2">
-            <Label
-              htmlFor="role"
-              className="text-sm font-medium text-gray-700"
-            >
+            <Label htmlFor="role" className="text-sm font-medium text-gray-700">
               Role
             </Label>
-            <Select
-              value={formik.values.role}
-              onValueChange={(value) => formik.setFieldValue("role", value)}
-            >
-              <SelectTrigger className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20">
-                <SelectValue placeholder="Select role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="user">USER</SelectItem>
-                <SelectItem value="admin">ADMIN</SelectItem>
-              </SelectContent>
-            </Select>
+
+            <div role="group" aria-labelledby="role" className="flex space-x-6">
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="role"
+                  value="user"
+                  checked={formik.values.role === "user"}
+                  onChange={formik.handleChange}
+                  className="form-radio text-blue-600"
+                />
+                <span>User</span>
+              </label>
+
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="role"
+                  value="admin"
+                  checked={formik.values.role === "admin"}
+                  onChange={formik.handleChange}
+                  className="form-radio text-blue-600"
+                />
+                <span>Admin</span>
+              </label>
+            </div>
+
             {formik.touched.role && formik.errors.role && (
               <p className="text-red-500 text-sm">{formik.errors.role}</p>
             )}
@@ -204,7 +229,7 @@ export function AddUserModal({
             <Button
               type="button"
               variant="outline"
-              onClick={handleClose}
+              onClick={handleCancel}
               disabled={isLoading}
               className="flex-1 h-11"
             >
