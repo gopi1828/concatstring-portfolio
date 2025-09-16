@@ -15,13 +15,14 @@ exports.createPortfolio = async function createPortfolio(req, res) {
       industry,
       description,
       pageBuilder,
-      clientName,
       clientInvoices,
       bidPlatform,
       bidPlatformUrl,
       invoiceAmount,
       startDate,
       completionDate,
+      salesPerson,
+      clientName,
       testimonials,
       tag,
     } = req.body || {};
@@ -55,8 +56,7 @@ exports.createPortfolio = async function createPortfolio(req, res) {
         typeof description === "string" ? description.trim() : undefined,
       pageBuilder:
         typeof pageBuilder === "string" ? pageBuilder.trim() : undefined,
-      clientName:
-        typeof clientName === "string" ? clientName.trim() : undefined,
+      
       clientInvoices: Array.isArray(clientInvoices)
         ? clientInvoices
         : undefined,
@@ -68,6 +68,10 @@ exports.createPortfolio = async function createPortfolio(req, res) {
         typeof invoiceAmount === "number" ? invoiceAmount : undefined,
       startDate: startDate ? new Date(startDate) : undefined,
       completionDate: completionDate ? new Date(completionDate) : undefined,
+      salesPerson:
+        typeof salesPerson === "string" ? salesPerson.trim() : undefined,
+      clientName:
+        typeof clientName === "string" ? clientName.trim() : undefined,
       testimonials:
         typeof testimonials === "string" ? testimonials.trim() : undefined,
       tag: Array.isArray(tag) ? tag : undefined,
@@ -130,13 +134,14 @@ exports.updatePortfolioById = async function updatePortfolioById(req, res) {
       industry,
       description,
       pageBuilder,
-      clientName,
       clientInvoices,
       bidPlatform,
       bidPlatformUrl,
       invoiceAmount,
       startDate,
       completionDate,
+      salesPerson,
+      clientName,
       testimonials,
       tag,
     } = req.body || {};
@@ -166,7 +171,6 @@ exports.updatePortfolioById = async function updatePortfolioById(req, res) {
       updates.description = description.trim();
     if (typeof pageBuilder === "string")
       updates.pageBuilder = pageBuilder.trim();
-    if (typeof clientName === "string") updates.clientName = clientName.trim();
     if (Array.isArray(clientInvoices)) updates.clientInvoices = clientInvoices;
     if (typeof bidPlatform === "string")
       updates.bidPlatform = bidPlatform.trim();
@@ -176,6 +180,9 @@ exports.updatePortfolioById = async function updatePortfolioById(req, res) {
       updates.invoiceAmount = invoiceAmount;
     if (startDate) updates.startDate = new Date(startDate);
     if (completionDate) updates.completionDate = new Date(completionDate);
+        if (typeof salesPerson === "string") updates.salesPerson = salesPerson.trim();
+    if (typeof clientName === "string") updates.clientName = clientName.trim();
+
     if (typeof testimonials === "string")
       updates.testimonials = testimonials.trim();
     if (Array.isArray(tag)) updates.tag = tag;
