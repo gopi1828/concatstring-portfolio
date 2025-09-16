@@ -584,26 +584,6 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
               </CardContent>
             </Card>
           )}
-
-          {/* Tags */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Tags</CardTitle>
-            </CardHeader>
-            {/* <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {portfolioTags.map((tag, index) => (
-                  <Badge
-                    key={index}
-                    variant="secondary"
-                    className="bg-blue-50 text-blue-700"
-                  >
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent> */}
-          </Card>
         </div>
       </div>
     </div>
