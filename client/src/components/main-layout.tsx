@@ -150,8 +150,6 @@ export function MainLayout({ children }: MainLayoutProps) {
     <div className="flex h-full flex-col bg-white border-r border-gray-200">
       <div className="flex h-16 items-center border-b border-gray-200 px-4">
         <div className="flex items-center justify-start w-full">
-          {/* <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center"> */}
-            {/* <FolderOpen className="w-4 h-4 text-white" /> */}
             <svg width="250" height="50" viewBox="0 0 286 70" fill="none" xmlns="http:/2/www.w3.org/2000/svg" className="ml-0">
                 <g clip-path="url(#clip0_423_2149)">
                     <path
@@ -285,10 +283,6 @@ export function MainLayout({ children }: MainLayoutProps) {
                     </clipPath>
                 </defs>
             </svg>
-          {/* </div> */}
-          {/* <span className="text-lg font-semibold text-gray-900">
-            Portfolio Admin
-          </span> */}
         </div>
       </div>
       <nav className="flex-1 px-4 py-6">

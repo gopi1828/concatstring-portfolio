@@ -11,6 +11,8 @@ import { IndustryPage } from "./components/industry-page";
 import { EditUserForm } from "./components/edit-user-form";
 import { PortfolioDetailPage } from "./components/portfolio-detail-page";
 import { UsersPage } from "./components/users-page";
+import { PublicPortfolioPage } from "./components/public-portfolio-page";
+import { PublicPortfolioDetail } from "./components/public-portfolio-detail";
 
 // Wrapper component to extract id from URL params
 function PortfolioDetailPageWrapper() {
@@ -65,6 +67,18 @@ function App() {
         {/* Public routes */}
         <Route
           path="/"
+          element={<PublicPortfolioPage />}
+        />
+        <Route
+          path="/portfolio"
+          element={<PublicPortfolioPage />}
+        />
+        <Route
+          path="/portfolio/:id"
+          element={<PublicPortfolioDetail />}
+        />
+        <Route
+          path="/login"
           element={
             <RedirectIfAuth>
               <LoginPage />
