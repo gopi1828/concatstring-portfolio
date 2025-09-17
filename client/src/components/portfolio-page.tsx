@@ -50,6 +50,7 @@ type PortfolioItem = {
   industry: string;
   pageBuilder: string;
   clientName: string;
+  salesPerson: string;
   clientInvoices: string[];
   bidPlatform: string;
   bidPlatformUrl: string;
@@ -225,7 +226,7 @@ export function PortfolioPage() {
 
   const isAdmin = (userRole ?? "").toUpperCase() === "ADMIN";
 
-  // Callback function to refresh data when portfolio is added
+  
   const handlePortfolioAdded = () => {
     fetchPortfolios();
   };
@@ -273,18 +274,24 @@ export function PortfolioPage() {
 
   const filteredItems = portfolioItems.filter((item) => {
     const projectName = item.projectName?.toLowerCase() || "";
-    const description = item.description?.toLowerCase() || "";
+    const websiteLink = item.websiteLink?.toLowerCase() || "";
+    const clientName = item.clientName?.toLowerCase() || "";
+    const salesPerson = item.salesPerson?.toLowerCase() || "";
     const technology = typeof item.technology === 'string' ? item.technology.toLowerCase() : "";
     const tag = Array.isArray(item.tag) ? item.tag : [];
+    const category = item.category?.toLowerCase() || "";
+    const industry = item.industry?.toLowerCase() || "";
     const search = searchTerm.toLowerCase();
 
     return (
       projectName.includes(search) ||
-      description.includes(search) ||
+      websiteLink.includes(search) ||
+      clientName.includes(search) ||
+      salesPerson.includes(search) ||
       technology.includes(search) ||
       tag.some((t) => t?.toLowerCase().includes(search)) ||
-      item.category?.toLowerCase().includes(search) ||
-      item.industry?.toLowerCase().includes(search)
+      category.includes(search) ||
+      industry.includes(search)
     );
   });
 

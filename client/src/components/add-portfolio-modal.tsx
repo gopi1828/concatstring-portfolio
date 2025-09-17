@@ -36,6 +36,8 @@ export function AddPortfolioModal({
   const [techOptions, setTechOptions] = useState<any[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<any[]>([]);
   const [tagOptions, setTagOptions] = useState<any[]>([]);
+  const [industryOptions, setIndustryOptions] = useState<any[]>([]);
+  const [userOptions, setUserOptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
@@ -57,7 +59,6 @@ export function AddPortfolioModal({
         const cleaned = Array.isArray(data) ? data.filter(
           (tech) =>
             typeof tech.name === "string" &&
-            typeof tech.description === "string" &&
             typeof tech.category === "string"
         ) : [];
         
@@ -105,6 +106,36 @@ export function AddPortfolioModal({
 
     if (open) {
       fetchTag();
+    }
+  }, [open]);
+
+  useEffect(() => {
+    const fetchIndustry = async () => {
+      try {
+        const res = await api.get("/api/industry");
+        setIndustryOptions(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        setIndustryOptions([]);
+      }
+    };
+
+    if (open) {
+      fetchIndustry();
+    }
+  }, [open]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await api.get("/api/auth/users");
+        setUserOptions(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        setUserOptions([]);
+      }
+    };
+
+    if (open) {
+      fetchUsers();
     }
   }, [open]);
 
@@ -336,7 +367,7 @@ export function AddPortfolioModal({
               value={formik.values.websiteLink}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.websiteLink && formik.errors.websiteLink && (
               <p className="text-sm text-red-600">
@@ -406,19 +437,36 @@ export function AddPortfolioModal({
             </select>
           </div>
 
-          {/* Industry */}
+          {/* Industry Select */}
           <div className="space-y-2">
             <Label htmlFor="industry" className="text-sm font-medium">
               Industry
             </Label>
-            <Input
+            <select
               id="industry"
               name="industry"
-              placeholder="e.g. E-commerce, Finance"
               value={formik.values.industry}
               onChange={formik.handleChange}
-              className="border-gray-200"
-            />
+              onBlur={formik.handleBlur}
+              className="w-full h-11 border border-gray-200 rounded-md focus:outline-none focus:ring-blue-500/20 px-3"
+              disabled={isLoading}
+            >
+              <option value="">-- Select Industry --</option>
+              {Array.isArray(industryOptions) &&
+                industryOptions.map((industry) => (
+                  <option
+                    key={industry._id}
+                    value={industry.name}
+                  >
+                    {industry.name}
+                  </option>
+                ))}
+            </select>
+            {formik.touched.industry && formik.errors.industry && (
+              <p className="text-sm text-red-600">
+                {formik.errors.industry}
+              </p>
+            )}
           </div>
 
           {/* Description */}
@@ -474,7 +522,7 @@ export function AddPortfolioModal({
               placeholder="Upwork, Freelancer, etc."
               value={formik.values.bidPlatform}
               onChange={formik.handleChange}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
           </div>
 
@@ -490,7 +538,7 @@ export function AddPortfolioModal({
               value={formik.values.bidPlatformUrl}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.bidPlatformUrl && formik.errors.bidPlatformUrl && (
               <p className="text-sm text-red-600">
@@ -512,7 +560,7 @@ export function AddPortfolioModal({
               value={formik.values.invoiceAmount}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.invoiceAmount && formik.errors.invoiceAmount && (
               <p className="text-sm text-red-600">
@@ -533,7 +581,7 @@ export function AddPortfolioModal({
               value={formik.values.startDate}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.startDate && formik.errors.startDate && (
               <p className="text-sm text-red-600">{formik.errors.startDate}</p>
@@ -552,7 +600,7 @@ export function AddPortfolioModal({
               value={formik.values.completionDate}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.completionDate && formik.errors.completionDate && (
               <p className="text-sm text-red-600">
@@ -561,19 +609,41 @@ export function AddPortfolioModal({
             )}
           </div>
 
-          {/* salesPerson */}
+          {/* Sales Person Select */}
           <div className="space-y-2">
             <Label htmlFor="salesPerson" className="text-sm font-medium">
               Sales Person
             </Label>
-            <Input
+            <select
               id="salesPerson"
               name="salesPerson"
-              placeholder="Enter sales person name"
               value={formik.values.salesPerson}
               onChange={formik.handleChange}
-              className="border-gray-200"
-            />
+              onBlur={formik.handleBlur}
+              className="w-full h-11 border border-gray-200 rounded-md focus:outline-none focus:ring-blue-500/20 px-3"
+              disabled={isLoading}
+            >
+              <option value="">-- Select Sales Person --</option>
+              {Array.isArray(userOptions) && userOptions.length > 0 ? (
+                userOptions.map((user, index) => (
+                  <option
+                    key={user._id || user.id || index}
+                    value={user.name || user.username}
+                  >
+                    {user.name || user.username}
+                  </option>
+                ))
+              ) : (
+                <option value="" disabled>
+                  {isLoading ? "Loading users..." : "No users available"}
+                </option>
+              )}
+            </select>
+            {formik.touched.salesPerson && formik.errors.salesPerson && (
+              <p className="text-sm text-red-600">
+                {formik.errors.salesPerson}
+              </p>
+            )}
           </div>
 
           {/* Client Name */}
@@ -587,7 +657,7 @@ export function AddPortfolioModal({
               placeholder="Enter client name"
               value={formik.values.clientName}
               onChange={formik.handleChange}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
           </div>
 
@@ -604,7 +674,7 @@ export function AddPortfolioModal({
               value={formik.values.testimonials}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.testimonials && formik.errors.testimonials && (
               <p className="text-sm text-red-600">

@@ -25,6 +25,11 @@ exports.register = async function register(req, res) {
         .json({ message: "name, username and password are required" });
     }
 
+        const existingName = await User.findOne({ name });
+    if (existingName) {
+      return res.status(400).json({ message: "name already exists" });
+    }
+
     const existing = await User.findOne({ username });
     if (existing) {
       return res.status(400).json({ message: "Username already exists" });

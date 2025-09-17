@@ -40,6 +40,7 @@ export default function EditPortfolioModal({
   const [categoryOptions, setCategoryOptions] = useState<any[]>([]);
   const [tagOptions, setTagOptions] = useState<any[]>([]);
   const [industryOptions, setIndustryOptions] = useState<any[]>([]);
+  const [userOptions, setUserOptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>(
     initialValues?.tag || []
@@ -148,6 +149,18 @@ export default function EditPortfolioModal({
       }
     };
     if (open) fetchIndustry();
+  }, [open]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await api.get("/api/auth/users");
+        setUserOptions(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        setUserOptions([]);
+      }
+    };
+    if (open) fetchUsers();
   }, [open]);
 
   const validationSchema = portfolioValidationSchema;
@@ -395,7 +408,7 @@ export default function EditPortfolioModal({
               value={formik.values.websiteLink}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.websiteLink && formik.errors.websiteLink && (
               <p className="text-sm text-red-600">
@@ -553,7 +566,7 @@ export default function EditPortfolioModal({
               value={formik.values.bidPlatform}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.bidPlatform && formik.errors.bidPlatform && (
               <p className="text-sm text-red-600">
@@ -574,7 +587,7 @@ export default function EditPortfolioModal({
               value={formik.values.bidPlatformUrl}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.bidPlatformUrl && formik.errors.bidPlatformUrl && (
               <p className="text-sm text-red-600">
@@ -596,7 +609,7 @@ export default function EditPortfolioModal({
               value={formik.values.invoiceAmount}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
 
             {formik.touched.invoiceAmount && formik.errors.invoiceAmount && (
@@ -618,7 +631,7 @@ export default function EditPortfolioModal({
               value={formik.values.startDate}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.startDate && formik.errors.startDate && (
               <p className="text-sm text-red-600">
@@ -639,7 +652,7 @@ export default function EditPortfolioModal({
               value={formik.values.completionDate}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.completionDate && formik.errors.completionDate && (
               <p className="text-sm text-red-600">
@@ -648,20 +661,36 @@ export default function EditPortfolioModal({
             )}
           </div>
 
-           {/* Client Name */}
+           {/* Sales Person Select */}
           <div className="space-y-2">
             <Label htmlFor="salesPerson" className="text-sm font-medium">
               Sales Person
             </Label>
-            <Input
+            <select
               id="salesPerson"
               name="salesPerson"
-              placeholder="Enter sales person name"
               value={formik.values.salesPerson}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
-            />
+              className="w-full h-11 border border-gray-200 rounded-md focus:outline-none focus:ring-blue-500/20 px-3"
+              disabled={isLoading}
+            >
+              <option value="">-- Select Sales Person --</option>
+              {Array.isArray(userOptions) && userOptions.length > 0 ? (
+                userOptions.map((user, index) => (
+                  <option
+                    key={user._id || user.id || index}
+                    value={user.name || user.username}
+                  >
+                    {user.name || user.username}
+                  </option>
+                ))
+              ) : (
+                <option value="" disabled>
+                  {isLoading ? "Loading users..." : "No users available"}
+                </option>
+              )}
+            </select>
             {formik.touched.salesPerson && formik.errors.salesPerson && (
               <p className="text-sm text-red-600">
                 {formik.errors.salesPerson as string}
@@ -681,7 +710,7 @@ export default function EditPortfolioModal({
               value={formik.values.clientName}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.clientName && formik.errors.clientName && (
               <p className="text-sm text-red-600">
@@ -703,7 +732,7 @@ export default function EditPortfolioModal({
               value={formik.values.testimonials}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.testimonials && formik.errors.testimonials && (
               <p className="text-sm text-red-600">

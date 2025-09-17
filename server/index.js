@@ -11,6 +11,7 @@ const technologyRoutes = require("./routes/technologyRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const portfolioRoutes = require("./routes/portfolioRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
+const publicRoutes = require("./routes/publicRoutes");
 dotenv.config();
 
 const app = express();
@@ -27,6 +28,10 @@ app.get("/", (_req, res) => {
   res.json({ status: "ok" });
 });
 
+// Public routes (no authentication required)
+app.use("/api/public", publicRoutes);
+
+// Protected routes (authentication required)
 app.use("/api/auth", authRoutes);
 app.use("/api/tags", tagRoutes);
 app.use("/api/industry", industryRoutes);
