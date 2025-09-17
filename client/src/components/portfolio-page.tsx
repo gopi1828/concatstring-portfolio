@@ -33,6 +33,12 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ConfirmDialog } from "./ui/confirm-delete";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 import ExportPortfolio from "../components/export-portfolio";
 import ImportPortfolio from "../components/import-portfolio";
@@ -302,10 +308,17 @@ export function PortfolioPage() {
     startIndex + itemsPerPage
   );
 
-  const getDisplayTags = (item: PortfolioItem) => {
-    const techTags = typeof item.technology === 'string' ? [item.technology] : [];
-    const tags = Array.isArray(item.tag) ? item.tag : [];
-    return [...techTags, ...tags].filter(Boolean);
+  const getDisplayTechnology = (item: PortfolioItem) => {
+    return typeof item.technology === 'string' ? item.technology : '';
+  };
+
+  const truncateTooltipText = (text: string, maxLength: number = 100) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  };
+
+  const shouldShowTooltip = (text: string, maxLength: number = 50) => {
+    return text.length > maxLength;
   };
 
   const isPdfUrl = (url: string) =>
@@ -322,7 +335,7 @@ export function PortfolioPage() {
           <TableRow className="bg-gray-50">
             <TableHead className="w-20">Thumbnail</TableHead>
             <TableHead>Title</TableHead>
-            <TableHead>Tags</TableHead>
+            <TableHead>Technology</TableHead>
             <TableHead>Date</TableHead>
             {isLoggedIn && <TableHead className="w-20">Actions</TableHead>}
           </TableRow>
@@ -363,23 +376,47 @@ export function PortfolioPage() {
                     </div>
                   </Link>
                   <div className="text-sm text-gray-500 break-words max-w-xs">
-                    {item.description}
+                    {shouldShowTooltip(item.description, 50) ? (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div 
+                              className="truncate cursor-help hover:text-gray-700 transition-colors" 
+                            >
+                              {item.description}
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent 
+                            className="max-w-xs rounded-lg bg-white text-black text-xs p-2 border border-gray-200 shadow-lg"
+                            side="top"
+                          >
+                            <p>{truncateTooltipText(item.description, 80)}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    ) : (
+                      <div className="truncate">
+                        {item.description}
+                      </div>
+                    )}
+                    {item.industry && (
+                      <span className="block text-xs text-blue-600 mt-1">
+                       {item.industry}
+                      </span>
+                    )}
                   </div>
                 </div>
               </TableCell>
               <TableCell>
                 <div className="flex flex-wrap gap-1">
-                  {getDisplayTags(item)
-                    .slice(0, 2)
-                    .map((tag, index) => (
-                      <Badge
-                        key={`${item._id}-${tag}-${index}`}
-                        variant="secondary"
-                        className="text-xs bg-blue-50 text-blue-700"
-                      >
-                        {tag}
-                      </Badge>
-                    ))}
+                  {getDisplayTechnology(item) && (
+                    <Badge
+                      variant="secondary"
+                      className="text-xs bg-blue-50 text-blue-700"
+                    >
+                      {getDisplayTechnology(item)}
+                    </Badge>
+                  )}
                 </div>
               </TableCell>
               <TableCell className="text-gray-600">
@@ -484,19 +521,43 @@ export function PortfolioPage() {
                 {item.projectName}
               </h3>
             </Link>
-            <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-              {item.description}
-            </p>
+            {shouldShowTooltip(item.description, 50) ? (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <p 
+                      className="text-gray-600 text-sm mb-2 truncate cursor-help hover:text-gray-700 transition-colors" 
+                    >
+                      {item.description}
+                    </p>
+                  </TooltipTrigger>
+                  <TooltipContent 
+                    className="max-w-xs rounded-lg bg-white text-black text-xs p-2 border border-gray-200 shadow-lg"
+                    side="top"
+                  >
+                    <p>{truncateTooltipText(item.description, 80)}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              <p className="text-gray-600 text-sm mb-2 truncate">
+                {item.description}
+              </p>
+            )}
+            {item.industry && (
+              <p className="text-xs text-blue-600 mb-4">
+                Industry: {item.industry}
+              </p>
+            )}
             <div className="flex flex-wrap gap-2 mb-4">
-              {getDisplayTags(item).map((tag, index) => (
+              {getDisplayTechnology(item) && (
                 <Badge
-                  key={`${tag}-${index}`}
                   variant="secondary"
                   className="bg-blue-50 text-blue-700 hover:bg-blue-100"
                 >
-                  {tag}
+                  {getDisplayTechnology(item)}
                 </Badge>
-              ))}
+              )}
             </div>
             <div className="flex items-center justify-between text-sm text-gray-500">
               <div className="flex items-center gap-1">
