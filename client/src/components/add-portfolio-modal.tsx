@@ -59,7 +59,6 @@ export function AddPortfolioModal({
         const cleaned = Array.isArray(data) ? data.filter(
           (tech) =>
             typeof tech.name === "string" &&
-            typeof tech.description === "string" &&
             typeof tech.category === "string"
         ) : [];
         

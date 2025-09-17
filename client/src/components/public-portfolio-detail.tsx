@@ -1,38 +1,25 @@
-import { useState, useEffect } from "react";
-import { Button } from "../components/ui/button";
-import { Badge } from "../components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
-// import { Separator } from "./ui/separator";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
-import {
-  ArrowLeft,
-  ExternalLink,
-  Calendar,
-  Eye,
-  Star,
-  DollarSign,
-  User,
-  ImageIcon,
-  FileText,
-  Code,
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import api from "../lib/api";
-import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { 
+  ArrowLeft, 
+  ExternalLink, 
+  Calendar, 
+  DollarSign, 
+  User, 
+  Code,
+  FileText,
+  ImageIcon,
+  Eye
+} from "lucide-react";
 
-interface PortfolioItem {
+
+type PortfolioItem = {
   _id: string;
   projectName: string;
   description: string;
@@ -52,26 +39,21 @@ interface PortfolioItem {
   testimonials: string;
   tag: string[];
   createdAt?: string;
-}
+};
 
-interface PortfolioDetailPageProps {
-  id: string;
-}
-
-export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
+export function PublicPortfolioDetail() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(0);
   const [portfolio, setPortfolio] = useState<PortfolioItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPortfolio = async () => {
       try {
         setIsLoading(true);
-
-        const response = await api.get(`/api/portfolios/${id}`);
-
+        const response = await api.get(`/api/public/portfolios/${id}`);
         const data = response.data;
         const item = (data &&
           (data.result ||
@@ -87,7 +69,6 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
         const message =
           err instanceof Error ? err.message : "Failed to fetch portfolio";
         setError(message);
-        toast.error(message);
       } finally {
         setIsLoading(false);
       }
@@ -98,11 +79,15 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
     }
   }, [id]);
 
+  const isPdfUrl = (url: string) =>
+    (url || "").toLowerCase().split("?")[0].endsWith(".pdf");
+
+
   if (isLoading) {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+          <Button variant="ghost" size="icon" onClick={() => navigate("/portfolio")}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="flex-1">
@@ -122,7 +107,7 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+          <Button variant="ghost" size="icon" onClick={() => navigate("/portfolio")}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="flex-1">
@@ -138,24 +123,18 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
     );
   }
 
- 
   const portfolioTags = portfolio.tag || [];
-
-  
   const technologiesUsed = Array.isArray(portfolio.technology)
     ? portfolio.technology.filter(Boolean)
     : portfolio.technology
     ? [portfolio.technology]
     : [];
 
-  const isPdfUrl = (url: string) =>
-    (url || "").toLowerCase().split("?")[0].endsWith(".pdf");
-
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+        <Button variant="ghost" size="icon" onClick={() => navigate("/portfolio")}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div className="flex-1">
@@ -164,13 +143,6 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
           </h1>
           <p className="text-gray-600">{portfolio.category}</p>
         </div>
-        {/* <div className="flex items-center gap-2">
-          <Badge className="bg-green-100 text-green-800">Completed</Badge>
-          <Button variant="outline" size="sm">
-            <Edit className="mr-2 h-4 w-4" />
-            Edit  
-          </Button>
-        </div> */}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -255,158 +227,157 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
             </CardContent>
           </Card>
 
+          {/* Project Description */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Project Description
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">{portfolio.description}</p>
+            </CardContent>
+          </Card>
 
-           {/* Project Description */}
-           <Card>
-             <CardHeader>
-               <CardTitle className="flex items-center gap-2">
-                 <FileText className="h-5 w-5" />
-                 Project Description
-               </CardTitle>
-             </CardHeader>
-             <CardContent>
-               <p className="text-gray-600">{portfolio.description}</p>
-             </CardContent>
-           </Card>
+          {/* Tabs Content */}
+          <Tabs defaultValue="technical" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="technical">Technical</TabsTrigger>
+              <TabsTrigger value="gallery">Gallery</TabsTrigger>
+            </TabsList>
 
-           {/* Tabs Content */}
-           <Tabs defaultValue="technical" className="w-full">
-             <TabsList className="grid w-full grid-cols-2">
-               <TabsTrigger value="technical">Technical</TabsTrigger>
-               <TabsTrigger value="gallery">Gallery</TabsTrigger>
-             </TabsList>
+            <TabsContent value="technical" className="space-y-6">
+              {/* Technical Stack */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Code className="h-5 w-5" />
+                    Technical Stack
+                  </CardTitle>
+                  <CardDescription>
+                    Technologies and tools used in this project
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {technologiesUsed.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-600 mb-2">Technologies Used</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {technologiesUsed.map((tech, index) => (
+                            <Badge
+                              key={index}
+                              variant="outline"
+                              className="bg-blue-50 text-blue-700 border-blue-200"
+                            >
+                              {tech}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {portfolio.pageBuilder && (
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-600 mb-2">Page Builder</h4>
+                        <Badge variant="secondary" className="bg-green-50 text-green-700">
+                          {portfolio.pageBuilder}
+                        </Badge>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
 
-             <TabsContent value="technical" className="space-y-6">
-               {/* Technical Stack */}
-               <Card>
-                 <CardHeader>
-                   <CardTitle className="flex items-center gap-2">
-                     <Code className="h-5 w-5" />
-                     Technical Stack
-                   </CardTitle>
-                   <CardDescription>
-                     Technologies and tools used in this project
-                   </CardDescription>
-                 </CardHeader>
-                 <CardContent>
-                   <div className="space-y-4">
-                     {technologiesUsed.length > 0 && (
-                       <div>
-                         <h4 className="text-sm font-medium text-gray-600 mb-2">Technologies Used</h4>
-                         <div className="flex flex-wrap gap-2">
-                           {technologiesUsed.map((tech, index) => (
-                             <Badge
-                               key={index}
-                               variant="outline"
-                               className="bg-blue-50 text-blue-700 border-blue-200"
-                             >
-                               {tech}
-                             </Badge>
-                           ))}
-                         </div>
-                       </div>
-                     )}
-                     
-                     {portfolio.pageBuilder && (
-                       <div>
-                         <h4 className="text-sm font-medium text-gray-600 mb-2">Page Builder</h4>
-                         <Badge variant="secondary" className="bg-green-50 text-green-700">
-                           {portfolio.pageBuilder}
-                         </Badge>
-                       </div>
-                     )}
-                   </div>
-                 </CardContent>
-               </Card>
-
-               {/* Project Information */}
-               <Card>
-                 <CardHeader>
-                   <CardTitle>Project Information</CardTitle>
-                   <CardDescription>
-                     Business and project details
-                   </CardDescription>
-                 </CardHeader>
-                 <CardContent className="space-y-4">
-                   {portfolio.industry && (
-                     <div className="flex items-center justify-between">
-                       <span className="text-sm text-gray-600">Industry</span>
-                       <span className="font-medium">
-                         {portfolio.industry}
-                       </span>
-                     </div>
-                   )}
-                   {portfolio.category && (
-                     <div className="flex items-center justify-between">
-                       <span className="text-sm text-gray-600">Category</span>
-                       <span className="font-medium">
-                         {portfolio.category}
-                       </span>
-                     </div>
-                   )}
-                   {portfolio.bidPlatform && (
-                     <div className="flex items-center justify-between">
-                       <span className="text-sm text-gray-600">
-                         Bid Platform
-                       </span>
-                       <span className="font-medium">
-                         {portfolio.bidPlatform}
-                       </span>
-                     </div>
-                   )}
-                   {portfolio.bidPlatformUrl && (
-                     <div className="flex items-center justify-between">
-                       <span className="text-sm text-gray-600">
-                         Platform URL
-                       </span>
-                       <a 
-                         href={portfolio.bidPlatformUrl}
-                         target="_blank"
-                         rel="noopener noreferrer"
-                         className="font-medium text-blue-600 hover:text-blue-800"
-                       >
+              {/* Project Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Project Information</CardTitle>
+                  <CardDescription>
+                    Business and project details
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {portfolio.industry && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Industry</span>
+                      <span className="font-medium">
+                        {portfolio.industry}
+                      </span>
+                    </div>
+                  )}
+                  {portfolio.category && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Category</span>
+                      <span className="font-medium">
+                        {portfolio.category}
+                      </span>
+                    </div>
+                  )}
+                  {portfolio.bidPlatform && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">
+                        Bid Platform
+                      </span>
+                      <span className="font-medium">
+                        {portfolio.bidPlatform}
+                      </span>
+                    </div>
+                  )}
+                  {portfolio.bidPlatformUrl && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">
+                        Platform URL
+                      </span>
+                      <a 
+                        href={portfolio.bidPlatformUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-blue-600 hover:text-blue-800"
+                      >
                         {portfolio.bidPlatformUrl}
-                       </a>
-                     </div>
-                   )}
-                   {portfolio.invoiceAmount && (
-                     <div className="flex items-center justify-between">
-                       <span className="text-sm text-gray-600">
-                         Invoice Amount
-                       </span>
-                       <span className="font-medium">
-                         ${portfolio.invoiceAmount}
-                       </span>
-                     </div>
-                   )}
-                 </CardContent>
-               </Card>
+                      </a>
+                    </div>
+                  )}
+                  {portfolio.invoiceAmount && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">
+                        Invoice Amount
+                      </span>
+                      <span className="font-medium">
+                        ${portfolio.invoiceAmount}
+                      </span>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
 
-               {/* Project Tags */}
-               {portfolioTags.length > 0 && (
-                 <Card>
-                   <CardHeader>
-                     <CardTitle>Project Tags</CardTitle>
-                     <CardDescription>
-                       Additional tags and keywords for this project
-                     </CardDescription>
-                   </CardHeader>
-                   <CardContent>
-                     <div className="flex flex-wrap gap-2">
-                       {portfolioTags.map((tag, index) => (
-                         <Badge
-                           key={index}
-                           variant="secondary"
-                           className="bg-purple-50 text-purple-700"
-                         >
-                           {tag}
-                         </Badge>
-                       ))}
-                     </div>
-                   </CardContent>
-                 </Card>
-               )}
-             </TabsContent>
+              {/* Project Tags */}
+              {portfolioTags.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Project Tags</CardTitle>
+                    <CardDescription>
+                      Additional tags and keywords for this project
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-wrap gap-2">
+                      {portfolioTags.map((tag, index) => (
+                        <Badge
+                          key={index}
+                          variant="secondary"
+                          className="bg-purple-50 text-purple-700"
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
 
             <TabsContent value="gallery" className="space-y-6">
               <Card>
@@ -571,7 +542,6 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
                 {portfolio.testimonials && (
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <Star className="h-4 w-4 text-yellow-500" />
                       <span className="text-sm font-medium text-gray-600">Testimonial</span>
                     </div>
                     <div className="bg-gray-50 p-3 rounded-lg">
