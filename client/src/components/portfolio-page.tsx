@@ -50,6 +50,7 @@ type PortfolioItem = {
   industry: string;
   pageBuilder: string;
   clientName: string;
+  salesPerson: string;
   clientInvoices: string[];
   bidPlatform: string;
   bidPlatformUrl: string;
@@ -275,6 +276,7 @@ export function PortfolioPage() {
     const projectName = item.projectName?.toLowerCase() || "";
     const websiteLink = item.websiteLink?.toLowerCase() || "";
     const clientName = item.clientName?.toLowerCase() || "";
+    const salesPerson = item.salesPerson?.toLowerCase() || "";
     const technology = typeof item.technology === 'string' ? item.technology.toLowerCase() : "";
     const tag = Array.isArray(item.tag) ? item.tag : [];
     const category = item.category?.toLowerCase() || "";
@@ -285,6 +287,7 @@ export function PortfolioPage() {
       projectName.includes(search) ||
       websiteLink.includes(search) ||
       clientName.includes(search) ||
+      salesPerson.includes(search) ||
       technology.includes(search) ||
       tag.some((t) => t?.toLowerCase().includes(search)) ||
       category.includes(search) ||
