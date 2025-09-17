@@ -151,8 +151,7 @@ export function UsersPage() {
       if (userData) {
         try {
           const user = JSON.parse(userData);
-          console.log("111",user);
-          
+                  
           const roleFromUser = (user?.role ??
             user?.user?.role ??
             user?.data?.role ??
@@ -175,7 +174,6 @@ export function UsersPage() {
 
   const isAdmin = (userRole ?? "").toUpperCase() === "ADMIN";
 
-  // Callback function to refresh data when user is added
   const handleUserAdded = () => {
     fetchUsers();
   };

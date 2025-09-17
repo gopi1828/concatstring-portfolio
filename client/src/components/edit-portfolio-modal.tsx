@@ -408,7 +408,7 @@ export default function EditPortfolioModal({
               value={formik.values.websiteLink}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.websiteLink && formik.errors.websiteLink && (
               <p className="text-sm text-red-600">
@@ -566,7 +566,7 @@ export default function EditPortfolioModal({
               value={formik.values.bidPlatform}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.bidPlatform && formik.errors.bidPlatform && (
               <p className="text-sm text-red-600">
@@ -587,7 +587,7 @@ export default function EditPortfolioModal({
               value={formik.values.bidPlatformUrl}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.bidPlatformUrl && formik.errors.bidPlatformUrl && (
               <p className="text-sm text-red-600">
@@ -609,7 +609,7 @@ export default function EditPortfolioModal({
               value={formik.values.invoiceAmount}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
 
             {formik.touched.invoiceAmount && formik.errors.invoiceAmount && (
@@ -631,7 +631,7 @@ export default function EditPortfolioModal({
               value={formik.values.startDate}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.startDate && formik.errors.startDate && (
               <p className="text-sm text-red-600">
@@ -652,7 +652,7 @@ export default function EditPortfolioModal({
               value={formik.values.completionDate}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.completionDate && formik.errors.completionDate && (
               <p className="text-sm text-red-600">
@@ -710,7 +710,7 @@ export default function EditPortfolioModal({
               value={formik.values.clientName}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.clientName && formik.errors.clientName && (
               <p className="text-sm text-red-600">
@@ -732,7 +732,7 @@ export default function EditPortfolioModal({
               value={formik.values.testimonials}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="border-gray-200"
+              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.testimonials && formik.errors.testimonials && (
               <p className="text-sm text-red-600">
