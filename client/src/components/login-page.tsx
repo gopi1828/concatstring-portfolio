@@ -82,9 +82,9 @@ export function LoginPage() {
       <Card className="w-full max-w-md shadow-xl border-0 bg-white/80 backdrop-blur-sm">
         <CardHeader className="text-center space-y-4">
           <div className="mx-auto w-16 h-16 flex items-center justify-center">
-            <img 
-              src="/cs-logo.svg" 
-              alt="Logo" 
+            <img
+              src="/cs-logo.svg"
+              alt="Logo"
               className="w-16 h-16 object-contain"
             />
           </div>

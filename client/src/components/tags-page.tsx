@@ -87,7 +87,7 @@ export function TagsPage() {
         />
       </div>
 
-      {/* Loader / Tags Grid */}
+      {/* Loader*/}
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, i) => (
@@ -105,13 +105,14 @@ export function TagsPage() {
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
-                <Skeleton className="h-6 w-20 rounded-md" /> {/* projects badge */}
+                <Skeleton className="h-6 w-20 rounded-md" />{" "}
+                {/* projects badge */}
               </CardContent>
             </Card>
           ))}
         </div>
       ) : (
-        <>  
+        <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredTags.map((tag) => (
               <Card
@@ -151,9 +152,8 @@ export function TagsPage() {
                 </CardHeader>
 
                 <CardContent className="pt-0">
-                <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white transition-colors duration-200">
-                    {tag.count ?? 0}{" "}
-                    {tag.count === 1 ? "project" : "projects"}
+                  <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white transition-colors duration-200">
+                    {tag.count ?? 0} {tag.count === 1 ? "project" : "projects"}
                   </Badge>
                 </CardContent>
               </Card>

@@ -32,7 +32,6 @@ type ExportPortfolioProps = {
 function toCsvValue(value: unknown): string {
   if (value === null || value === undefined) return "";
   const stringValue = String(value);
-  // Escape quotes and wrap in quotes if contains comma, quote, or newline
   if (/[",\n\r]/.test(stringValue)) {
     return '"' + stringValue.replace(/"/g, '""') + '"';
   }
@@ -51,20 +50,17 @@ function formatDateForCsv(dateStr?: string): string {
 
 function cleanTextForCsv(text: string, maxLength: number = 100): string {
   if (!text) return "";
-  
-  // Remove base64 data
-  if (text.startsWith('data:image/')) {
-    return '[Image Data]';
+
+  if (text.startsWith("data:image/")) {
+    return "[Image Data]";
   }
-  
-  // Remove excessive whitespace and newlines
-  const cleaned = text.replace(/\s+/g, ' ').trim();
-  
-  // Truncate if too long
+
+  const cleaned = text.replace(/\s+/g, " ").trim();
+
   if (cleaned.length > maxLength) {
-    return cleaned.substring(0, maxLength - 3) + '...';
+    return cleaned.substring(0, maxLength - 3) + "...";
   }
-  
+
   return cleaned;
 }
 
@@ -98,40 +94,39 @@ export default function ExportPortfolio({
     rows.push(headers);
 
     const source = items && items.length > 0 ? items : allItems ?? [];
-    
-    
-  
 
     for (const p of source) {
       try {
         rows.push([
-        cleanTextForCsv(p.projectName || "", 50),
-        Array.isArray(p.technology)
-          ? p.technology.join(", ")
-          : cleanTextForCsv(String(p.technology ?? ""), 30),
-        cleanTextForCsv(p.category || "", 30),
-        cleanTextForCsv(p.industry || "", 30),
-        cleanTextForCsv(p.description || "", 200),
-        cleanTextForCsv(p.pageBuilder || "", 20),
-        cleanTextForCsv(p.clientName || "", 30),
-        cleanTextForCsv(p.websiteLink || "", 50),
-        cleanTextForCsv(p.bidPlatform || "", 20),
-        cleanTextForCsv(p.bidPlatformUrl || "", 50),
-        p.invoiceAmount != null ? String(p.invoiceAmount) : "",
-        formatDateForCsv(p.startDate),
-        formatDateForCsv(p.completionDate),
-        cleanTextForCsv(p.testimonials || "", 150),
-        Array.isArray(p.tag) ? p.tag.join(", ") : cleanTextForCsv(String(p.tag ?? ""), 50),
-        Array.isArray(p.clientInvoices)
-          ? p.clientInvoices
-              .filter(url => url && typeof url === 'string')
-              .map(url => cleanTextForCsv(url, 50))
-              .join(" | ")
-          : cleanTextForCsv(String(p.clientInvoices ?? ""), 50),
+          cleanTextForCsv(p.projectName || "", 50),
+          Array.isArray(p.technology)
+            ? p.technology.join(", ")
+            : cleanTextForCsv(String(p.technology ?? ""), 30),
+          cleanTextForCsv(p.category || "", 30),
+          cleanTextForCsv(p.industry || "", 30),
+          cleanTextForCsv(p.description || "", 200),
+          cleanTextForCsv(p.pageBuilder || "", 20),
+          cleanTextForCsv(p.clientName || "", 30),
+          cleanTextForCsv(p.websiteLink || "", 50),
+          cleanTextForCsv(p.bidPlatform || "", 20),
+          cleanTextForCsv(p.bidPlatformUrl || "", 50),
+          p.invoiceAmount != null ? String(p.invoiceAmount) : "",
+          formatDateForCsv(p.startDate),
+          formatDateForCsv(p.completionDate),
+          cleanTextForCsv(p.testimonials || "", 150),
+          Array.isArray(p.tag)
+            ? p.tag.join(", ")
+            : cleanTextForCsv(String(p.tag ?? ""), 50),
+          Array.isArray(p.clientInvoices)
+            ? p.clientInvoices
+                .filter((url) => url && typeof url === "string")
+                .map((url) => cleanTextForCsv(url, 50))
+                .join(" | ")
+            : cleanTextForCsv(String(p.clientInvoices ?? ""), 50),
         ]);
       } catch (error) {
-        console.error('Error processing portfolio item:', p, error);
-        
+        console.error("Error processing portfolio item:", p, error);
+
         rows.push([
           p.projectName || "ERROR",
           "ERROR",
@@ -159,17 +154,16 @@ export default function ExportPortfolio({
 
   const handleDownload = () => {
     try {
-      // Add BOM for proper UTF-8 encoding in Excel
-      const BOM = '\uFEFF';
+      const BOM = "\uFEFF";
       const content = BOM + csvContent;
-      
-      const blob = new Blob([content], { 
-        type: "text/csv;charset=utf-8;" 
+
+      const blob = new Blob([content], {
+        type: "text/csv;charset=utf-8;",
       });
-      
+
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
-      
+
       const now = new Date();
       const ts = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(
         2,
@@ -179,26 +173,25 @@ export default function ExportPortfolio({
       ).padStart(2, "0")}${String(now.getMinutes()).padStart(2, "0")}${String(
         now.getSeconds()
       ).padStart(2, "0")}`;
-      
+
       link.href = url;
       link.download = `portfolio_export_${ts}.csv`;
-      link.style.display = 'none';
-      
+      link.style.display = "none";
+
       document.body.appendChild(link);
       link.click();
-      
-      // Clean up
+
       setTimeout(() => {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
       }, 100);
-      
-      const sourceCount = items && items.length > 0 ? items.length : (allItems?.length ?? 0);
+
+      const sourceCount =
+        items && items.length > 0 ? items.length : allItems?.length ?? 0;
       toast.success(`Successfully exported ${sourceCount} portfolio items`);
-      
     } catch (error) {
-      console.error('Export failed:', error);
-      toast.error('Failed to export data. Please try again.');
+      console.error("Export failed:", error);
+      toast.error("Failed to export data. Please try again.");
     }
   };
 

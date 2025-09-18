@@ -108,13 +108,13 @@ export function IndustryPage() {
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-start gap-3 min-w-0 flex-1">
                     <div className="flex-1 min-w-0">
-                      <Skeleton className="h-5 w-32 mb-2" /> {/* industry name */}
+                      <Skeleton className="h-5 w-32 mb-2" />
                     </div>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
-                <Skeleton className="h-6 w-20 rounded-md" /> {/* projects badge */}
+                <Skeleton className="h-6 w-20 rounded-md" /> 
               </CardContent>
             </Card>
           ))}

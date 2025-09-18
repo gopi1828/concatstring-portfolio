@@ -3,21 +3,26 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../lib/api";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "./ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { 
-  ArrowLeft, 
-  ExternalLink, 
-  Calendar, 
-  DollarSign, 
-  User, 
+import {
+  ArrowLeft,
+  ExternalLink,
+  Calendar,
+  DollarSign,
+  User,
   Code,
   FileText,
   ImageIcon,
-  Eye
+  Eye,
 } from "lucide-react";
-
 
 type PortfolioItem = {
   _id: string;
@@ -55,11 +60,7 @@ export function PublicPortfolioDetail() {
         setIsLoading(true);
         const response = await api.get(`/api/public/portfolios/${id}`);
         const data = response.data;
-        const item = (data &&
-          (data.result ||
-            data.portfolio ||
-            data.item ||
-            data)) as PortfolioItem | null;
+        const item = data as PortfolioItem | null;
         if (item && (item as any)._id) {
           setPortfolio(item as PortfolioItem);
         } else {
@@ -82,12 +83,15 @@ export function PublicPortfolioDetail() {
   const isPdfUrl = (url: string) =>
     (url || "").toLowerCase().split("?")[0].endsWith(".pdf");
 
-
   if (isLoading) {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/portfolio")}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/portfolio")}
+          >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="flex-1">
@@ -107,7 +111,11 @@ export function PublicPortfolioDetail() {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/portfolio")}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/portfolio")}
+          >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="flex-1">
@@ -134,7 +142,11 @@ export function PublicPortfolioDetail() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate("/portfolio")}>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate("/portfolio")}
+        >
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div className="flex-1">
@@ -263,7 +275,9 @@ export function PublicPortfolioDetail() {
                   <div className="space-y-4">
                     {technologiesUsed.length > 0 && (
                       <div>
-                        <h4 className="text-sm font-medium text-gray-600 mb-2">Technologies Used</h4>
+                        <h4 className="text-sm font-medium text-gray-600 mb-2">
+                          Technologies Used
+                        </h4>
                         <div className="flex flex-wrap gap-2">
                           {technologiesUsed.map((tech, index) => (
                             <Badge
@@ -277,11 +291,16 @@ export function PublicPortfolioDetail() {
                         </div>
                       </div>
                     )}
-                    
+
                     {portfolio.pageBuilder && (
                       <div>
-                        <h4 className="text-sm font-medium text-gray-600 mb-2">Page Builder</h4>
-                        <Badge variant="secondary" className="bg-green-50 text-green-700">
+                        <h4 className="text-sm font-medium text-gray-600 mb-2">
+                          Page Builder
+                        </h4>
+                        <Badge
+                          variant="secondary"
+                          className="bg-green-50 text-green-700"
+                        >
                           {portfolio.pageBuilder}
                         </Badge>
                       </div>
@@ -302,17 +321,13 @@ export function PublicPortfolioDetail() {
                   {portfolio.industry && (
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600">Industry</span>
-                      <span className="font-medium">
-                        {portfolio.industry}
-                      </span>
+                      <span className="font-medium">{portfolio.industry}</span>
                     </div>
                   )}
                   {portfolio.category && (
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600">Category</span>
-                      <span className="font-medium">
-                        {portfolio.category}
-                      </span>
+                      <span className="font-medium">{portfolio.category}</span>
                     </div>
                   )}
                   {portfolio.bidPlatform && (
@@ -330,7 +345,7 @@ export function PublicPortfolioDetail() {
                       <span className="text-sm text-gray-600">
                         Platform URL
                       </span>
-                      <a 
+                      <a
                         href={portfolio.bidPlatformUrl}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -482,7 +497,9 @@ export function PublicPortfolioDetail() {
           </Card>
 
           {/* Client & Sales Information */}
-          {(portfolio.clientName || portfolio.salesPerson || portfolio.testimonials) && (
+          {(portfolio.clientName ||
+            portfolio.salesPerson ||
+            portfolio.testimonials) && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -494,7 +511,9 @@ export function PublicPortfolioDetail() {
                 {portfolio.clientName && (
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-gray-600">Client</span>
+                      <span className="text-sm font-medium text-gray-600">
+                        Client
+                      </span>
                     </div>
                     <div className="flex items-center gap-3">
                       <Avatar>
@@ -514,11 +533,13 @@ export function PublicPortfolioDetail() {
                     </div>
                   </div>
                 )}
-                
+
                 {portfolio.salesPerson && (
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-gray-600">Sales Person</span>
+                      <span className="text-sm font-medium text-gray-600">
+                        Sales Person
+                      </span>
                     </div>
                     <div className="flex items-center gap-3">
                       <Avatar>
@@ -542,7 +563,9 @@ export function PublicPortfolioDetail() {
                 {portfolio.testimonials && (
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-gray-600">Testimonial</span>
+                      <span className="text-sm font-medium text-gray-600">
+                        Testimonial
+                      </span>
                     </div>
                     <div className="bg-gray-50 p-3 rounded-lg">
                       <p className="text-sm text-gray-700 italic">
