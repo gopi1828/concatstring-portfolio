@@ -538,7 +538,7 @@ export default function ImportPortfolio({
           <DialogFooter className="border-t pt-4">
             <Button
               onClick={() => setDialogOpen(false)}
-              className="min-w-[100px]"
+  className="min-w-[100px] bg-transparent text-black border border-black hover:bg-black/10 hover:text-black rounded-md transition-colors"
             >
               Close
             </Button>
