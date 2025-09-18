@@ -36,13 +36,12 @@ export function CategoriesPage() {
       const response = await api.get("/api/categories");
       const categoriesWithId = response.data.map((cat: any) => ({
         ...cat,
-        id: cat._id || cat.id,
+        id: cat._id,
         count: cat.count ?? 0,
       }));
       setCategories(categoriesWithId);
     } catch (err: any) {
       console.error("Error fetching categories:", err);
-      // Error handled silently
     } finally {
       setLoading(false);
     }
@@ -95,9 +94,8 @@ export function CategoriesPage() {
     setCategoryToDelete(null);
   };
 
-  const filteredCategories = categories.filter(
-    (category) =>
-      category?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCategories = categories.filter((category) =>
+    category?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -142,14 +140,16 @@ export function CategoriesPage() {
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <div className="flex-1 min-w-0">
-                      <Skeleton className="h-5 w-32 mb-2" /> {/* category name */}
+                      <Skeleton className="h-5 w-32 mb-2" />{" "}
+                      {/* category name */}
                     </div>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="flex items-center justify-between">
-                  <Skeleton className="h-6 w-20 rounded-md" /> {/* projects badge */}
+                  <Skeleton className="h-6 w-20 rounded-md" />{" "}
+                  {/* projects badge */}
                 </div>
               </CardContent>
             </Card>

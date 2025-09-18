@@ -51,7 +51,6 @@ export default function EditPortfolioModal({
 
   const isImageUrl = (url: string) => {
     const clean = (url || "").split("?")[0].toLowerCase();
-    // Treat everything except explicit PDFs as images, since we only accept images or PDFs
     return !clean.endsWith(".pdf");
   };
   const extractFileNameFromUrl = (url: string) => url.split("/").pop() || url;
@@ -67,7 +66,9 @@ export default function EditPortfolioModal({
           const objectUrl = URL.createObjectURL(item as File);
           setImagePreview(objectUrl);
           return;
-        } catch {}
+        } catch (error) {
+          console.error("Error creating object URL for image file:", error);
+        }
       }
     }
     setImagePreview(null);
@@ -83,15 +84,16 @@ export default function EditPortfolioModal({
         setIsLoading(true);
         const res = await api.get("/api/technologies");
         const data = res.data;
-        
-        // Filter technologies to only include valid ones
-        const cleaned = Array.isArray(data) ? data.filter(
-          (tech) =>
-            typeof tech.name === "string" &&
-            typeof tech.description === "string" &&
-            typeof tech.category === "string"
-        ) : [];
-        
+
+        const cleaned = Array.isArray(data)
+          ? data.filter(
+              (tech) =>
+                typeof tech.name === "string" &&
+                typeof tech.description === "string" &&
+                typeof tech.category === "string"
+            )
+          : [];
+
         console.log("Raw technologies data (edit):", data);
         console.log("Filtered technologies (edit):", cleaned);
         setTechOptions(cleaned);
@@ -169,7 +171,7 @@ export default function EditPortfolioModal({
     if (!date) return "";
     const dateObj = new Date(date);
     if (isNaN(dateObj.getTime())) return "";
-    return dateObj.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    return dateObj.toISOString().split("T")[0];
   };
 
   const normalizeInitialValues = (iv: any) => ({
@@ -210,7 +212,7 @@ export default function EditPortfolioModal({
           invoiceAmount: "",
           startDate: "",
           completionDate: "",
-          salesPerson:"",
+          salesPerson: "",
           clientName: "",
           testimonials: "",
           tag: "",
@@ -255,13 +257,12 @@ export default function EditPortfolioModal({
             : values.invoiceAmount,
         startDate: values.startDate || undefined,
         completionDate: values.completionDate || undefined,
-        salesPerson:values.salesPerson,
+        salesPerson: values.salesPerson,
         clientName: values.clientName,
         testimonials: values.testimonials,
         tag: selectedTags,
       };
 
-      // Remove undefined keys to avoid empty update
       Object.keys(payload).forEach(
         (k) => payload[k] === undefined && delete payload[k]
       );
@@ -272,7 +273,6 @@ export default function EditPortfolioModal({
           payload
         );
         if (response.status === 200) {
-          // Notify parent to refresh its data without requiring a full page reload
           if (typeof onUpdated === "function") {
             onUpdated();
           } else {
@@ -289,7 +289,6 @@ export default function EditPortfolioModal({
     },
   });
 
-  // Keep preview in sync with current selections (existing + new)
   useEffect(() => {
     if (!open) return;
     if (Array.isArray(formik.values.clientInvoices)) {
@@ -297,7 +296,6 @@ export default function EditPortfolioModal({
         formik.values.clientInvoices as Array<File | string>
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, formik.values.clientInvoices]);
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -443,7 +441,9 @@ export default function EditPortfolioModal({
                 ))
               ) : (
                 <option value="" disabled>
-                  {isLoading ? "Loading technologies..." : "No technologies available"}
+                  {isLoading
+                    ? "Loading technologies..."
+                    : "No technologies available"}
                 </option>
               )}
             </select>
@@ -554,7 +554,7 @@ export default function EditPortfolioModal({
             </select>
           </div>
 
-         {/* Bid Platform */}
+          {/* Bid Platform */}
           <div className="space-y-2">
             <Label htmlFor="bidPlatform" className="text-sm font-medium">
               Bid Platform
@@ -661,7 +661,7 @@ export default function EditPortfolioModal({
             )}
           </div>
 
-           {/* Sales Person Select */}
+          {/* Sales Person Select */}
           <div className="space-y-2">
             <Label htmlFor="salesPerson" className="text-sm font-medium">
               Sales Person
@@ -698,7 +698,7 @@ export default function EditPortfolioModal({
             )}
           </div>
 
-           {/* Client Name */}
+          {/* Client Name */}
           <div className="space-y-2">
             <Label htmlFor="clientName" className="text-sm font-medium">
               Client Name

@@ -58,16 +58,15 @@ export function EditCategoryModal({
         onOpenChange(false);
         toast.success("Category updated successfully!");
       } catch (error: any) {
-        const errorMessage = 
-          error.response?.data?.message || 
-          error.message || 
+        const errorMessage =
+          error.response?.data?.message ||
+          error.message ||
           "Error updating category";
         toast.error(errorMessage);
       }
     },
   });
 
-  // Reset form when modal opens
   useEffect(() => {
     if (open) {
       formik.resetForm();
@@ -109,9 +108,7 @@ export function EditCategoryModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.name && formik.errors.name && (
-              <p className="text-sm text-red-600">
-                {formik.errors.name}
-              </p>
+              <p className="text-sm text-red-600">{formik.errors.name}</p>
             )}
           </div>
 

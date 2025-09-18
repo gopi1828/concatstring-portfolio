@@ -45,7 +45,7 @@ export function AddTechnologyModal({
         setLoadingCategories(true);
         const res = await api.get("/api/categories");
         const mapped = res.data.map((cat: any) => ({
-          id: cat._id || cat.id,
+          id: cat._id,
           name: cat.name,
         }));
         setCategories(mapped);

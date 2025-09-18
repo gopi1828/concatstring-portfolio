@@ -6,6 +6,39 @@
   .text-balance {
     text-wrap: balance;
   }
+  
+  /* Custom responsive utilities */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Ensure minimum width for very small screens */
+  .min-w-320 {
+    min-width: 320px;
+  }
+  
+  /* Custom breakpoint for extra small screens */
+  @media (min-width: 320px) {
+    .xs\:inline {
+      display: inline;
+    }
+  }
+  
+  @media (max-width: 319px) {
+    .xs\:hidden {
+      display: none;
+    }
+  }
 }
 
 @layer base {

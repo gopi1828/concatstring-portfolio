@@ -48,23 +48,19 @@ export function EditTagModal({
 
         onOpenChange(false);
 
-        // Refresh the tags list
         if (onTagUpdated) {
           onTagUpdated();
         }
         toast.success("Tag updated successfully!");
       } catch (error: any) {
         console.error("Tag update error:", error);
-        const errorMessage = 
-          error.response?.data?.error || 
-          error.message || 
-          "Failed to update tag";
+
+        const errorMessage = error.message || "Failed to update tag";
         toast.error(errorMessage);
       }
     },
   });
 
-  // Reset form when modal opens
   useEffect(() => {
     if (open) {
       formik.resetForm();
@@ -80,9 +76,7 @@ export function EditTagModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">
-            Edit Tag
-          </DialogTitle>
+          <DialogTitle className="text-xl font-semibold">Edit Tag</DialogTitle>
           <DialogDescription>
             Update the tag name to better categorize your portfolio projects.
           </DialogDescription>
@@ -105,9 +99,7 @@ export function EditTagModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.name && formik.errors.name && (
-              <p className="text-sm text-red-600">
-                {formik.errors.name}
-              </p>
+              <p className="text-sm text-red-600">{formik.errors.name}</p>
             )}
           </div>
 

@@ -48,7 +48,6 @@ export function EditIndustryModal({
 
         onOpenChange(false);
 
-        // Refresh the industries list
         if (onIndustryUpdated) {
           onIndustryUpdated();
         }
@@ -64,7 +63,6 @@ export function EditIndustryModal({
     },
   });
 
-  // Reset form when modal opens
   useEffect(() => {
     if (open) {
       formik.resetForm();

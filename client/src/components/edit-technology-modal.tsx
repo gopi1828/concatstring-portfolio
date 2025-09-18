@@ -35,21 +35,18 @@ interface EditTechnologyModalProps {
   technology: Technology | null;
 }
 
-
-
-
-
 export function EditTechnologyModal({
   open,
   onOpenChange,
   onTechnologyUpdated,
   technology,
 }: EditTechnologyModalProps) {
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>(
+    []
+  );
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Reset form when modal opens
   useEffect(() => {
     if (open) {
       formik.resetForm();
@@ -66,7 +63,7 @@ export function EditTechnologyModal({
     validateOnBlur: false,
     onSubmit: async (values) => {
       if (!technology) return;
-      
+
       setIsSubmitting(true);
       try {
         await api.put(`/api/technologies/${technology._id}`, {
@@ -76,15 +73,14 @@ export function EditTechnologyModal({
 
         onOpenChange(false);
 
-        // Refresh the technologies list
         if (onTechnologyUpdated) {
           onTechnologyUpdated();
         }
         toast.success("Technology updated successfully!");
       } catch (error: any) {
-        const errorMessage = 
-          error.response?.data?.message || 
-          error.message || 
+        const errorMessage =
+          error.response?.data?.message ||
+          error.message ||
           "Failed to update technology";
         toast.error(errorMessage);
       } finally {
@@ -93,7 +89,6 @@ export function EditTechnologyModal({
     },
   });
 
-  // Fetch categories when component mounts
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -102,10 +97,12 @@ export function EditTechnologyModal({
     try {
       setLoadingCategories(true);
       const response = await api.get("/api/categories");
+
       const data = response.data.map((cat: any) => ({
-        id: cat._id || cat.id,
+        id: cat._id,
         name: cat.name,
       }));
+
       setCategories(data);
     } catch (err) {
       console.error("Error fetching categories:", err);
@@ -113,7 +110,6 @@ export function EditTechnologyModal({
       setLoadingCategories(false);
     }
   };
-
 
   const handleCancel = () => {
     formik.resetForm();
@@ -188,7 +184,6 @@ export function EditTechnologyModal({
               <p className="text-sm text-red-600">{formik.errors.category}</p>
             )}
           </div>
-
 
           <DialogFooter className="gap-2">
             <Button

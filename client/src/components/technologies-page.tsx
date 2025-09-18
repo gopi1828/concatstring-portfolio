@@ -6,13 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { AddTechnologyModal } from "./add-technology-modal";
 import { EditTechnologyModal } from "./edit-technology-modal";
 import { ConfirmDialog } from "./ui/confirm-delete";
-import {
-  Search,
-  Plus,
-  Edit,
-  Trash2,
-  Code2,
-} from "lucide-react";
+import { Search, Plus, Edit, Trash2, Code2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { Skeleton } from "./ui/skeleton";
 import api from "../lib/api";
@@ -24,7 +18,6 @@ interface Technology {
   count?: number;
 }
 
-
 export function TechnologiesPage() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -34,7 +27,9 @@ export function TechnologiesPage() {
     null
   );
   const [technologies, setTechnologies] = useState<Technology[]>([]);
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>(
+    []
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -50,8 +45,7 @@ export function TechnologiesPage() {
 
       const cleaned = data.filter(
         (tech) =>
-          typeof tech.name === "string" &&
-          typeof tech.category === "string"
+          typeof tech.name === "string" && typeof tech.category === "string"
       );
 
       setTechnologies(cleaned);
@@ -72,16 +66,15 @@ export function TechnologiesPage() {
         name: cat.name,
       }));
       setCategories(data);
-      return data; // Return the data for potential use
+      return data;
     } catch (err) {
       console.error("Error fetching categories:", err);
-      return []; // Return empty array on error
+      return [];
     }
   };
 
   useEffect(() => {
     const loadData = async () => {
-      // First fetch categories, then technologies
       await fetchCategories();
       await fetchTechnologies();
     };
@@ -89,7 +82,7 @@ export function TechnologiesPage() {
   }, []);
 
   const getCategoryName = (categoryId: string) => {
-    const category = categories.find(cat => cat.id === categoryId);
+    const category = categories.find((cat) => cat.id === categoryId);
     return category ? category.name : categoryId;
   };
 
@@ -157,7 +150,6 @@ export function TechnologiesPage() {
 
       {/* Filters */}
       <div className="flex flex-col gap-4">
-        {/* Search Input */}
         <div className="relative w-full max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
@@ -186,7 +178,9 @@ export function TechnologiesPage() {
           {categories.map((category) => (
             <Button
               key={category.id}
-              variant={selectedCategory === category.name ? "default" : "outline"}
+              variant={
+                selectedCategory === category.name ? "default" : "outline"
+              }
               size="sm"
               onClick={() => setSelectedCategory(category.name)}
               className={`whitespace-nowrap ${
@@ -201,7 +195,7 @@ export function TechnologiesPage() {
         </div>
       </div>
 
-      {/* Loader / Error */}
+      {/* Loader  */}
       {loading && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, i) => (
@@ -213,7 +207,8 @@ export function TechnologiesPage() {
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-start gap-3 min-w-0 flex-1">
                     <div className="flex-1 min-w-0">
-                      <Skeleton className="h-5 w-32 mb-2" /> {/* technology name */}
+                      <Skeleton className="h-5 w-32 mb-2" />{" "}
+                      {/* technology name */}
                       <Skeleton className="h-4 w-24" /> {/* category name */}
                     </div>
                   </div>
@@ -221,7 +216,8 @@ export function TechnologiesPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <Skeleton className="h-6 w-20 rounded-md" /> {/* projects badge */}
+                  <Skeleton className="h-6 w-20 rounded-md" />{" "}
+                  {/* projects badge */}
                 </div>
               </CardContent>
             </Card>
@@ -275,7 +271,6 @@ export function TechnologiesPage() {
               </CardHeader>
 
               <CardContent className="space-y-4">
-
                 <div className="flex items-center justify-between">
                   <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-600 hover:text-white transition-colors duration-200">
                     {tech.count ?? 0}{" "}

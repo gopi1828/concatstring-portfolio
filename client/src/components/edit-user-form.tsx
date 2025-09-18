@@ -87,7 +87,6 @@ export function EditUserForm() {
           });
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
       } finally {
         setIsLoading(false);
       }

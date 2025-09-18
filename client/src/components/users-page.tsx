@@ -19,12 +19,7 @@ import {
   PaginationPrevious,
 } from "../components/ui/pagination";
 import { AddUserModal } from "../components/add-user-modal";
-import {
-  Search,
-  Plus,
-  Trash2,
-  User,
-} from "lucide-react";
+import { Search, Plus, Trash2, User } from "lucide-react";
 import { ConfirmDialog } from "./ui/confirm-delete";
 import { Skeleton } from "./ui/skeleton";
 import api from "../lib/api";
@@ -74,7 +69,6 @@ const TableSkeleton = () => (
     </Table>
   </div>
 );
-
 
 export function UsersPage() {
   const [users, setUsers] = useState<UserItem[]>([]);
@@ -137,7 +131,6 @@ export function UsersPage() {
     if (token) {
       const payload = decodeJwtPayload(token);
       const roleFromToken = (payload?.role ??
-        payload?.user?.role ??
         (Array.isArray(payload?.roles) ? payload.roles[0] : null)) as
         | string
         | null;
@@ -151,7 +144,7 @@ export function UsersPage() {
       if (userData) {
         try {
           const user = JSON.parse(userData);
-                  
+
           const roleFromUser = (user?.role ??
             user?.user?.role ??
             user?.data?.role ??
@@ -179,7 +172,7 @@ export function UsersPage() {
   };
 
   const handleDelete = async (id: string) => {
-    const user = users.find(u => u._id === id);
+    const user = users.find((u) => u._id === id);
     setUserToDelete(id);
     setUsernameToDelete(user?.username || null);
     setDeleteConfirmOpen(true);
@@ -201,9 +194,7 @@ export function UsersPage() {
         throw new Error(result.error || "Delete operation failed");
       }
 
-      setUsers((prev) =>
-        prev.filter((user) => user._id !== userToDelete)
-      );
+      setUsers((prev) => prev.filter((user) => user._id !== userToDelete));
       toast.success("User deleted successfully!");
     } catch (error) {
       toast.error("Failed to delete user");
@@ -259,7 +250,9 @@ export function UsersPage() {
             <TableHead>Name</TableHead>
             <TableHead>Username</TableHead>
             <TableHead>Role</TableHead>
-            {isLoggedIn && isAdmin && <TableHead className="w-20">Actions</TableHead>}
+            {isLoggedIn && isAdmin && (
+              <TableHead className="w-20">Actions</TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -270,15 +263,11 @@ export function UsersPage() {
                   <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
                     <User className="h-4 w-4 text-gray-600" />
                   </div>
-                  <div className="font-medium text-gray-900">
-                    {user.name}
-                  </div>
+                  <div className="font-medium text-gray-900">{user.name}</div>
                 </div>
               </TableCell>
               <TableCell>
-                <div className="text-sm text-gray-600">
-                  @{user.username}
-                </div>
+                <div className="text-sm text-gray-600">@{user.username}</div>
               </TableCell>
               <TableCell>
                 <Badge
@@ -308,7 +297,6 @@ export function UsersPage() {
       </Table>
     </div>
   );
-
 
   if (isLoading) {
     return (
@@ -378,7 +366,6 @@ export function UsersPage() {
         <div className="flex justify-center">
           <Pagination>
             <PaginationContent>
-              {/* Previous */}
               <PaginationItem>
                 <PaginationPrevious
                   href="#"
@@ -392,7 +379,6 @@ export function UsersPage() {
                 />
               </PaginationItem>
 
-              {/* Page Numbers */}
               {[...Array(totalPages)].map((_, i) => (
                 <PaginationItem key={i}>
                   <PaginationLink
@@ -409,7 +395,6 @@ export function UsersPage() {
                 </PaginationItem>
               ))}
 
-              {/* Next */}
               <PaginationItem>
                 <PaginationNext
                   href="#"
@@ -441,7 +426,9 @@ export function UsersPage() {
       <ConfirmDialog
         isOpen={deleteConfirmOpen}
         title="Delete User"
-        description={`Are you sure you want to delete the user "${usernameToDelete || 'Unknown'}"?`}
+        description={`Are you sure you want to delete the user "${
+          usernameToDelete || "Unknown"
+        }"?`}
         confirmText="Delete"
         cancelText="Cancel"
         onConfirm={confirmDelete}
