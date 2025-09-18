@@ -3,6 +3,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Badge } from "../components/ui/badge";
 import { Card, CardContent } from "../components/ui/card";
+import { Checkbox } from "../components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -18,6 +19,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  PaginationEllipsis,
 } from "../components/ui/pagination";
 import { AddPortfolioModal } from "../components/add-portfolio-modal";
 import EditPortfolioModal from "../components/edit-portfolio-modal";
@@ -67,11 +69,12 @@ type PortfolioItem = {
   createdAt?: string;
 };
 
-const TableSkeleton = () => (
+const TableSkeleton = ({ showSelectColumn = false }: { showSelectColumn?: boolean }) => (
   <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
     <Table>
       <TableHeader>
         <TableRow className="bg-gray-50">
+          {showSelectColumn && <TableHead className="w-8">Select</TableHead>}
           <TableHead className="w-20">Thumbnail</TableHead>
           <TableHead>Title</TableHead>
           <TableHead>Tags</TableHead>
@@ -82,6 +85,11 @@ const TableSkeleton = () => (
       <TableBody>
         {[...Array(6)].map((_, i) => (
           <TableRow key={i}>
+            {showSelectColumn && (
+              <TableCell>
+                <Skeleton className="w-3 h-3 rounded" />
+              </TableCell>
+            )}
             <TableCell>
               <Skeleton className="w-12 h-12 rounded-lg" />
             </TableCell>
@@ -144,6 +152,10 @@ export function PortfolioPage() {
   const [itemToDeleteName, setItemToDeleteName] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  const [isSelectAll, setIsSelectAll] = useState<boolean>(false);
+  const [bulkDeleteConfirmOpen, setBulkDeleteConfirmOpen] = useState<boolean>(false);
+  const [isSelectionMode, setIsSelectionMode] = useState<boolean>(false);
   const itemsPerPage = 10;
 
   const decodeJwtPayload = (token: string) => {
@@ -276,6 +288,87 @@ export function PortfolioPage() {
     setItemToDeleteName(null);
   };
 
+  const handleSelectionModeToggle = (checked: boolean) => {
+    setIsSelectionMode(checked);
+    if (!checked) {
+      
+      setSelectedItems(new Set());
+      setIsSelectAll(false);
+    }
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      const allIds = new Set(paginatedItems.map(item => item._id));
+      setSelectedItems(allIds);
+      setIsSelectAll(true);
+    } else {
+      setSelectedItems(new Set());
+      setIsSelectAll(false);
+    }
+  };
+
+  const handleSelectItem = (itemId: string, checked: boolean) => {
+    const newSelectedItems = new Set(selectedItems);
+    if (checked) {
+      newSelectedItems.add(itemId);
+    } else {
+      newSelectedItems.delete(itemId);
+    }
+    setSelectedItems(newSelectedItems);
+    setIsSelectAll(newSelectedItems.size === paginatedItems.length);
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedItems.size === 0) return;
+    setBulkDeleteConfirmOpen(true);
+  };
+
+  const confirmBulkDelete = async () => {
+    if (selectedItems.size === 0) return;
+
+    try {
+      const deletePromises = Array.from(selectedItems).map(id =>
+        api.delete(`/api/portfolios/${id}`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+      );
+
+      await Promise.all(deletePromises);
+
+      setPortfolioItems((prev) =>
+        prev.filter((item) => !selectedItems.has(item._id))
+      );
+      
+      setSelectedItems(new Set());
+      setIsSelectAll(false);
+      setBulkDeleteConfirmOpen(false);
+      
+      toast.success(`${selectedItems.size} portfolio item(s) deleted successfully!`);
+    } catch (error) {
+      toast.error("Failed to delete selected portfolio items");
+    }
+  };
+
+  const cancelBulkDelete = () => {
+    setBulkDeleteConfirmOpen(false);
+  };
+
+  
+  useEffect(() => {
+    setSelectedItems(new Set());
+    setIsSelectAll(false);
+  }, [currentPage, searchTerm]);
+
+  
+  useEffect(() => {
+    if (selectedItems.size === 0 && isSelectionMode) {
+      setIsSelectAll(false);
+    }
+  }, [selectedItems.size, isSelectionMode]);
+
   const filteredItems = portfolioItems.filter((item) => {
     const projectName = item.projectName?.toLowerCase() || "";
     const websiteLink = item.websiteLink?.toLowerCase() || "";
@@ -327,11 +420,28 @@ export function PortfolioPage() {
     return firstImage || "/placeholder.svg";
   };
 
+  const getVisibleResultsMin = (currentPage: number, itemsPerPage: number) => {
+    return (currentPage - 1) * itemsPerPage + 1;
+  };
+
+  const getVisibleResultsMax = (currentPage: number, itemsPerPage: number, totalItems: number) => {
+    return Math.min(currentPage * itemsPerPage, totalItems);
+  };
+
   const TableView = () => (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50">
+            {isLoggedIn && isSelectionMode && (
+              <TableHead className="w-8 min-w-[32px]">
+                <Checkbox
+                  checked={isSelectAll}
+                  onCheckedChange={handleSelectAll}
+                  className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 h-3 w-3 [&>span]:h-2.5 [&>span]:w-2.5"
+                />
+              </TableHead>
+            )}
             <TableHead className="w-12 sm:w-16 lg:w-20 min-w-[48px]">
               Thumbnail
             </TableHead>
@@ -352,6 +462,15 @@ export function PortfolioPage() {
         <TableBody>
           {paginatedItems.map((item) => (
             <TableRow key={item._id} className="hover:bg-gray-50">
+              {isLoggedIn && isSelectionMode && (
+                <TableCell>
+                  <Checkbox
+                    checked={selectedItems.has(item._id)}
+                    onCheckedChange={(checked) => handleSelectItem(item._id, checked as boolean)}
+                    className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 h-3 w-3 [&>span]:h-2.5 [&>span]:w-2.5"
+                  />
+                </TableCell>
+              )}
               <TableCell>
                 {item.clientInvoices &&
                 item.clientInvoices.length > 0 &&
@@ -491,8 +610,17 @@ export function PortfolioPage() {
       {paginatedItems.map((item) => (
         <Card
           key={item._id}
-          className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-white"
+          className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-white relative"
         >
+          {isLoggedIn && isSelectionMode && (
+            <div className="absolute top-2 left-2 z-10">
+              <Checkbox
+                checked={selectedItems.has(item._id)}
+                onCheckedChange={(checked) => handleSelectItem(item._id, checked as boolean)}
+                className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 bg-white/90 h-3 w-3 [&>span]:h-2.5 [&>span]:w-2.5"
+              />
+            </div>
+          )}
           <Link to={`/dashboard/portfolio/${item._id}`}>
             <div className="relative overflow-hidden rounded-t-lg">
               {item.clientInvoices &&
@@ -614,7 +742,7 @@ export function PortfolioPage() {
         </div>
 
         {/* Skeleton Loader */}
-        {viewMode === "table" ? <TableSkeleton /> : <GridSkeleton />}
+        {viewMode === "table" ? <TableSkeleton showSelectColumn={isLoggedIn && isSelectionMode} /> : <GridSkeleton />}
       </div>
     );
   }
@@ -642,6 +770,17 @@ export function PortfolioPage() {
               allItems={portfolioItems}
               disabled={isLoading}
             />
+            {isLoggedIn && selectedItems.size > 0 && (
+              <Button
+                onClick={handleBulkDelete}
+                variant="destructive"
+                className="text-sm sm:text-base"
+                disabled={!isAdmin}
+              >
+                <Trash2 className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                Delete ({selectedItems.size})
+              </Button>
+            )}
           </div>
           {isLoggedIn && (
             <Button
@@ -667,29 +806,41 @@ export function PortfolioPage() {
             className="pl-7 sm:pl-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 text-sm sm:text-base h-8 sm:h-10"
           />
         </div>
-        <div className="flex items-center gap-1 sm:gap-2 bg-white rounded-lg border border-gray-200 p-1">
-          <Button
-            variant={viewMode === "table" ? "default" : "ghost"}
-            size="sm"
-            onClick={() => setViewMode("table")}
-            className={`h-7 w-7 sm:h-8 sm:w-8 ${
-              viewMode === "table" ? "bg-blue-600 hover:bg-blue-700" : ""
-            }`}
-            title="Table View"
-          >
-            <List className="h-3 w-3 sm:h-4 sm:w-4" />
-          </Button>
-          <Button
-            variant={viewMode === "grid" ? "default" : "ghost"}
-            size="sm"
-            onClick={() => setViewMode("grid")}
-            className={`h-7 w-7 sm:h-8 sm:w-8 ${
-              viewMode === "grid" ? "bg-blue-600 hover:bg-blue-700" : ""
-            }`}
-            title="Grid View"
-          >
-            <Grid3X3 className="h-3 w-3 sm:h-4 sm:w-4" />
-          </Button>
+        <div className="flex items-center gap-2">
+          {isLoggedIn && (
+            <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
+              <Checkbox
+                checked={isSelectionMode}
+                onCheckedChange={handleSelectionModeToggle}
+                className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 h-3 w-3 [&>span]:h-2.5 [&>span]:w-2.5"
+              />
+              <span className="text-xs sm:text-sm font-medium text-gray-700">Select</span>
+            </div>
+          )}
+          <div className="flex items-center gap-1 sm:gap-2 bg-white rounded-lg border border-gray-200 p-1">
+            <Button
+              variant={viewMode === "table" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setViewMode("table")}
+              className={`h-7 w-7 sm:h-8 sm:w-8 ${
+                viewMode === "table" ? "bg-blue-600 hover:bg-blue-700" : ""
+              }`}
+              title="Table View"
+            >
+              <List className="h-3 w-3 sm:h-4 sm:w-4" />
+            </Button>
+            <Button
+              variant={viewMode === "grid" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setViewMode("grid")}
+              className={`h-7 w-7 sm:h-8 sm:w-8 ${
+                viewMode === "grid" ? "bg-blue-600 hover:bg-blue-700" : ""
+              }`}
+              title="Grid View"
+            >
+              <Grid3X3 className="h-3 w-3 sm:h-4 sm:w-4" />
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -708,126 +859,86 @@ export function PortfolioPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center gap-4">
           <Pagination>
             <PaginationContent>
-              {/* Previous */}
               <PaginationItem>
                 <PaginationPrevious
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    if (currentPage > 1) setCurrentPage(currentPage - 1);
+                    if (currentPage > 1) {
+                      setCurrentPage(currentPage - 1);
+                    }
                   }}
-                  className={`text-xs sm:text-sm ${
-                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
-                  }`}
+                  className={currentPage <= 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                 />
               </PaginationItem>
-
-              {totalPages <= 7 ? (
-                [...Array(totalPages)].map((_, i) => (
-                  <PaginationItem key={i}>
-                    <PaginationLink
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setCurrentPage(i + 1);
-                      }}
-                      isActive={currentPage === i + 1}
-                      size="icon"
-                      className="text-xs sm:text-sm h-7 w-7 sm:h-8 sm:w-8"
-                    >
-                      {i + 1}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))
-              ) : (
-                <>
-                  <PaginationItem>
-                    <PaginationLink
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setCurrentPage(1);
-                      }}
-                      isActive={currentPage === 1}
-                      size="icon"
-                      className="text-xs sm:text-sm h-7 w-7 sm:h-8 sm:w-8"
-                    >
-                      1
-                    </PaginationLink>
-                  </PaginationItem>
-
-                  {currentPage > 3 && (
-                    <PaginationItem>
-                      <span className="px-2 text-xs sm:text-sm">...</span>
-                    </PaginationItem>
-                  )}
-
-                  {[...Array(Math.min(3, totalPages - 2))].map((_, i) => {
-                    const pageNum = Math.max(2, currentPage - 1) + i;
-                    if (pageNum >= totalPages) return null;
+              
+              {/* Page numbers */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => {
+                // Show first page, last page, current page, and pages around current page
+                const shouldShow = 
+                  pageNumber === 1 || 
+                  pageNumber === totalPages || 
+                  (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1);
+                
+                if (!shouldShow) {
+                  // Show ellipsis for gaps
+                  if (pageNumber === currentPage - 2 || pageNumber === currentPage + 2) {
                     return (
-                      <PaginationItem key={pageNum}>
-                        <PaginationLink
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setCurrentPage(pageNum);
-                          }}
-                          isActive={currentPage === pageNum}
-                          size="icon"
-                          className="text-xs sm:text-sm h-7 w-7 sm:h-8 sm:w-8"
-                        >
-                          {pageNum}
-                        </PaginationLink>
+                      <PaginationItem key={pageNumber}>
+                        <PaginationEllipsis />
                       </PaginationItem>
                     );
-                  })}
-
-                  {currentPage < totalPages - 2 && (
-                    <PaginationItem>
-                      <span className="px-2 text-xs sm:text-sm">...</span>
-                    </PaginationItem>
-                  )}
-
-                  {totalPages > 1 && (
-                    <PaginationItem>
-                      <PaginationLink
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setCurrentPage(totalPages);
-                        }}
-                        isActive={currentPage === totalPages}
-                        size="icon"
-                        className="text-xs sm:text-sm h-7 w-7 sm:h-8 sm:w-8"
-                      >
-                        {totalPages}
-                      </PaginationLink>
-                    </PaginationItem>
-                  )}
-                </>
-              )}
-
+                  }
+                  return null;
+                }
+                
+                 return (
+                   <PaginationItem key={pageNumber}>
+                     <PaginationLink
+                       href="#"
+                       onClick={(e) => {
+                         e.preventDefault();
+                         setCurrentPage(pageNumber);
+                       }}
+                       isActive={currentPage === pageNumber}
+                       className={`cursor-pointer h-8 w-8 p-0 flex items-center justify-center text-sm rounded-md ${
+                         currentPage === pageNumber 
+                           ? "bg-blue-600 text-white hover:bg-blue-600 hover:text-white" 
+                           : "hover:bg-gray-100 hover:text-gray-900"
+                       }`}
+                     >
+                       {pageNumber}
+                     </PaginationLink>
+                   </PaginationItem>
+                 );
+              })}
+              
               <PaginationItem>
                 <PaginationNext
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    if (currentPage < totalPages)
+                    if (currentPage < totalPages) {
                       setCurrentPage(currentPage + 1);
+                    }
                   }}
-                  className={`text-xs sm:text-sm ${
-                    currentPage === totalPages
-                      ? "pointer-events-none opacity-50"
-                      : ""
-                  }`}
+                  className={currentPage >= totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
                 />
               </PaginationItem>
             </PaginationContent>
           </Pagination>
+          
+          {/* Results info */}
+          <div className="text-sm text-gray-600">
+            Showing {getVisibleResultsMin(currentPage, itemsPerPage)}-{getVisibleResultsMax(
+              currentPage,
+              itemsPerPage,
+              filteredItems.length
+            )} of {filteredItems.length} results
+          </div>
         </div>
       )}
 
@@ -845,6 +956,16 @@ export function PortfolioPage() {
         cancelText="Cancel"
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
+      />
+
+      <ConfirmDialog
+        isOpen={bulkDeleteConfirmOpen}
+        title="Delete Selected Items"
+        description={`Are you sure you want to delete ${selectedItems.size} selected portfolio item(s)?`}
+        confirmText="Delete All"
+        cancelText="Cancel"
+        onConfirm={confirmBulkDelete}
+        onCancel={cancelBulkDelete}
       />
 
       {editItem && (

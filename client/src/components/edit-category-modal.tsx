@@ -49,7 +49,6 @@ export function EditCategoryModal({
           name: values.name,
         });
 
-        // Update the category in the parent component
         const updatedCategory = {
           ...category,
           name: values.name,
