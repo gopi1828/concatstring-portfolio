@@ -29,7 +29,8 @@ exports.createTag = async function createTag(req, res) {
 exports.getTags = async function getTags(_req, res) {
   try {
     await connectToDatabase();
-    const tags = await Tag.find().sort({ createdAt: -1 }).lean();
+    const tags = await Tag.find().collation({ locale: "en", strength: 1 })
+    .sort({ name: 1 }).lean();
 
     const tagsWithCounts = await Promise.all(
       tags.map(async(tag)=>{

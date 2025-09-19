@@ -30,7 +30,9 @@ exports.createIndustry = async function createIndustry(req, res) {
 exports.getIndustry = async function getIndustry(_req, res) {
   try {
     await connectToDatabase();
-    const industry = await Industry.find().sort({ createdAt: -1 }).lean();
+    const industry = await Industry.find()
+    .collation({ locale: "en", strength: 1 })
+    .sort({ name: 1 }).lean();
     const industryWithCounts = await Promise.all(
       industry.map(async(ind) => {
         const count = await Portfolio.countDocuments({ industry: ind.name})
