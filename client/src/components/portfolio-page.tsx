@@ -31,6 +31,10 @@ import {
   Edit,
   Trash2,
   FileText,
+  Filter,
+  X,
+  ChevronDown,
+  Code,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ConfirmDialog } from "./ui/confirm-delete";
@@ -40,6 +44,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from "./ui/dropdown-menu";
 
 import ExportPortfolio from "../components/export-portfolio";
 import ImportPortfolio from "../components/import-portfolio";
@@ -67,6 +79,18 @@ type PortfolioItem = {
   testimonials: string;
   tag: string[];
   createdAt?: string;
+};
+
+type Industry = {
+  _id: string;
+  name: string;
+  count: number;
+};
+
+type Technology = {
+  _id: string;
+  name: string;
+  count: number;
 };
 
 const TableSkeleton = ({ showSelectColumn = false }: { showSelectColumn?: boolean }) => (
@@ -159,6 +183,11 @@ export function PortfolioPage() {
   const [isSelectAll, setIsSelectAll] = useState<boolean>(false);
   const [bulkDeleteConfirmOpen, setBulkDeleteConfirmOpen] = useState<boolean>(false);
   const [isSelectionMode, setIsSelectionMode] = useState<boolean>(false);
+  const [industries, setIndustries] = useState<Industry[]>([]);
+  const [technologies, setTechnologies] = useState<Technology[]>([]);
+  const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
+  const [selectedTechnology, setSelectedTechnology] = useState<string | null>(null);
+  const [loadingFilters, setLoadingFilters] = useState(true);
   const itemsPerPage = 10;
 
   const decodeJwtPayload = (token: string) => {
@@ -199,8 +228,36 @@ export function PortfolioPage() {
     }
   };
 
+  const fetchIndustries = async () => {
+    try {
+      const response = await api.get("/api/industry");
+      setIndustries(response.data || []);
+    } catch (error) {
+      console.error("Error fetching industries:", error);
+    }
+  };
+
+  const fetchTechnologies = async () => {
+    try {
+      const response = await api.get("/api/technologies");
+      setTechnologies(response.data || []);
+    } catch (error) {
+      console.error("Error fetching technologies:", error);
+    }
+  };
+
+  const fetchAllData = async () => {
+    setLoadingFilters(true);
+    await Promise.all([
+      fetchPortfolios(),
+      fetchIndustries(),
+      fetchTechnologies()
+    ]);
+    setLoadingFilters(false);
+  };
+
   useEffect(() => {
-    fetchPortfolios();
+    fetchAllData();
   }, []);
 
   useEffect(() => {
@@ -359,6 +416,25 @@ export function PortfolioPage() {
     setBulkDeleteConfirmOpen(false);
   };
 
+  const handleIndustryFilter = (industry: string | null) => {
+    setSelectedIndustry(industry);
+    setCurrentPage(1); // Reset to first page when filtering
+  };
+
+  const handleTechnologyFilter = (technology: string | null) => {
+    setSelectedTechnology(technology);
+    setCurrentPage(1); // Reset to first page when filtering
+  };
+
+  const clearAllFilters = () => {
+    setSelectedIndustry(null);
+    setSelectedTechnology(null);
+    setSearchTerm("");
+    setCurrentPage(1);
+  };
+
+  const hasActiveFilters = selectedIndustry || selectedTechnology || searchTerm;
+
   
   useEffect(() => {
     setSelectedItems(new Set());
@@ -389,7 +465,8 @@ export function PortfolioPage() {
     const industry = item.industry?.toLowerCase() || "";
     const search = searchTerm.toLowerCase();
 
-    return (
+    // Search filter
+    const matchesSearch = (
       projectName.includes(search) ||
       websiteLink.includes(search) ||
       clientName.includes(search) ||
@@ -399,6 +476,16 @@ export function PortfolioPage() {
       category.includes(search) ||
       industry.includes(search)
     );
+
+    // Industry filter
+    const matchesIndustry = !selectedIndustry || 
+      industry === selectedIndustry.toLowerCase();
+
+    // Technology filter
+    const matchesTechnology = !selectedTechnology || 
+      technology === selectedTechnology.toLowerCase();
+
+    return matchesSearch && matchesIndustry && matchesTechnology;
   });
 
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
@@ -715,7 +802,7 @@ export function PortfolioPage() {
             <div className="hidden sm:block">
               {item.industry && (
                 <p className="text-xs text-blue-600 mb-2 sm:mb-4">
-                {item.industry}
+                   {item.industry}
                 </p>
               )}
             </div>
@@ -735,7 +822,7 @@ export function PortfolioPage() {
     </div>
   );
 
-  if (isLoading) {
+  if (isLoading || loadingFilters) {
     return (
       <div className="space-y-4 sm:space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
@@ -803,18 +890,109 @@ export function PortfolioPage() {
         </div>
       </div>
 
-      {/* Search and View Toggle */}
-      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center justify-between">
-        <div className="relative flex-1 max-w-md w-full">
-          <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3 sm:h-4 sm:w-4" />
-          <Input
-            placeholder="Search portfolio items..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-7 sm:pl-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 text-sm sm:text-base h-8 sm:h-10"
-          />
+      {/* Search and Filters */}
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-start sm:items-center justify-between">
+        <div className="flex flex-1 gap-2 items-center">
+          {/* Search Bar */}
+          <div className="relative w-64">
+            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
+            <Input
+              placeholder="Search portfolio items..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-7 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 text-xs h-7"
+            />
+          </div>
+
+          {/* Filter Dropdowns */}
+          <div className="flex gap-2 items-center flex-wrap">
+            {/* Industry Filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="h-7 px-2 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40"
+                >
+                  <div className="flex items-center gap-1 min-w-0">
+                    <Filter className="h-3 w-3 flex-shrink-0" />
+                    <span className="truncate">{selectedIndustry || "Industry"}</span>
+                    <ChevronDown className="h-3 w-3 flex-shrink-0" />
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="start">
+                <DropdownMenuLabel>Filter by Industry</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => handleIndustryFilter(null)}
+                  className={!selectedIndustry ? "bg-blue-50 text-blue-700" : ""}
+                >
+                  All Industries
+                </DropdownMenuItem>
+                {industries.map((industry) => (
+                  <DropdownMenuItem
+                    key={industry._id}
+                    onClick={() => handleIndustryFilter(industry.name)}
+                    className={selectedIndustry === industry.name ? "bg-blue-50 text-blue-700" : ""}
+                  >
+                    {industry.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Technology Filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="h-7 px-2 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40"
+                >
+                  <div className="flex items-center gap-1 min-w-0">
+                    <Code className="h-3 w-3 flex-shrink-0" />
+                    <span className="truncate">{selectedTechnology || "Technology"}</span>
+                    <ChevronDown className="h-3 w-3 flex-shrink-0" />
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="start">
+                <DropdownMenuLabel>Filter by Technology</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => handleTechnologyFilter(null)}
+                  className={!selectedTechnology ? "bg-blue-50 text-blue-700" : ""}
+                >
+                  All Technologies
+                </DropdownMenuItem>
+                {technologies.map((technology) => (
+                  <DropdownMenuItem
+                    key={technology._id}
+                    onClick={() => handleTechnologyFilter(technology.name)}
+                    className={selectedTechnology === technology.name ? "bg-blue-50 text-blue-700" : ""}
+                  >
+                    {technology.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Clear Filters */}
+            {hasActiveFilters && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearAllFilters}
+                className="h-7 px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+              >
+                <X className="h-3 w-3 -mr-1.5" />
+                Clear
+              </Button>
+            )}
+          </div>
         </div>
-        <div className="flex items-center gap-2">
+
+        {/* Right Side Controls */}
+        <div className="flex items-center gap-2 flex-shrink-0">
           {isLoggedIn && (
             <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
               <Checkbox
@@ -822,10 +1000,10 @@ export function PortfolioPage() {
                 onCheckedChange={handleSelectionModeToggle}
                 className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 h-3 w-3 [&>span]:h-2.5 [&>span]:w-2.5"
               />
-              <span className="text-xs sm:text-sm font-medium text-gray-700">Select</span>
+              <span className="text-xs font-medium text-gray-700">Select</span>
             </div>
           )}
-          <div className="flex items-center gap-1 sm:gap-2 bg-white rounded-lg border border-gray-200 p-1">
+          <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 p-1">
             <Button
               variant={viewMode === "table" ? "default" : "ghost"}
               size="sm"
@@ -835,7 +1013,7 @@ export function PortfolioPage() {
               }`}
               title="Table View"
             >
-              <List className="h-3 w-3 sm:h-4 sm:w-4" />
+              <List className="h-3 w-3" />
             </Button>
             <Button
               variant={viewMode === "grid" ? "default" : "ghost"}
@@ -846,7 +1024,7 @@ export function PortfolioPage() {
               }`}
               title="Grid View"
             >
-              <Grid3X3 className="h-3 w-3 sm:h-4 sm:w-4" />
+              <Grid3X3 className="h-3 w-3" />
             </Button>
           </div>
         </div>
@@ -855,10 +1033,19 @@ export function PortfolioPage() {
       {/* Content */}
       {filteredItems.length === 0 ? (
         <div className="text-center py-12">
-          <div className="text-gray-500 text-lg">
-            {portfolioItems.length === 0
-              ? "No portfolio items found."
-              : "No items match your search."}
+          <div className="flex flex-col items-center">
+            <img 
+              src="/no-portfolio-found.png" 
+              alt="No portfolio items found" 
+              className="w-48 h-48 object-contain mb-4"
+            />
+            <div className="text-gray-500 text-lg">
+              {portfolioItems.length === 0
+                ? "No portfolio items found."
+                : hasActiveFilters
+                ? "No portfolio items match your current filters. Try adjusting your search criteria or clearing filters."
+                : "No items match your search."}
+            </div>
           </div>
         </div>
       ) : (
