@@ -16,14 +16,20 @@ import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationLink,
+  PaginationLink, 
   PaginationNext,
   PaginationPrevious,
+  PaginationEllipsis,
 } from "./ui/pagination";
-import { Search, Code, Eye, Grid3X3, List, FileText } from "lucide-react";
+import { Search, Grid3X3, List, Calendar, FileText } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
-import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 type PortfolioItem = {
   _id: string;
@@ -53,7 +59,7 @@ const TableSkeleton = () => (
         <TableRow className="bg-gray-50">
           <TableHead className="w-20">Thumbnail</TableHead>
           <TableHead>Title</TableHead>
-          <TableHead>Tags</TableHead>
+          <TableHead>Technology</TableHead>
           <TableHead>Date</TableHead>
         </TableRow>
       </TableHeader>
@@ -69,7 +75,6 @@ const TableSkeleton = () => (
             </TableCell>
             <TableCell>
               <div className="flex gap-2">
-                <Skeleton className="h-5 w-12 rounded-full" />
                 <Skeleton className="h-5 w-12 rounded-full" />
               </div>
             </TableCell>
@@ -106,9 +111,11 @@ export function PublicPortfolioPage() {
   const [portfolios, setPortfolios] = useState<PortfolioItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [viewMode, setViewMode] = useState<"table" | "grid">("table");
+  const [viewMode, setViewMode] = useState<"table" | "grid">(() => {
+    const savedViewMode = localStorage.getItem("portfolioViewMode");
+    return (savedViewMode as "table" | "grid") || "table";
+  });
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const navigate = useNavigate();
   const itemsPerPage = 10;
 
   const fetchPortfolios = async () => {
@@ -127,11 +134,17 @@ export function PublicPortfolioPage() {
     fetchPortfolios();
   }, []);
 
-  const getDisplayTags = (item: PortfolioItem) => {
-    const techTags =
-      typeof item.technology === "string" ? [item.technology] : [];
-    const tags = Array.isArray(item.tag) ? item.tag : [];
-    return [...techTags, ...tags].filter(Boolean);
+  const getDisplayTechnology = (item: PortfolioItem) => {
+    return typeof item.technology === 'string' ? item.technology : '';
+  };
+
+  const truncateTooltipText = (text: string, maxLength: number = 100) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  };
+
+  const shouldShowTooltip = (text: string, maxLength: number = 50) => {
+    return text.length > maxLength;
   };
 
   const isPdfUrl = (url: string) =>
@@ -142,12 +155,22 @@ export function PublicPortfolioPage() {
     return firstImage || "/placeholder.svg";
   };
 
+  const getVisibleResultsMin = (currentPage: number, itemsPerPage: number) => {
+    return (currentPage - 1) * itemsPerPage + 1;
+  };
+
+  const getVisibleResultsMax = (currentPage: number, itemsPerPage: number, totalItems: number) => {
+    return Math.min(currentPage * itemsPerPage, totalItems);
+  };
+
   const filteredPortfolios = portfolios.filter((item) => {
     const projectName = item.projectName?.toLowerCase() || "";
     const description = item.description?.toLowerCase() || "";
     const technology =
       typeof item.technology === "string" ? item.technology.toLowerCase() : "";
     const tag = Array.isArray(item.tag) ? item.tag : [];
+    const category = item.category?.toLowerCase() || "";
+    const industry = item.industry?.toLowerCase() || "";
     const search = searchTerm.toLowerCase();
 
     return (
@@ -155,8 +178,8 @@ export function PublicPortfolioPage() {
       description.includes(search) ||
       technology.includes(search) ||
       tag.some((t) => t?.toLowerCase().includes(search)) ||
-      item.category?.toLowerCase().includes(search) ||
-      item.industry?.toLowerCase().includes(search)
+      category.includes(search) ||
+      industry.includes(search)
     );
   });
 
@@ -167,28 +190,23 @@ export function PublicPortfolioPage() {
     startIndex + itemsPerPage
   );
 
-  const handleProjectClick = (id: string) => {
-    navigate(`/portfolio/${id}`);
+  const handleViewModeChange = (mode: "table" | "grid") => {
+    setViewMode(mode);
+    localStorage.setItem("portfolioViewMode", mode);
   };
 
   const TableView = () => (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-x-auto">
-      <Table>
-        <TableHeader>
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+            <Table>
+              <TableHeader>
           <TableRow className="bg-gray-50">
-            <TableHead className="w-12 sm:w-16 lg:w-20 min-w-[48px]">
-              Thumbnail
-            </TableHead>
-            <TableHead className="min-w-[200px]">Title</TableHead>
-            <TableHead className="hidden sm:table-cell min-w-[120px]">
-              Tags
-            </TableHead>
-            <TableHead className="hidden lg:table-cell min-w-[100px]">
-              Date
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+            <TableHead className="w-20">Thumbnail</TableHead>
+            <TableHead>Title</TableHead>
+            <TableHead>Technology</TableHead>
+            <TableHead>Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
           {paginatedItems.map((item) => (
             <TableRow key={item._id} className="hover:bg-gray-50">
               <TableCell>
@@ -205,9 +223,9 @@ export function PublicPortfolioPage() {
                     <FileText className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5 text-gray-600" />
                   </button>
                 ) : (
-                  <img
-                    src={getFirstImageUrl(item.clientInvoices)}
-                    alt={item.projectName}
+                        <img
+                          src={getFirstImageUrl(item.clientInvoices)}
+                          alt={item.projectName}
                     onClick={() =>
                       window.open(item.clientInvoices[0], "_blank")
                     }
@@ -215,69 +233,72 @@ export function PublicPortfolioPage() {
                     className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 object-cover rounded-lg cursor-pointer"
                   />
                 )}
-              </TableCell>
+                    </TableCell>
               <TableCell>
                 <div>
                   <Link to={`/portfolio/${item._id}`}>
-                    <div className="font-medium text-gray-900 hover:text-blue-600 cursor-pointer text-sm sm:text-base">
-                      {item.projectName}
-                    </div>
+                    <div className="font-medium text-gray-900 hover:text-blue-600 cursor-pointer">
+                          {item.projectName}
+                        </div>
                   </Link>
-                  <div className="text-xs sm:text-sm text-gray-500 break-words max-w-xs">
-                    {/* Show description only on screens 700px and above */}
-                    <div className="hidden sm:block">
-                      {item.description && (
-                        <div className="truncate">{item.description}</div>
-                      )}
-                    </div>
-                    {/* Show tags on mobile */}
-                    <div className="sm:hidden mt-1">
-                      <div className="flex flex-wrap gap-1">
-                        {getDisplayTags(item)
-                          .slice(0, 2)
-                          .map((tag, index) => (
-                            <Badge
-                              key={`${item._id}-${tag}-${index}`}
-                              variant="secondary"
-                              className="text-xs bg-blue-50 text-blue-700"
+                  <div className="text-sm text-gray-500 break-words max-w-xs">
+                    {shouldShowTooltip(item.description, 50) ? (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div 
+                              className="truncate cursor-help hover:text-gray-700 transition-colors" 
                             >
-                              {tag}
-                            </Badge>
-                          ))}
+                              {item.description}
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent 
+                            className="max-w-xs rounded-lg bg-white text-black text-xs p-2 border border-gray-200 shadow-lg"
+                            side="top"
+                          >
+                            <p>{truncateTooltipText(item.description, 80)}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    ) : (
+                      <div className="truncate">
+                        {item.description}
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell className="hidden sm:table-cell">
+                    )}
+                    {item.industry && (
+                      <span className="block text-xs text-blue-600 mt-1">
+                       {item.industry}
+                      </span>
+                    )}
+                        </div>
+                      </div>
+                    </TableCell>
+              <TableCell>
                 <div className="flex flex-wrap gap-1">
-                  {getDisplayTags(item)
-                    .slice(0, 2)
-                    .map((tag, index) => (
-                      <Badge
-                        key={`${item._id}-${tag}-${index}`}
-                        variant="secondary"
-                        className="text-xs bg-blue-50 text-blue-700"
-                      >
-                        {tag}
-                      </Badge>
-                    ))}
-                </div>
-              </TableCell>
-              <TableCell className="hidden lg:table-cell text-gray-600 text-sm">
+                  {getDisplayTechnology(item) && (
+                          <Badge
+                      variant="secondary"
+                      className="text-xs bg-blue-50 text-blue-700"
+                    >
+                      {getDisplayTechnology(item)}
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
+              <TableCell className="text-gray-600">
                 {item.completionDate
                   ? new Date(item.completionDate).toLocaleDateString()
                   : "N/A"}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
   );
 
   const GridView = () => (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {paginatedItems.map((item) => (
         <Card
           key={item._id}
@@ -299,22 +320,6 @@ export function PublicPortfolioPage() {
                 />
               )}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-              <div className="absolute top-2 right-2 sm:top-3 sm:right-3 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="flex gap-1 sm:gap-2">
-                  <Button
-                    size="icon"
-                    variant="secondary"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleProjectClick(item._id);
-                    }}
-                    className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 bg-white/90 hover:bg-white"
-                    title="View Details"
-                  >
-                    <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
-                  </Button>
-                </div>
-              </div>
             </div>
           </Link>
           <CardContent className="p-3 sm:p-4 lg:p-6">
@@ -323,24 +328,51 @@ export function PublicPortfolioPage() {
                 {item.projectName}
               </h3>
             </Link>
-            {/* Show description only on screens 700px and above */}
-            <div className="hidden sm:block">
-              {item.description && (
-                <p className="text-gray-600 text-xs sm:text-sm mb-2 sm:mb-4 line-clamp-2">
-                  {item.description}
-                </p>
-              )}
-            </div>
-            <div className="flex flex-wrap gap-1 sm:gap-2 mb-2 sm:mb-4">
-              {getDisplayTags(item).map((tag, index) => (
+            {shouldShowTooltip(item.description, 50) ? (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <p 
+                      className="text-gray-600 text-sm mb-2 truncate cursor-help hover:text-gray-700 transition-colors" 
+                    >
+                      {item.description}
+                    </p>
+                  </TooltipTrigger>
+                  <TooltipContent 
+                    className="max-w-xs rounded-lg bg-white text-black text-xs p-2 border border-gray-200 shadow-lg"
+                    side="top"
+                  >
+                    <p>{truncateTooltipText(item.description, 80)}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              <p className="text-gray-600 text-sm mb-2 truncate">
+                {item.description}
+              </p>
+            )}
+            {item.industry && (
+              <p className="text-xs text-blue-600 mb-4">
+                Industry: {item.industry}
+              </p>
+            )}
+            <div className="flex flex-wrap gap-2 mb-4">
+              {getDisplayTechnology(item) && (
                 <Badge
-                  key={`${tag}-${index}`}
                   variant="secondary"
                   className="bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs"
                 >
-                  {tag}
+                  {getDisplayTechnology(item)}
                 </Badge>
-              ))}
+              )}
+            </div>
+            <div className="flex items-center justify-between text-sm text-gray-500">
+              <div className="flex items-center gap-1">
+                <Calendar className="h-4 w-4" />
+                {item.completionDate
+                  ? new Date(item.completionDate).toLocaleDateString()
+                  : "N/A"}
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -351,16 +383,12 @@ export function PublicPortfolioPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-white max-w-[2500px] mx-auto">
-        <div className="px-2 sm:px-4 lg:px-6 xl:px-8 py-4 sm:py-6 lg:py-8">
+        <div className="px-6 sm:px-12 lg:px-20 xl:px-32 py-4 sm:py-6 lg:py-8">
           <div className="space-y-4 sm:space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
               <div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
-                  Our Portfolio
-                </h1>
-                <p className="text-base sm:text-lg lg:text-xl text-gray-600 mt-1 sm:mt-2">
-                  Loading portfolio items...
-                </p>
+                <img src="/frame.svg" alt="logo" className="h-12 w-auto" />
+
               </div>
             </div>
             {viewMode === "table" ? <TableSkeleton /> : <GridSkeleton />}
@@ -372,24 +400,22 @@ export function PublicPortfolioPage() {
 
   return (
     <div className="min-h-screen bg-white max-w-[2500px] mx-auto">
-      <div className="px-2 sm:px-4 lg:px-6 xl:px-8 py-4 sm:py-6 lg:py-8">
+      <div className="px-6 sm:px-12 lg:px-20 xl:px-32 py-4 sm:py-6 lg:py-8">
         <div className="space-y-4 sm:space-y-6">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
             <div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
-                Our Portfolio
-              </h1>
-              <p className="text-base sm:text-lg lg:text-xl text-gray-600 mt-1 sm:mt-2">
+              <img src="/frame.svg" alt="logo" className="h-12 w-auto" />
+              <p className="text-lg text-gray-600 mt-2">
                 Explore our collection of successful projects and client work
               </p>
             </div>
           </div>
 
           {/* Search and View Toggle */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center justify-between">
-            <div className="relative flex-1 max-w-md w-full">
-              <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3 sm:h-4 sm:w-4" />
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="relative flex-1 max-w-md -mt-2">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
                 placeholder="Search portfolio items..."
                 value={searchTerm}
@@ -401,7 +427,7 @@ export function PublicPortfolioPage() {
               <Button
                 variant={viewMode === "table" ? "default" : "ghost"}
                 size="sm"
-                onClick={() => setViewMode("table")}
+                onClick={() => handleViewModeChange("table")}
                 className={`h-7 w-7 sm:h-8 sm:w-8 ${
                   viewMode === "table" ? "bg-blue-600 hover:bg-blue-700" : ""
                 }`}
@@ -412,7 +438,7 @@ export function PublicPortfolioPage() {
               <Button
                 variant={viewMode === "grid" ? "default" : "ghost"}
                 size="sm"
-                onClick={() => setViewMode("grid")}
+                onClick={() => handleViewModeChange("grid")}
                 className={`h-7 w-7 sm:h-8 sm:w-8 ${
                   viewMode === "grid" ? "bg-blue-600 hover:bg-blue-700" : ""
                 }`}
@@ -426,17 +452,11 @@ export function PublicPortfolioPage() {
           {/* Content */}
           {filteredPortfolios.length === 0 ? (
             <div className="text-center py-12">
-              <div className="mx-auto w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                <Code className="h-16 w-16 text-gray-400" />
+              <div className="text-gray-500 text-lg">
+                {portfolios.length === 0
+                  ? "No portfolio items found."
+                  : "No items match your search."}
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                No projects found
-              </h3>
-              <p className="text-lg text-gray-600 mb-6">
-                {searchTerm
-                  ? "Try adjusting your search criteria"
-                  : "No projects available at the moment"}
-              </p>
             </div>
           ) : (
             <>{viewMode === "table" ? <TableView /> : <GridView />}</>
@@ -444,128 +464,86 @@ export function PublicPortfolioPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex justify-center">
+            <div className="flex flex-col items-center gap-4">
               <Pagination>
                 <PaginationContent>
-                  {/* Previous */}
                   <PaginationItem>
                     <PaginationPrevious
                       href="#"
                       onClick={(e) => {
                         e.preventDefault();
-                        if (currentPage > 1) setCurrentPage(currentPage - 1);
+                        if (currentPage > 1) {
+                          setCurrentPage(currentPage - 1);
+                        }
                       }}
-                      className={`text-xs sm:text-sm ${
-                        currentPage === 1
-                          ? "pointer-events-none opacity-50"
-                          : ""
-                      }`}
+                      className={currentPage <= 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                     />
                   </PaginationItem>
-
-                  {totalPages <= 7 ? (
-                    [...Array(totalPages)].map((_, i) => (
-                      <PaginationItem key={i}>
-                        <PaginationLink
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setCurrentPage(i + 1);
-                          }}
-                          isActive={currentPage === i + 1}
-                          size="icon"
-                          className="text-xs sm:text-sm h-7 w-7 sm:h-8 sm:w-8"
-                        >
-                          {i + 1}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ))
-                  ) : (
-                    <>
-                      <PaginationItem>
-                        <PaginationLink
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setCurrentPage(1);
-                          }}
-                          isActive={currentPage === 1}
-                          size="icon"
-                          className="text-xs sm:text-sm h-7 w-7 sm:h-8 sm:w-8"
-                        >
-                          1
-                        </PaginationLink>
-                      </PaginationItem>
-
-                      {currentPage > 3 && (
-                        <PaginationItem>
-                          <span className="px-2 text-xs sm:text-sm">...</span>
-                        </PaginationItem>
-                      )}
-
-                      {[...Array(Math.min(3, totalPages - 2))].map((_, i) => {
-                        const pageNum = Math.max(2, currentPage - 1) + i;
-                        if (pageNum >= totalPages) return null;
+                  
+                  {/* Page numbers */}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => {
+                    // Show first page, last page, current page, and pages around current page
+                    const shouldShow = 
+                      pageNumber === 1 || 
+                      pageNumber === totalPages || 
+                      (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1);
+                    
+                    if (!shouldShow) {
+                      // Show ellipsis for gaps
+                      if (pageNumber === currentPage - 2 || pageNumber === currentPage + 2) {
                         return (
-                          <PaginationItem key={pageNum}>
-                            <PaginationLink
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setCurrentPage(pageNum);
-                              }}
-                              isActive={currentPage === pageNum}
-                              size="icon"
-                              className="text-xs sm:text-sm h-7 w-7 sm:h-8 sm:w-8"
-                            >
-                              {pageNum}
-                            </PaginationLink>
+                          <PaginationItem key={pageNumber}>
+                            <PaginationEllipsis />
                           </PaginationItem>
                         );
-                      })}
-
-                      {currentPage < totalPages - 2 && (
-                        <PaginationItem>
-                          <span className="px-2 text-xs sm:text-sm">...</span>
-                        </PaginationItem>
-                      )}
-
-                      {totalPages > 1 && (
-                        <PaginationItem>
-                          <PaginationLink
-                            href="#"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setCurrentPage(totalPages);
-                            }}
-                            isActive={currentPage === totalPages}
-                            size="icon"
-                            className="text-xs sm:text-sm h-7 w-7 sm:h-8 sm:w-8"
-                          >
-                            {totalPages}
-                          </PaginationLink>
-                        </PaginationItem>
-                      )}
-                    </>
-                  )}
-
+                      }
+                      return null;
+                    }
+                    
+                     return (
+                       <PaginationItem key={pageNumber}>
+                         <PaginationLink
+                           href="#"
+                           onClick={(e) => {
+                             e.preventDefault();
+                             setCurrentPage(pageNumber);
+                           }}
+                           isActive={currentPage === pageNumber}
+                           className={`cursor-pointer h-8 w-8 p-0 flex items-center justify-center text-sm rounded-md ${
+                             currentPage === pageNumber 
+                               ? "bg-blue-600 text-white hover:bg-blue-600 hover:text-white" 
+                               : "hover:bg-gray-100 hover:text-gray-900"
+                           }`}
+                         >
+                           {pageNumber}
+                         </PaginationLink>
+                       </PaginationItem>
+                     );
+                  })}
+                  
                   <PaginationItem>
                     <PaginationNext
                       href="#"
                       onClick={(e) => {
                         e.preventDefault();
-                        if (currentPage < totalPages)
+                        if (currentPage < totalPages) {
                           setCurrentPage(currentPage + 1);
+                        }
                       }}
-                      className={`text-xs sm:text-sm ${
-                        currentPage === totalPages
-                          ? "pointer-events-none opacity-50"
-                          : ""
-                      }`}
+                      className={currentPage >= totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
                     />
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>
+              
+              {/* Results info */}
+              <div className="text-sm text-gray-600">
+                Showing {getVisibleResultsMin(currentPage, itemsPerPage)}-{getVisibleResultsMax(
+                  currentPage,
+                  itemsPerPage,
+                  filteredPortfolios.length
+                )} of {filteredPortfolios.length} results
+              </div>
             </div>
           )}
         </div>

@@ -84,16 +84,14 @@ export default function EditPortfolioModal({
         setIsLoading(true);
         const res = await api.get("/api/technologies");
         const data = res.data;
-
-        const cleaned = Array.isArray(data)
-          ? data.filter(
-              (tech) =>
-                typeof tech.name === "string" &&
-                typeof tech.description === "string" &&
-                typeof tech.category === "string"
-            )
-          : [];
-
+        
+        // Filter technologies to only include valid ones
+        const cleaned = Array.isArray(data) ? data.filter(
+          (tech) =>
+            typeof tech.name === "string" &&
+            typeof tech.category === "string"
+        ) : [];
+        
         console.log("Raw technologies data (edit):", data);
         console.log("Filtered technologies (edit):", cleaned);
         setTechOptions(cleaned);

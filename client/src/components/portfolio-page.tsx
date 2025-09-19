@@ -140,7 +140,10 @@ const GridSkeleton = () => (
 
 export function PortfolioPage() {
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([]);
-  const [viewMode, setViewMode] = useState<"table" | "grid">("table");
+  const [viewMode, setViewMode] = useState<"table" | "grid">(() => {
+    const savedViewMode = localStorage.getItem("adminPortfolioViewMode");
+    return (savedViewMode as "table" | "grid") || "table";
+  });
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -368,6 +371,11 @@ export function PortfolioPage() {
       setIsSelectAll(false);
     }
   }, [selectedItems.size, isSelectionMode]);
+
+  const handleViewModeChange = (mode: "table" | "grid") => {
+    setViewMode(mode);
+    localStorage.setItem("adminPortfolioViewMode", mode);
+  };
 
   const filteredItems = portfolioItems.filter((item) => {
     const projectName = item.projectName?.toLowerCase() || "";
@@ -821,7 +829,7 @@ export function PortfolioPage() {
             <Button
               variant={viewMode === "table" ? "default" : "ghost"}
               size="sm"
-              onClick={() => setViewMode("table")}
+              onClick={() => handleViewModeChange("table")}
               className={`h-7 w-7 sm:h-8 sm:w-8 ${
                 viewMode === "table" ? "bg-blue-600 hover:bg-blue-700" : ""
               }`}
@@ -832,7 +840,7 @@ export function PortfolioPage() {
             <Button
               variant={viewMode === "grid" ? "default" : "ghost"}
               size="sm"
-              onClick={() => setViewMode("grid")}
+              onClick={() => handleViewModeChange("grid")}
               className={`h-7 w-7 sm:h-8 sm:w-8 ${
                 viewMode === "grid" ? "bg-blue-600 hover:bg-blue-700" : ""
               }`}
@@ -980,3 +988,4 @@ export function PortfolioPage() {
     </div>
   );
 }
+
