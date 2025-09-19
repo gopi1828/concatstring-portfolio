@@ -23,7 +23,7 @@ import { useNavigate } from "react-router-dom";
 interface AddPortfolioModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  // Add callback to refresh parent data
+  
   onPortfolioAdded?: () => void;
 }
 
@@ -55,15 +55,12 @@ export function AddPortfolioModal({
         const res = await api.get("/api/technologies");
         const data = res.data;
         
-        // Filter technologies to only include valid ones
         const cleaned = Array.isArray(data) ? data.filter(
           (tech) =>
             typeof tech.name === "string" &&
             typeof tech.category === "string"
         ) : [];
         
-        console.log("Raw technologies data:", data);
-        console.log("Filtered technologies:", cleaned);
         setTechOptions(cleaned);
       } catch (err) {
         console.error("Error fetching technologies:", err);
