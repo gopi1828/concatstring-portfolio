@@ -164,7 +164,7 @@ exports.getUser = async function getUser(req, res) {
 
     const users = await User.find()
       .collation({ locale: "en", strength: 1 })
-      .sort({ role: 1, name: 1 });
+      .sort({ role: 1, name: 1 }).lean();
     if (!users) {
       return res.status(404).json({ message: "Users not found" });
     }

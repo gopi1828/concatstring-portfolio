@@ -92,7 +92,7 @@ exports.getPortfolios = async function getPortfolios(req, res) {
     await connectToDatabase();
     const portfolios = await Portfolio.find({})
       .collation({ locale: "en", strength: 1 })
-      .sort({ projectName: 1 });
+      .sort({ projectName: 1 }).lean();
     return res.status(200).json(portfolios);
   } catch (error) {
     return res

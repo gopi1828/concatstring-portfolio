@@ -39,7 +39,7 @@ exports.getCategories = async function getCategories(_req, res) {
     await connectToDatabase();
     const categories = await Category.find({})
     .collation({ locale: "en", strength: 1 })
-    .sort({ name: 1 });
+    .sort({ name: 1 }).lean();
 
     const categoriesWithCount = await Promise.all(
       categories.map(async (cat) => {
