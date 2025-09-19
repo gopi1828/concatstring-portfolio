@@ -37,7 +37,9 @@ exports.createCategory = async function createCategory(req, res) {
 exports.getCategories = async function getCategories(_req, res) {
   try {
     await connectToDatabase();
-    const categories = await Category.find({}).sort({ createdAt: -1 });
+    const categories = await Category.find({})
+    .collation({ locale: "en", strength: 1 })
+    .sort({ name: 1 });
 
     const categoriesWithCount = await Promise.all(
       categories.map(async (cat) => {

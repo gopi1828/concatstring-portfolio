@@ -8,9 +8,7 @@ const User = require("../model/User");
 dotenv.config();
 
 function signAuthToken(payload) {
-  const secret =
-    process.env.JWT_SECRETKEY ||
-    "dev_secret_key_change_me";
+  const secret = process.env.JWT_SECRETKEY || "dev_secret_key_change_me";
   return jwt.sign(payload, secret, { expiresIn: "2h" });
 }
 
@@ -25,7 +23,7 @@ exports.register = async function register(req, res) {
         .json({ message: "name, username and password are required" });
     }
 
-        const existingName = await User.findOne({ name });
+    const existingName = await User.findOne({ name });
     if (existingName) {
       return res.status(400).json({ message: "name already exists" });
     }
@@ -47,7 +45,9 @@ exports.register = async function register(req, res) {
 
     // Validate role
     if (role && !["user", "admin"].includes(role)) {
-      return res.status(400).json({ message: "Invalid role. Must be 'user' or 'admin'" });
+      return res
+        .status(400)
+        .json({ message: "Invalid role. Must be 'user' or 'admin'" });
     }
 
     const newUser = await User.create(userData);
@@ -161,8 +161,10 @@ exports.getUserById = async function getUserById(req, res) {
 exports.getUser = async function getUser(req, res) {
   try {
     await connectToDatabase();
-    
-    const users = await User.find();
+
+    const users = await User.find()
+      .collation({ locale: "en", strength: 1 })
+      .sort({ role: 1, name: 1 });
     if (!users) {
       return res.status(404).json({ message: "Users not found" });
     }
@@ -240,9 +242,9 @@ exports.deleteUserById = async function deleteUserById(req, res) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    return res.status(200).json({ 
-      message: "User deleted successfully", 
-      success: true 
+    return res.status(200).json({
+      message: "User deleted successfully",
+      success: true,
     });
   } catch (error) {
     return res.status(500).json({

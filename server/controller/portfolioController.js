@@ -56,7 +56,7 @@ exports.createPortfolio = async function createPortfolio(req, res) {
         typeof description === "string" ? description.trim() : undefined,
       pageBuilder:
         typeof pageBuilder === "string" ? pageBuilder.trim() : undefined,
-      
+
       clientInvoices: Array.isArray(clientInvoices)
         ? clientInvoices
         : undefined,
@@ -90,7 +90,9 @@ exports.createPortfolio = async function createPortfolio(req, res) {
 exports.getPortfolios = async function getPortfolios(req, res) {
   try {
     await connectToDatabase();
-    const portfolios = await Portfolio.find({}).sort({ createdAt: -1 });
+    const portfolios = await Portfolio.find({})
+      .collation({ locale: "en", strength: 1 })
+      .sort({ projectName: 1 });
     return res.status(200).json(portfolios);
   } catch (error) {
     return res
@@ -147,10 +149,14 @@ exports.updatePortfolioById = async function updatePortfolioById(req, res) {
     } = req.body || {};
 
     // Check for duplicate project name if projectName is being updated
-    if (projectName && typeof projectName === "string" && projectName.trim() !== "") {
+    if (
+      projectName &&
+      typeof projectName === "string" &&
+      projectName.trim() !== ""
+    ) {
       const existing = await Portfolio.findOne({
         projectName: projectName.trim(),
-        _id: { $ne: id } // Exclude current portfolio from duplicate check
+        _id: { $ne: id }, // Exclude current portfolio from duplicate check
       });
       if (existing) {
         return res
@@ -180,7 +186,8 @@ exports.updatePortfolioById = async function updatePortfolioById(req, res) {
       updates.invoiceAmount = invoiceAmount;
     if (startDate) updates.startDate = new Date(startDate);
     if (completionDate) updates.completionDate = new Date(completionDate);
-        if (typeof salesPerson === "string") updates.salesPerson = salesPerson.trim();
+    if (typeof salesPerson === "string")
+      updates.salesPerson = salesPerson.trim();
     if (typeof clientName === "string") updates.clientName = clientName.trim();
 
     if (typeof testimonials === "string")

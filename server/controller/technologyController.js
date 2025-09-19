@@ -5,15 +5,18 @@ const Technology = require("../model/Technology");
 exports.listTechnologies = async function listTechnologies(_req, res) {
   try {
     await connectToDatabase();
-    const techs = await Technology.find({}).sort({ createdAt: -1 }).lean();
+    const techs = await Technology.find({})
+      .collation({ locale: "en", strength: 1 })
+      .sort({ name: 1 })
+      .lean();
 
     const techWithCounts = await Promise.all(
       techs.map(async (tech) => {
-        const count = await Portfolio.countDocuments({ technology: tech.name })
+        const count = await Portfolio.countDocuments({ technology: tech.name });
         return {
           ...tech,
           count,
-        }
+        };
       })
     );
     return res.status(200).json(techWithCounts);
@@ -40,7 +43,9 @@ exports.createTechnology = async function createTechnology(req, res) {
   } catch (error) {
     console.error("Create technology error:", error);
     if (error.code === 11000) {
-      return res.status(400).json({ message: "Technology name already exists" });
+      return res
+        .status(400)
+        .json({ message: "Technology name already exists" });
     }
     return res.status(400).json({ message: error.message });
   }
@@ -74,7 +79,9 @@ exports.updateTechnology = async function updateTechnology(req, res) {
   } catch (error) {
     console.error("Update technology error:", error);
     if (error.code === 11000) {
-      return res.status(400).json({ message: "Technology name already exists" });
+      return res
+        .status(400)
+        .json({ message: "Technology name already exists" });
     }
     return res.status(500).json({ message: error.message });
   }
