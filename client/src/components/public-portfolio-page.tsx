@@ -21,7 +21,7 @@ import {
   PaginationPrevious,
   PaginationEllipsis,
 } from "./ui/pagination";
-import { Search, Grid3X3, List, Calendar, FileText } from "lucide-react";
+import { Search, Grid3X3, List, FileText } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
 import { Link } from "react-router-dom";
 import {
@@ -203,7 +203,8 @@ export function PublicPortfolioPage() {
             <TableHead className="w-20">Thumbnail</TableHead>
             <TableHead>Title</TableHead>
             <TableHead>Technology</TableHead>
-            <TableHead>Date</TableHead>
+            <TableHead>Industry</TableHead>
+            <TableHead>Category</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -265,11 +266,6 @@ export function PublicPortfolioPage() {
                         {item.description}
                       </div>
                     )}
-                    {item.industry && (
-                      <span className="block text-xs text-blue-600 mt-1">
-                       {item.industry}
-                      </span>
-                    )}
                         </div>
                       </div>
                     </TableCell>
@@ -286,9 +282,18 @@ export function PublicPortfolioPage() {
                       </div>
                     </TableCell>
               <TableCell className="text-gray-600">
-                {item.completionDate
-                  ? new Date(item.completionDate).toLocaleDateString()
-                  : "N/A"}
+                  {item.industry && (
+                      <span className="block text-sm text-blue-600 mt-1">
+                       {item.industry}
+                      </span>
+                    )}
+                    </TableCell>
+                    <TableCell className="text-gray-600">
+                      {item.category && (
+                        <span className="block text-sm text-blue-600 mt-1">
+                          {item.category}
+                        </span>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -353,7 +358,7 @@ export function PublicPortfolioPage() {
             )}
             {item.industry && (
               <p className="text-xs text-blue-600 mb-4">
-                Industry: {item.industry}
+              {item.industry}
               </p>
             )}
             <div className="flex flex-wrap gap-2 mb-4">
@@ -365,14 +370,6 @@ export function PublicPortfolioPage() {
                   {getDisplayTechnology(item)}
                 </Badge>
               )}
-            </div>
-            <div className="flex items-center justify-between text-sm text-gray-500">
-              <div className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                {item.completionDate
-                  ? new Date(item.completionDate).toLocaleDateString()
-                  : "N/A"}
-              </div>
             </div>
           </CardContent>
         </Card>
@@ -479,7 +476,7 @@ export function PublicPortfolioPage() {
                       className={currentPage <= 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                     />
                   </PaginationItem>
-                  
+
                   {/* Page numbers */}
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => {
                     // Show first page, last page, current page, and pages around current page
@@ -502,10 +499,10 @@ export function PublicPortfolioPage() {
                     
                      return (
                        <PaginationItem key={pageNumber}>
-                         <PaginationLink
-                           href="#"
-                           onClick={(e) => {
-                             e.preventDefault();
+                          <PaginationLink
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
                              setCurrentPage(pageNumber);
                            }}
                            isActive={currentPage === pageNumber}
@@ -516,11 +513,11 @@ export function PublicPortfolioPage() {
                            }`}
                          >
                            {pageNumber}
-                         </PaginationLink>
-                       </PaginationItem>
+                          </PaginationLink>
+                        </PaginationItem>
                      );
                   })}
-                  
+
                   <PaginationItem>
                     <PaginationNext
                       href="#"
@@ -544,8 +541,8 @@ export function PublicPortfolioPage() {
                   filteredPortfolios.length
                 )} of {filteredPortfolios.length} results
               </div>
-            </div>
-          )}
+          </div>
+        )}
         </div>
       </div>
     </div>

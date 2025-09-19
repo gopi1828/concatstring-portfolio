@@ -25,7 +25,6 @@ import {
   User,
   ImageIcon,
   FileText,
-  Code,
 } from "lucide-react";
 import api from "../lib/api";
 import { toast } from "react-hot-toast";
@@ -256,62 +255,13 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
           </Card>
 
           {/* Tabs Content */}
-          <Tabs defaultValue="technical" className="w-full">
+          <Tabs defaultValue="overview" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="technical">Technical</TabsTrigger>
+              <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="gallery">Gallery</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="technical" className="space-y-6">
-              {/* Technical Stack */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Code className="h-5 w-5" />
-                    Technical Stack
-                  </CardTitle>
-                  <CardDescription>
-                    Technologies and tools used in this project
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {technologiesUsed.length > 0 && (
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-600 mb-2">
-                          Technologies Used
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                          {technologiesUsed.map((tech, index) => (
-                            <Badge
-                              key={index}
-                              variant="outline"
-                              className="bg-blue-50 text-blue-700 border-blue-200"
-                            >
-                              {tech}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {portfolio.pageBuilder && (
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-600 mb-2">
-                          Page Builder
-                        </h4>
-                        <Badge
-                          variant="secondary"
-                          className="bg-green-50 text-green-700"
-                        >
-                          {portfolio.pageBuilder}
-                        </Badge>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
+            <TabsContent value="overview" className="space-y-6">
               {/* Project Information */}
               <Card>
                 <CardHeader>
@@ -358,14 +308,31 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
                       </a>
                     </div>
                   )}
-                  {portfolio.invoiceAmount && (
+                  {technologiesUsed.length > 0 && (
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">
-                        Invoice Amount
-                      </span>
-                      <span className="font-medium">
-                        ${portfolio.invoiceAmount}
-                      </span>
+                      <span className="text-sm text-gray-600">Technology</span>
+                      <div className="flex flex-wrap gap-1 justify-end">
+                        {technologiesUsed.map((tech, index) => (
+                          <Badge
+                            key={index}
+                            variant="outline"
+                            className="bg-blue-50 text-blue-700 border-blue-200 text-xs"
+                          >
+                            {tech}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {portfolio.pageBuilder && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Page Builder</span>
+                      <Badge
+                        variant="secondary"
+                        className="bg-green-50 text-green-700 text-xs"
+                      >
+                        {portfolio.pageBuilder}
+                      </Badge>
                     </div>
                   )}
                 </CardContent>
