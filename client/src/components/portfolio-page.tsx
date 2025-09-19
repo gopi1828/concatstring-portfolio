@@ -715,7 +715,7 @@ export function PortfolioPage() {
             <div className="hidden sm:block">
               {item.industry && (
                 <p className="text-xs text-blue-600 mb-2 sm:mb-4">
-                  Industry: {item.industry}
+                {item.industry}
                 </p>
               )}
             </div>
