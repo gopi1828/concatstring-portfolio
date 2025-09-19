@@ -12,12 +12,10 @@ import {
 } from "./ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import {
-  ArrowLeft,
-  ExternalLink,
-  Calendar,
-  DollarSign,
-  User,
+import { 
+  ArrowLeft, 
+  ExternalLink, 
+  User, 
   Code,
   FileText,
   ImageIcon,
@@ -85,22 +83,22 @@ export function PublicPortfolioDetail() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/portfolio")}
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gray-900">Loading...</h1>
-          </div>
-        </div>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-lg text-gray-500">
-            Loading portfolio details...
+      <div className="min-h-screen bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" size="icon" onClick={() => navigate("/portfolio")}>
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <div className="flex-1">
+                <h1 className="text-2xl font-bold text-gray-900">Loading...</h1>
+              </div>
+            </div>
+            <div className="flex justify-center items-center h-64">
+              <div className="text-lg text-gray-500">
+                Loading portfolio details...
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -109,22 +107,22 @@ export function PublicPortfolioDetail() {
 
   if (error || !portfolio) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/portfolio")}
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gray-900">Error</h1>
-          </div>
-        </div>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-lg text-red-500">
-            {error || "Portfolio not found"}
+      <div className="min-h-screen bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" size="icon" onClick={() => navigate("/portfolio")}>
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <div className="flex-1">
+                <h1 className="text-2xl font-bold text-gray-900">Error</h1>
+              </div>
+            </div>
+            <div className="flex justify-center items-center h-64">
+              <div className="text-lg text-red-500">
+                {error || "Portfolio not found"}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -139,444 +137,382 @@ export function PublicPortfolioDetail() {
     : [];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate("/portfolio")}
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-900">
-            {portfolio.projectName}
-          </h1>
-          <p className="text-gray-600">{portfolio.category}</p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/portfolio")}>
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold text-gray-900">
+                {portfolio.projectName}
+              </h1>
+              <p className="text-gray-600">{portfolio.category}</p>
+            </div>
+          </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Image Gallery */}
-          <Card>
-            <CardContent className="p-0">
-              <div className="relative">
-                {portfolio.clientInvoices &&
-                portfolio.clientInvoices.length > 0 &&
-                isPdfUrl(portfolio.clientInvoices[selectedImage]) ? (
-                  <div className="w-full h-96 flex items-center justify-center bg-gray-50 rounded-t-lg border-b">
-                    <Button
-                      onClick={() =>
-                        window.open(
-                          portfolio.clientInvoices[selectedImage],
-                          "_blank"
-                        )
-                      }
-                    >
-                      <FileText className="mr-2 h-4 w-4" /> Open PDF
-                    </Button>
-                  </div>
-                ) : (
-                  <img
-                    src={
-                      portfolio.clientInvoices &&
-                      portfolio.clientInvoices.length > 0
-                        ? portfolio.clientInvoices[selectedImage]
-                        : "/placeholder.svg"
-                    }
-                    alt={portfolio.projectName}
-                    className="w-full h-96 object-cover rounded-t-lg"
-                  />
-                )}
-                <div className="absolute top-4 right-4 flex gap-2">
-                  {portfolio.websiteLink && (
-                    <Button
-                      size="sm"
-                      className="bg-white/90 text-gray-900 hover:bg-white"
-                      onClick={() =>
-                        window.open(portfolio.websiteLink, "_blank")
-                      }
-                    >
-                      <ExternalLink className="mr-2 h-4 w-4" />
-                      Live Demo
-                    </Button>
-                  )}
-                </div>
-              </div>
-              {portfolio.clientInvoices &&
-                portfolio.clientInvoices.length > 0 && (
-                  <div className="p-4">
-                    <div className="flex gap-2 overflow-x-auto">
-                      {portfolio.clientInvoices.map((image, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setSelectedImage(index)}
-                          className={`flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
-                            selectedImage === index
-                              ? "border-blue-500"
-                              : "border-gray-200"
-                          }`}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Main Content */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Image Gallery */}
+              <Card>
+                <CardContent className="p-0">
+                  <div className="relative">
+                    {portfolio.clientInvoices &&
+                    portfolio.clientInvoices.length > 0 &&
+                    isPdfUrl(portfolio.clientInvoices[selectedImage]) ? (
+                      <div className="w-full h-96 flex items-center justify-center bg-gray-50 rounded-t-lg border-b">
+                        <Button
+                          onClick={() =>
+                            window.open(
+                              portfolio.clientInvoices[selectedImage],
+                              "_blank"
+                            )
+                          }
                         >
-                          {isPdfUrl(image) ? (
-                            <div className="w-full h-full flex items-center justify-center bg-white">
-                              <FileText className="h-4 w-4 text-gray-600" />
-                            </div>
-                          ) : (
-                            <img
-                              src={image}
-                              alt={`View ${index + 1}`}
-                              className="w-full h-full object-cover"
-                            />
-                          )}
-                        </button>
-                      ))}
+                          <FileText className="mr-2 h-4 w-4" /> Open PDF
+                        </Button>
+                      </div>
+                    ) : (
+                      <img
+                        src={
+                          portfolio.clientInvoices &&
+                          portfolio.clientInvoices.length > 0
+                            ? portfolio.clientInvoices[selectedImage]
+                            : "/placeholder.svg"
+                        }
+                        alt={portfolio.projectName}
+                        className="w-full h-96 object-cover rounded-t-lg"
+                      />
+                    )}
+                    <div className="absolute top-4 right-4 flex gap-2">
+                      {portfolio.websiteLink && (
+                        <Button
+                          size="sm"
+                          className="bg-white/90 text-gray-900 hover:bg-white"
+                          onClick={() =>
+                            window.open(portfolio.websiteLink, "_blank")
+                          }
+                        >
+                          <ExternalLink className="mr-2 h-4 w-4" />
+                          Live Demo
+                        </Button>
+                      )}
                     </div>
                   </div>
-                )}
-            </CardContent>
-          </Card>
-
-          {/* Project Description */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                Project Description
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">{portfolio.description}</p>
-            </CardContent>
-          </Card>
-
-          {/* Tabs Content */}
-          <Tabs defaultValue="technical" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="technical">Technical</TabsTrigger>
-              <TabsTrigger value="gallery">Gallery</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="technical" className="space-y-6">
-              {/* Technical Stack */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Code className="h-5 w-5" />
-                    Technical Stack
-                  </CardTitle>
-                  <CardDescription>
-                    Technologies and tools used in this project
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {technologiesUsed.length > 0 && (
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-600 mb-2">
-                          Technologies Used
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                          {technologiesUsed.map((tech, index) => (
-                            <Badge
+                  {portfolio.clientInvoices &&
+                    portfolio.clientInvoices.length > 0 && (
+                      <div className="p-4">
+                        <div className="flex gap-2 overflow-x-auto">
+                          {portfolio.clientInvoices.map((image, index) => (
+                            <button
                               key={index}
-                              variant="outline"
-                              className="bg-blue-50 text-blue-700 border-blue-200"
+                              onClick={() => setSelectedImage(index)}
+                              className={`flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
+                                selectedImage === index
+                                  ? "border-blue-500"
+                                  : "border-gray-200"
+                              }`}
                             >
-                              {tech}
-                            </Badge>
+                              {isPdfUrl(image) ? (
+                                <div className="w-full h-full flex items-center justify-center bg-white">
+                                  <FileText className="h-4 w-4 text-gray-600" />
+                                </div>
+                              ) : (
+                                <img
+                                  src={image}
+                                  alt={`View ${index + 1}`}
+                                  className="w-full h-full object-cover"
+                                />
+                              )}
+                            </button>
                           ))}
                         </div>
                       </div>
                     )}
-
-                    {portfolio.pageBuilder && (
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-600 mb-2">
-                          Page Builder
-                        </h4>
-                        <Badge
-                          variant="secondary"
-                          className="bg-green-50 text-green-700"
-                        >
-                          {portfolio.pageBuilder}
-                        </Badge>
-                      </div>
-                    )}
-                  </div>
                 </CardContent>
               </Card>
 
-              {/* Project Information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Project Information</CardTitle>
-                  <CardDescription>
-                    Business and project details
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {portfolio.industry && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Industry</span>
-                      <span className="font-medium">{portfolio.industry}</span>
-                    </div>
-                  )}
-                  {portfolio.category && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Category</span>
-                      <span className="font-medium">{portfolio.category}</span>
-                    </div>
-                  )}
-                  {portfolio.bidPlatform && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">
-                        Bid Platform
-                      </span>
-                      <span className="font-medium">
-                        {portfolio.bidPlatform}
-                      </span>
-                    </div>
-                  )}
-                  {portfolio.bidPlatformUrl && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">
-                        Platform URL
-                      </span>
-                      <a
-                        href={portfolio.bidPlatformUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-medium text-blue-600 hover:text-blue-800"
-                      >
-                        {portfolio.bidPlatformUrl}
-                      </a>
-                    </div>
-                  )}
-                  {portfolio.invoiceAmount && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">
-                        Invoice Amount
-                      </span>
-                      <span className="font-medium">
-                        ${portfolio.invoiceAmount}
-                      </span>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Project Tags */}
-              {portfolioTags.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Project Tags</CardTitle>
-                    <CardDescription>
-                      Additional tags and keywords for this project
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap gap-2">
-                      {portfolioTags.map((tag, index) => (
-                        <Badge
-                          key={index}
-                          variant="secondary"
-                          className="bg-purple-50 text-purple-700"
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </TabsContent>
-
-            <TabsContent value="gallery" className="space-y-6">
+              {/* Project Description */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <ImageIcon className="h-5 w-5" />
-                    Project Gallery
+                    <FileText className="h-5 w-5" />
+                    Project Description
                   </CardTitle>
-                  <CardDescription>
-                    All project screenshots and images
-                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {portfolio.clientInvoices &&
-                  portfolio.clientInvoices.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {portfolio.clientInvoices.map((image, index) => (
-                        <div key={index} className="relative group">
-                          {isPdfUrl(image) ? (
-                            <div className="w-full h-64 flex items-center justify-center bg-gray-50 rounded-lg border">
-                              <Button
-                                size="sm"
-                                variant="secondary"
-                                onClick={() => window.open(image, "_blank")}
-                              >
-                                <FileText className="mr-2 h-4 w-4" /> Open PDF
-                              </Button>
-                            </div>
-                          ) : (
-                            <img
-                              src={image}
-                              alt={`Gallery image ${index + 1}`}
-                              className="w-full h-64 object-cover rounded-lg"
-                            />
-                          )}
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 rounded-lg" />
-                          <Button
-                            size="icon"
-                            variant="secondary"
-                            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                            onClick={() => window.open(image, "_blank")}
-                            title="View"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8 text-gray-500">
-                      No images available for this project.
-                    </div>
-                  )}
+                  <p className="text-gray-600">{portfolio.description}</p>
                 </CardContent>
               </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
 
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Project Stats */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Project Stats</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">Start Date</span>
-                </div>
-                <span className="font-medium">
-                  {portfolio.startDate
-                    ? new Date(portfolio.startDate).toLocaleDateString()
-                    : "N/A"}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">Completion Date</span>
-                </div>
-                <span className="font-medium">
-                  {portfolio.completionDate
-                    ? new Date(portfolio.completionDate).toLocaleDateString()
-                    : "N/A"}
-                </span>
-              </div>
-              {portfolio.invoiceAmount && (
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm text-gray-600">Amount</span>
-                  </div>
-                  <span className="font-medium">
-                    ${portfolio.invoiceAmount}
-                  </span>
-                </div>
+              {/* Tabs Content */}
+              <Tabs defaultValue="technical" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="technical">Technical</TabsTrigger>
+                  <TabsTrigger value="gallery">Gallery</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="technical" className="space-y-6">
+                  {/* Technical Stack */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Code className="h-5 w-5" />
+                        Technical Stack
+                      </CardTitle>
+                      <CardDescription>
+                        Technologies and tools used in this project
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {technologiesUsed.length > 0 && (
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-600 mb-2">Technologies Used</h4>
+                            <div className="flex flex-wrap gap-2">
+                              {technologiesUsed.map((tech, index) => (
+                                <Badge
+                                  key={index}
+                                  variant="outline"
+                                  className="bg-blue-50 text-blue-700 border-blue-200"
+                                >
+                                  {tech}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {portfolio.pageBuilder && (
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-600 mb-2">Page Builder</h4>
+                            <Badge variant="secondary" className="bg-green-50 text-green-700">
+                              {portfolio.pageBuilder}
+                            </Badge>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Project Information */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Project Information</CardTitle>
+                      <CardDescription>
+                        Business and project details
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {portfolio.industry && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-600">Industry</span>
+                          <span className="font-medium">
+                            {portfolio.industry}
+                          </span>
+                        </div>
+                      )}
+                      {portfolio.category && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-600">Category</span>
+                          <span className="font-medium">
+                            {portfolio.category}
+                          </span>
+                        </div>
+                      )}
+                      {portfolio.bidPlatform && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-600">
+                            Bid Platform
+                          </span>
+                          <span className="font-medium">
+                            {portfolio.bidPlatform}
+                          </span>
+                        </div>
+                      )}
+                      {portfolio.bidPlatformUrl && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-600">
+                            Platform URL
+                          </span>
+                          <a 
+                            href={portfolio.bidPlatformUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-medium text-blue-600 hover:text-blue-800"
+                          >
+                            {portfolio.bidPlatformUrl}
+                          </a>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  {/* Project Tags */}
+                  {portfolioTags.length > 0 && (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Project Tags</CardTitle>
+                        <CardDescription>
+                          Additional tags and keywords for this project
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex flex-wrap gap-2">
+                          {portfolioTags.map((tag, index) => (
+                            <Badge
+                              key={index}
+                              variant="secondary"
+                              className="bg-purple-50 text-purple-700"
+                            >
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="gallery" className="space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <ImageIcon className="h-5 w-5" />
+                        Project Gallery
+                      </CardTitle>
+                      <CardDescription>
+                        All project screenshots and images
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {portfolio.clientInvoices &&
+                      portfolio.clientInvoices.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {portfolio.clientInvoices.map((image, index) => (
+                            <div key={index} className="relative group">
+                              {isPdfUrl(image) ? (
+                                <div className="w-full h-64 flex items-center justify-center bg-gray-50 rounded-lg border">
+                                  <Button
+                                    size="sm"
+                                    variant="secondary"
+                                    onClick={() => window.open(image, "_blank")}
+                                  >
+                                    <FileText className="mr-2 h-4 w-4" /> Open PDF
+                                  </Button>
+                                </div>
+                              ) : (
+                                <img
+                                  src={image}
+                                  alt={`Gallery image ${index + 1}`}
+                                  className="w-full h-64 object-cover rounded-lg"
+                                />
+                              )}
+                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 rounded-lg" />
+                              <Button
+                                size="icon"
+                                variant="secondary"
+                                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                onClick={() => window.open(image, "_blank")}
+                                title="View"
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-8 text-gray-500">
+                          No images available for this project.
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+            </div>
+
+            {/* Sidebar */}
+            <div className="space-y-6">
+
+              {/* Client & Sales Information */}
+              {(portfolio.clientName || portfolio.salesPerson || portfolio.testimonials) && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <User className="h-5 w-5" />
+                      Client & Sales Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {portfolio.clientName && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-gray-600">Client</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Avatar>
+                            <AvatarImage src="/placeholder.svg" />
+                            <AvatarFallback>
+                              {portfolio.clientName
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium text-gray-900">
+                              {portfolio.clientName}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {portfolio.salesPerson && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-gray-600">Sales Person</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Avatar>
+                            <AvatarImage src="/placeholder.svg" />
+                            <AvatarFallback>
+                              {portfolio.salesPerson
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium text-gray-900">
+                              {portfolio.salesPerson}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {portfolio.testimonials && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-gray-600">Testimonial</span>
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <p className="text-sm text-gray-700 italic">
+                            "{portfolio.testimonials}"
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               )}
-            </CardContent>
-          </Card>
-
-          {/* Client & Sales Information */}
-          {(portfolio.clientName ||
-            portfolio.salesPerson ||
-            portfolio.testimonials) && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
-                  Client & Sales Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {portfolio.clientName && (
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-gray-600">
-                        Client
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarImage src="/placeholder.svg" />
-                        <AvatarFallback>
-                          {portfolio.clientName
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {portfolio.clientName}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {portfolio.salesPerson && (
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-gray-600">
-                        Sales Person
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarImage src="/placeholder.svg" />
-                        <AvatarFallback>
-                          {portfolio.salesPerson
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {portfolio.salesPerson}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {portfolio.testimonials && (
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-gray-600">
-                        Testimonial
-                      </span>
-                    </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-sm text-gray-700 italic">
-                        "{portfolio.testimonials}"
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
