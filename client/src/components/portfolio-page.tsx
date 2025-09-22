@@ -537,18 +537,18 @@ export function PortfolioPage() {
                 />
               </TableHead>
             )}
-            <TableHead className="w-12 sm:w-16 lg:w-20 min-w-[48px]">
+            <TableHead className="w-12 sm:w-16 lg:w-20 min-w-[48px] text-grey-600">
               Thumbnail
             </TableHead>
-            <TableHead className="min-w-[200px]">Title</TableHead>
-            <TableHead className="hidden sm:table-cell min-w-[120px]">
+            <TableHead className="min-w-[200px] text-grey-600">Title</TableHead>
+            <TableHead className="hidden sm:table-cell min-w-[120px] text-grey-600">
               Technology
             </TableHead>
-            <TableHead className="hidden lg:table-cell min-w-[100px]">
+            <TableHead className="hidden lg:table-cell min-w-[100px] text-grey-600">
               Date
             </TableHead>
             {isLoggedIn && (
-              <TableHead className="w-16 sm:w-20 lg:w-24 min-w-[64px]">
+              <TableHead className="w-16 sm:w-20 lg:w-24 min-w-[64px] text-grey-600">
                 Actions
               </TableHead>
             )}
