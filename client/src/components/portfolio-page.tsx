@@ -39,12 +39,6 @@ import {
 import { Link } from "react-router-dom";
 import { ConfirmDialog } from "./ui/confirm-delete";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "./ui/tooltip";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -499,15 +493,6 @@ export function PortfolioPage() {
     return typeof item.technology === "string" ? item.technology : "";
   };
 
-  const truncateTooltipText = (text: string, maxLength: number = 100) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + "...";
-  };
-
-  const shouldShowTooltip = (text: string, maxLength: number = 50) => {
-    return text.length > maxLength;
-  };
-
   const isPdfUrl = (url: string) =>
     (url || "").toLowerCase().split("?")[0].endsWith(".pdf");
   const getFirstImageUrl = (files: string[] = []) => {
@@ -601,28 +586,9 @@ export function PortfolioPage() {
                   <div className="text-xs sm:text-sm text-gray-500 break-words max-w-xs">
                     {/* Show description only on screens 700px and above */}
                     <div className="hidden sm:block">
-                      {item.description &&
-                        (shouldShowTooltip(item.description, 50) ? (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <div className="truncate cursor-help hover:text-gray-700 transition-colors">
-                                  {item.description}
-                                </div>
-                              </TooltipTrigger>
-                              <TooltipContent
-                                className="max-w-xs rounded-lg bg-white text-black text-xs p-2 border border-gray-200 shadow-lg"
-                                side="top"
-                              >
-                                <p>
-                                  {truncateTooltipText(item.description, 80)}
-                                </p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        ) : (
-                          <div className="truncate">{item.description}</div>
-                        ))}
+                      {item.description && (
+                        <div className="truncate">{item.description}</div>
+                      )}
                     </div>
                     {/* Show industry only on screens 700px and above */}
                     <div className="hidden sm:block">
@@ -766,28 +732,11 @@ export function PortfolioPage() {
             </Link>
             {/* Show description only on screens 700px and above */}
             <div className="hidden sm:block">
-              {item.description &&
-                (shouldShowTooltip(item.description, 50) ? (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <p className="text-gray-600 text-xs sm:text-sm mb-2 truncate cursor-help hover:text-gray-700 transition-colors">
-                          {item.description}
-                        </p>
-                      </TooltipTrigger>
-                      <TooltipContent
-                        className="max-w-xs rounded-lg bg-white text-black text-xs p-2 border border-gray-200 shadow-lg"
-                        side="top"
-                      >
-                        <p>{truncateTooltipText(item.description, 80)}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                ) : (
-                  <p className="text-gray-600 text-xs sm:text-sm mb-2 truncate">
-                    {item.description}
-                  </p>
-                ))}
+              {item.description && (
+                <p className="text-gray-600 text-xs sm:text-sm mb-2 truncate">
+                  {item.description}
+                </p>
+              )}
             </div>
             {/* Show industry only on screens 700px and above */}
             <div className="hidden sm:block">
@@ -930,7 +879,7 @@ export function PortfolioPage() {
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenu> 
 
             {/* Technology Filter */}
             <DropdownMenu>
@@ -942,7 +891,7 @@ export function PortfolioPage() {
                   <div className="flex items-center gap-1 min-w-0 text-gray-500">
                     <Code className="h-3 w-3 flex-shrink-0" />
                     <span className="truncate">{selectedTechnology || "Technology"}</span>
-                    <ChevronDown className="h-3 w-3 flex-shrink-0" />
+                     <ChevronDown className="h-3 w-3 flex-shrink-0" />
                   </div>
                 </Button>
               </DropdownMenuTrigger>
