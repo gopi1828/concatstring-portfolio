@@ -353,28 +353,19 @@ export function PublicPortfolioPage() {
                         </div>
                       </div>
                     </TableCell>
-              <TableCell>
-                <div className="flex flex-wrap gap-1">
-                  {getDisplayTechnology(item) && (
-                          <Badge
-                      variant="secondary"
-                      className="text-xs bg-blue-50 text-blue-700"
-                    >
-                      {getDisplayTechnology(item)}
-                          </Badge>
-                        )}
-                      </div>
-                    </TableCell>
+               <TableCell className="text-gray-600">
+                 {getDisplayTechnology(item) || "N/A"}
+               </TableCell>
               <TableCell className="text-gray-600">
                   {item.industry && (
-                      <span className="block text-sm text-blue-600 mt-1">
+                      <span className="block text-sm text-gray-600 mt-1">
                        {item.industry}
                       </span>
                     )}
                     </TableCell>
                     <TableCell className="text-gray-600">
                       {item.category && (
-                        <span className="block text-sm text-blue-600 mt-1">
+                        <span className="block text-sm text-gray-600 mt-1">
                           {item.category}
                         </span>
                       )}
@@ -494,19 +485,18 @@ export function PublicPortfolioPage() {
           </div>
 
           {/* Search and Filters */}
-          <div className="flex flex-col gap-2 sm:gap-3">
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-start sm:items-center justify-between">
-              <div className="flex flex-1 gap-2 items-center flex-wrap">
-                {/* Search Bar */}
-                <div className="relative w-64">
-                  <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
-                  <Input
-                    placeholder="Search portfolio items..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-7 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 text-xs h-7"
-                  />
-                </div>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-start sm:items-center justify-between">
+            <div className="flex flex-1 gap-2 items-center">
+              {/* Search Bar */}
+              <div className="relative w-64">
+                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
+                <Input
+                  placeholder="Search portfolio items..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-7 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 text-xs h-7"
+                />
+              </div>
 
                 {/* Filter Dropdowns */}
                 <div className="flex gap-2 items-center flex-wrap">
@@ -533,15 +523,15 @@ export function PublicPortfolioPage() {
                     >
                       All Industries
                     </DropdownMenuItem>
-                     {industries.map((industry) => (
-                       <DropdownMenuItem
-                         key={industry._id}
-                         onClick={() => handleIndustryFilter(industry.name)}
-                         className={selectedIndustry === industry.name ? "bg-blue-50 text-blue-700" : ""}
-                       >
-                         {industry.name}
-                       </DropdownMenuItem>
-                     ))}
+                    {industries.map((industry) => (
+                      <DropdownMenuItem
+                        key={industry._id}
+                        onClick={() => handleIndustryFilter(industry.name)}
+                        className={selectedIndustry === industry.name ? "bg-blue-50 text-blue-700" : ""}
+                      >
+                        {industry.name}
+                      </DropdownMenuItem>
+                    ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
 
@@ -568,15 +558,15 @@ export function PublicPortfolioPage() {
                     >
                       All Technologies
                     </DropdownMenuItem>
-                     {technologies.map((technology) => (
-                       <DropdownMenuItem
-                         key={technology._id}
-                         onClick={() => handleTechnologyFilter(technology.name)}
-                         className={selectedTechnology === technology.name ? "bg-blue-50 text-blue-700" : ""}
-                       >
-                         {technology.name}
-                       </DropdownMenuItem>
-                     ))}
+                    {technologies.map((technology) => (
+                      <DropdownMenuItem
+                        key={technology._id}
+                        onClick={() => handleTechnologyFilter(technology.name)}
+                        className={selectedTechnology === technology.name ? "bg-blue-50 text-blue-700" : ""}
+                      >
+                        {technology.name}
+                      </DropdownMenuItem>
+                    ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
 
@@ -593,33 +583,34 @@ export function PublicPortfolioPage() {
                   </Button>
                 )}
               </div>
-              </div>
             </div>
 
-            {/* View Toggle */}
-            <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 p-1 self-start flex-shrink-0">
-              <Button
-                variant={viewMode === "table" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => handleViewModeChange("table")}
-                className={`h-7 w-7 sm:h-8 sm:w-8 ${
-                  viewMode === "table" ? "bg-blue-600 hover:bg-blue-700" : ""
-                }`}
-                title="Table View"
-              >
-                <List className="h-3 w-3" />
-              </Button>
-              <Button
-                variant={viewMode === "grid" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => handleViewModeChange("grid")}
-                className={`h-7 w-7 sm:h-8 sm:w-8 ${
-                  viewMode === "grid" ? "bg-blue-600 hover:bg-blue-700" : ""
-                }`}
-                title="Grid View"
-              >
-                <Grid3X3 className="h-3 w-3" />
-              </Button>
+            {/* Right Side Controls */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 p-1">
+                <Button
+                  variant={viewMode === "table" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => handleViewModeChange("table")}
+                  className={`h-7 w-7 sm:h-8 sm:w-8 ${
+                    viewMode === "table" ? "bg-blue-600 hover:bg-blue-700" : ""
+                  }`}
+                  title="Table View"
+                >
+                  <List className="h-3 w-3" />
+                </Button>
+                <Button
+                  variant={viewMode === "grid" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => handleViewModeChange("grid")}
+                  className={`h-7 w-7 sm:h-8 sm:w-8 ${
+                    viewMode === "grid" ? "bg-blue-600 hover:bg-blue-700" : ""
+                  }`}
+                  title="Grid View"
+                >
+                  <Grid3X3 className="h-3 w-3" />
+                </Button>
+              </div>
             </div>
           </div>
 
