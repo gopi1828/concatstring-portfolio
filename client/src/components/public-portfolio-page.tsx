@@ -32,12 +32,6 @@ import {
 import { Search, Code, Grid3X3, List, FileText, Filter, X, ChevronDown } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
 import { Link } from "react-router-dom";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "./ui/tooltip";
 
 type PortfolioItem = {
   _id: string;
@@ -192,15 +186,6 @@ export function PublicPortfolioPage() {
     return typeof item.technology === 'string' ? item.technology : '';
   };
 
-  const truncateTooltipText = (text: string, maxLength: number = 100) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
-  };
-
-  const shouldShowTooltip = (text: string, maxLength: number = 50) => {
-    return text.length > maxLength;
-  };
-
   const isPdfUrl = (url: string) =>
     (url || "").toLowerCase().split("?")[0].endsWith(".pdf");
 
@@ -327,30 +312,12 @@ export function PublicPortfolioPage() {
                         </div>
                   </Link>
                   <div className="text-sm text-gray-500 break-words max-w-xs">
-                    {shouldShowTooltip(item.description, 50) ? (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div 
-                              className="truncate cursor-help hover:text-gray-700 transition-colors" 
-                            >
-                              {item.description}
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent 
-                            className="max-w-xs rounded-lg bg-white text-black text-xs p-2 border border-gray-200 shadow-lg"
-                            side="top"
-                          >
-                            <p>{truncateTooltipText(item.description, 80)}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    ) : (
+                    {item.description && (
                       <div className="truncate">
                         {item.description}
                       </div>
                     )}
-                        </div>
+                  </div>
                       </div>
                     </TableCell>
                <TableCell className="text-gray-600">
@@ -408,25 +375,7 @@ export function PublicPortfolioPage() {
                 {item.projectName}
               </h3>
             </Link>
-            {shouldShowTooltip(item.description, 50) ? (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <p 
-                      className="text-gray-600 text-sm mb-2 truncate cursor-help hover:text-gray-700 transition-colors" 
-                    >
-                      {item.description}
-                    </p>
-                  </TooltipTrigger>
-                  <TooltipContent 
-                    className="max-w-xs rounded-lg bg-white text-black text-xs p-2 border border-gray-200 shadow-lg"
-                    side="top"
-                  >
-                    <p>{truncateTooltipText(item.description, 80)}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            ) : (
+            {item.description && (
               <p className="text-gray-600 text-sm mb-2 truncate">
                 {item.description}
               </p>

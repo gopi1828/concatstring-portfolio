@@ -349,7 +349,7 @@ export default function ImportPortfolio({
           } else if (err.response?.data?.message) {
             reason = err.response.data.message;
           } else if (err.message) {
-            reason = err.message;
+            reason = err.message; 
           }
 
           skipped.push({ projectName: p.projectName, reason });
@@ -363,7 +363,7 @@ export default function ImportPortfolio({
       setDialogOpen(true);
     } catch (err: any) {
       console.error("Import failed:", err);
-    } finally {
+    } finally { 
       setIsImporting(false);
       if (e.target) e.target.value = "";
     }
@@ -402,7 +402,7 @@ export default function ImportPortfolio({
             onImported?.();
           }
         }}
-      >
+        >
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">
