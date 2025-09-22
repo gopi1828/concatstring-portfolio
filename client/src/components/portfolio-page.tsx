@@ -465,7 +465,7 @@ export function PortfolioPage() {
     const industry = item.industry?.toLowerCase() || "";
     const search = searchTerm.toLowerCase();
 
-    // Search filter
+    
     const matchesSearch = (
       projectName.includes(search) ||
       websiteLink.includes(search) ||
@@ -477,11 +477,11 @@ export function PortfolioPage() {
       industry.includes(search)
     );
 
-    // Industry filter
+    
     const matchesIndustry = !selectedIndustry || 
       industry === selectedIndustry.toLowerCase();
 
-    // Technology filter
+
     const matchesTechnology = !selectedTechnology || 
       technology === selectedTechnology.toLowerCase();
 
@@ -537,18 +537,18 @@ export function PortfolioPage() {
                 />
               </TableHead>
             )}
-            <TableHead className="w-12 sm:w-16 lg:w-20 min-w-[48px] text-grey-600">
+            <TableHead className="w-12 sm:w-16 lg:w-20 min-w-[48px] ">
               Thumbnail
             </TableHead>
-            <TableHead className="min-w-[200px] text-grey-600">Title</TableHead>
-            <TableHead className="hidden sm:table-cell min-w-[120px] text-grey-600">
+            <TableHead className="min-w-[200px]">Title</TableHead>
+            <TableHead className="hidden sm:table-cell min-w-[120px] ">
               Technology
             </TableHead>
-            <TableHead className="hidden lg:table-cell min-w-[100px] text-grey-600">
+            <TableHead className="hidden lg:table-cell min-w-[100px] ">
               Date
             </TableHead>
             {isLoggedIn && (
-              <TableHead className="w-16 sm:w-20 lg:w-24 min-w-[64px] text-grey-600">
+              <TableHead className="w-16 sm:w-20 lg:w-24 min-w-[64px] ">
                 Actions
               </TableHead>
             )}

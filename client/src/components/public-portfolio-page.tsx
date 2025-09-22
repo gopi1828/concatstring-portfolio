@@ -64,11 +64,11 @@ const TableSkeleton = () => (
   <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
     <Table>
       <TableHeader>
-        <TableRow className="bg-gray-50 text-grey-600">
-          <TableHead className="w-20 text-grey-600">Thumbnail</TableHead>
-          <TableHead className="text-grey-600">Title</TableHead>
-          <TableHead className="text-grey-600">Technology</TableHead>
-          <TableHead className="text-grey-600">Category</TableHead>
+        <TableRow className="bg-gray-50 ">
+          <TableHead className="w-20 ">Thumbnail</TableHead>
+          <TableHead>Title</TableHead>
+          <TableHead>Technology</TableHead>
+          <TableHead>Category</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -284,11 +284,11 @@ export function PublicPortfolioPage() {
             <Table>
               <TableHeader>
           <TableRow className="bg-gray-50">
-            <TableHead className="w-20 text-grey-600">Thumbnail</TableHead>
-            <TableHead className="text-grey-600">Title</TableHead>
-            <TableHead className="text-grey-600">Technology</TableHead>
-            <TableHead className="text-grey-600">Industry</TableHead>
-            <TableHead className="text-grey-600">Category</TableHead>
+            <TableHead className="w-20">Thumbnail</TableHead>
+            <TableHead>Technology</TableHead>
+            <TableHead>Industry</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Title</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
