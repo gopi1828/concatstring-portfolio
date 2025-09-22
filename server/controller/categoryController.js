@@ -45,7 +45,7 @@ exports.getCategories = async function getCategories(_req, res) {
       categories.map(async (cat) => {
         const count = await Portfolio.countDocuments({ category: cat.name });
         return {
-          ...cat.toObject(),
+          ...cat,
           count,
         }
       })

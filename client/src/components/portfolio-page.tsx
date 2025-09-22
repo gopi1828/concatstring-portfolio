@@ -646,17 +646,8 @@ export function PortfolioPage() {
                   </div>
                 </div>
               </TableCell>
-              <TableCell className="hidden sm:table-cell">
-                <div className="flex flex-wrap gap-1">
-                  {getDisplayTechnology(item) && (
-                    <Badge
-                      variant="secondary"
-                      className="text-xs bg-blue-50 text-blue-700"
-                    >
-                      {getDisplayTechnology(item)}
-                    </Badge>
-                  )}
-                </div>
+              <TableCell className="hidden sm:table-cell text-gray-600 text-sm">
+                {getDisplayTechnology(item) || "N/A"}
               </TableCell>
               <TableCell className="hidden lg:table-cell text-gray-600 text-sm">
                 {item.completionDate

@@ -83,7 +83,7 @@ export function TechnologiesPage() {
 
   const getCategoryName = (categoryId: string) => {
     const category = categories.find((cat) => cat.id === categoryId);
-    return category ? category.name : categoryId;
+    return category ? category.name : "";
   };
 
   const handleEditTechnology = (technology: Technology) => {
