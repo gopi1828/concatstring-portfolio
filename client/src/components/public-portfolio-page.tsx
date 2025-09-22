@@ -498,22 +498,22 @@ export function PublicPortfolioPage() {
                 />
               </div>
 
-              {/* Filter Dropdowns */}
-              <div className="flex gap-2 items-center flex-wrap">
-                {/* Industry Filter */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="h-7 px-2 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40"
-                    >
-                      <div className="flex items-center gap-1 min-w-0">
-                        <Filter className="h-3 w-3 flex-shrink-0" />
-                        <span className="truncate">{selectedIndustry || "Industry"}</span>
-                        <ChevronDown className="h-3 w-3 flex-shrink-0" />
-                      </div>
-                    </Button>
-                  </DropdownMenuTrigger>
+                {/* Filter Dropdowns */}
+                <div className="flex gap-2 items-center flex-wrap">
+                 {/* Industry Filter */}
+                 <DropdownMenu>
+                   <DropdownMenuTrigger asChild>
+                     <Button
+                       variant="outline"
+                       className="h-auto min-h-7 px-2 py-1 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40 text-gray-700"
+                     >
+                       <div className="flex items-center gap-1 min-w-0 text-gray-500">
+                         <Filter className="h-3 w-3 flex-shrink-0" />
+                         <span className="text-center leading-tight truncate">{selectedIndustry || "Industry"}</span>
+                         <ChevronDown className="h-3 w-3 flex-shrink-0" />
+                       </div>
+                     </Button>
+                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" align="start">
                     <DropdownMenuLabel>Filter by Industry</DropdownMenuLabel>
                     <DropdownMenuSeparator />
@@ -535,20 +535,20 @@ export function PublicPortfolioPage() {
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                {/* Technology Filter */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="h-7 px-2 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40"
-                    >
-                      <div className="flex items-center gap-1 min-w-0">
-                        <Code className="h-3 w-3 flex-shrink-0" />
-                        <span className="truncate">{selectedTechnology || "Technology"}</span>
-                        <ChevronDown className="h-3 w-3 flex-shrink-0" />
-                      </div>
-                    </Button>
-                  </DropdownMenuTrigger>
+                 {/* Technology Filter */}
+                 <DropdownMenu>
+                   <DropdownMenuTrigger asChild>
+                     <Button
+                       variant="outline"
+                       className="h-auto min-h-7 px-2 py-1 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40 text-gray-700"
+                     >
+                       <div className="flex items-center gap-1 min-w-0  text-gray-500">
+                         <Code className="h-3 w-3 flex-shrink-0" />
+                         <span className="text-center leading-tight truncate">{selectedTechnology || "Technology"}</span>
+                         <ChevronDown className="h-3 w-3 flex-shrink-0" />
+                       </div>
+                     </Button>
+                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" align="start">
                     <DropdownMenuLabel>Filter by Technology</DropdownMenuLabel>
                     <DropdownMenuSeparator />
