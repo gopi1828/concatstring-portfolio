@@ -264,11 +264,20 @@ export function PublicPortfolioDetail() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
+                      
                       {portfolio.industry && (
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-gray-600">Industry</span>
                           <span className="font-medium">
                             {portfolio.industry}
+                          </span>
+                        </div>
+                      )}
+                       {technologiesUsed.length > 0 && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-600">Technology</span>
+                          <span className="font-medium">
+                            {technologiesUsed.join(", ")}
                           </span>
                         </div>
                       )}
@@ -305,22 +314,7 @@ export function PublicPortfolioDetail() {
                           </a>
                         </div>
                       )}
-                      {technologiesUsed.length > 0 && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Technology</span>
-                          <div className="flex flex-wrap gap-1 justify-end">
-                            {technologiesUsed.map((tech, index) => (
-                              <Badge
-                                key={index}
-                                variant="outline"
-                                className="bg-blue-50 text-blue-700 border-blue-200 text-xs"
-                              >
-                                {tech}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      )}
+                    
                       {portfolio.pageBuilder && (
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-gray-600">Page Builder</span>
