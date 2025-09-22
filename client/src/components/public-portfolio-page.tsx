@@ -515,7 +515,7 @@ export function PublicPortfolioPage() {
                    <DropdownMenuTrigger asChild>
                      <Button
                        variant="outline"
-                       className="h-auto min-h-7 px-2 py-1 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40"
+                       className="h-auto min-h-7 px-2 py-1 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40 text-gray-700"
                      >
                        <div className="flex items-center gap-1 min-w-0">
                          <Filter className="h-3 w-3 flex-shrink-0" />
@@ -550,7 +550,7 @@ export function PublicPortfolioPage() {
                    <DropdownMenuTrigger asChild>
                      <Button
                        variant="outline"
-                       className="h-auto min-h-7 px-2 py-1 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40"
+                       className="h-auto min-h-7 px-2 py-1 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40 text-gray-700"
                      >
                        <div className="flex items-center gap-1 min-w-0">
                          <Code className="h-3 w-3 flex-shrink-0" />
