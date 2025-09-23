@@ -289,31 +289,6 @@ export function PublicPortfolioDetail() {
                           </span>
                         </div>
                       )}
-                      {portfolio.bidPlatform && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">
-                            Bid Platform
-                          </span>
-                          <span className="font-medium">
-                            {portfolio.bidPlatform}
-                          </span>
-                        </div>
-                      )}
-                      {portfolio.bidPlatformUrl && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">
-                            Platform URL
-                          </span>
-                          <a 
-                            href={portfolio.bidPlatformUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="font-medium text-blue-600 hover:text-blue-800"
-                          >
-                            {portfolio.bidPlatformUrl}
-                          </a>
-                        </div>
-                      )}
                     
                       {portfolio.pageBuilder && (
                         <div className="flex items-center justify-between">
