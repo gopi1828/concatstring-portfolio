@@ -491,7 +491,7 @@ export function PublicPortfolioPage() {
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-start sm:items-center justify-between">
             <div className="flex flex-1 gap-2 items-center">
               {/* Search Bar */}
-              <div className="relative w-64">
+              <div className="relative w-96">
                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
                 <Input
                   placeholder="Search portfolio items..."
@@ -590,12 +590,12 @@ export function PublicPortfolioPage() {
 
             {/* Right Side Controls */}
             <div className="flex items-center gap-2 flex-shrink-0">
-              <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 p-1">
+              <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 p-1 h-[33px]">
                 <Button
                   variant={viewMode === "table" ? "default" : "ghost"}
                   size="sm"
                   onClick={() => handleViewModeChange("table")}
-                  className={`h-[33px] w-[33px] ${
+                  className={`h-[26px] w-[26px] ${
                     viewMode === "table" ? "bg-blue-600 hover:bg-blue-700" : ""
                   }`}
                   title="Table View"
@@ -606,7 +606,7 @@ export function PublicPortfolioPage() {
                   variant={viewMode === "grid" ? "default" : "ghost"}
                   size="sm"
                   onClick={() => handleViewModeChange("grid")}
-                  className={`h-[33px] w-[33px] ${
+                  className={`h-[26px] w-[26px] ${
                     viewMode === "grid" ? "bg-blue-600 hover:bg-blue-700" : ""
                   }`}
                   title="Grid View"

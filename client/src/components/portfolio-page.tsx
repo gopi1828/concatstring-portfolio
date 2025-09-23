@@ -1028,12 +1028,12 @@ export function PortfolioPage() {
               <span className="text-xs font-medium text-gray-700">Select</span>
             </div>
           )}
-          <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 p-1">
+          <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 p-1 h-[33px]">
             <Button
               variant={viewMode === "table" ? "default" : "ghost"}
               size="sm"
               onClick={() => handleViewModeChange("table")}
-              className={`h-[33px] w-[33px] ${
+              className={`h-[26px] w-[26px] ${
                 viewMode === "table" ? "bg-blue-600 hover:bg-blue-700" : ""
               }`}
               title="Table View"
@@ -1044,7 +1044,7 @@ export function PortfolioPage() {
               variant={viewMode === "grid" ? "default" : "ghost"}
               size="sm"
               onClick={() => handleViewModeChange("grid")}
-              className={`h-[33px] w-[33px] ${
+              className={`h-[26px] w-[26px] ${
                 viewMode === "grid" ? "bg-blue-600 hover:bg-blue-700" : ""
               }`}
               title="Grid View"
