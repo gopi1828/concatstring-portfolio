@@ -179,8 +179,10 @@ export function PortfolioPage() {
   const [isSelectionMode, setIsSelectionMode] = useState<boolean>(false);
   const [industries, setIndustries] = useState<Industry[]>([]);
   const [technologies, setTechnologies] = useState<Technology[]>([]);
+  const [salesPerson, setSalesPerson] = useState<Technology[]>([]);
   const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
   const [selectedTechnology, setSelectedTechnology] = useState<string | null>(null);
+  const [selectedSalesPerson, setSelectedSalesPerson] = useState<string | null>(null);
   const [loadingFilters, setLoadingFilters] = useState(true);
   const itemsPerPage = 10;
 
@@ -240,12 +242,22 @@ export function PortfolioPage() {
     }
   };
 
+   const fetchSalesPerson = async () => {
+    try {
+      const response = await api.get("/api/auth/users");
+      setSalesPerson(response.data || []);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
   const fetchAllData = async () => {
     setLoadingFilters(true);
     await Promise.all([
       fetchPortfolios(),
       fetchIndustries(),
-      fetchTechnologies()
+      fetchTechnologies(),
+      fetchSalesPerson()
     ]);
     setLoadingFilters(false);
   };
@@ -420,14 +432,20 @@ export function PortfolioPage() {
     setCurrentPage(1);
   };
 
+  const handleSalesPersonFilter = (salesPerson: string | null) => {
+    setSelectedSalesPerson(salesPerson);
+    setCurrentPage(1);
+  };
+
   const clearAllFilters = () => {
     setSelectedIndustry(null);
     setSelectedTechnology(null);
+    setSelectedSalesPerson(null);
     setSearchTerm("");
     setCurrentPage(1);
   };
 
-  const hasActiveFilters = selectedIndustry || selectedTechnology || searchTerm;
+  const hasActiveFilters = selectedIndustry || selectedTechnology || selectedSalesPerson || searchTerm;
 
   
   useEffect(() => {
@@ -479,7 +497,10 @@ export function PortfolioPage() {
     const matchesTechnology = !selectedTechnology || 
       technology === selectedTechnology.toLowerCase();
 
-    return matchesSearch && matchesIndustry && matchesTechnology;
+      const matchesSalesPerson = !selectedSalesPerson || 
+      salesPerson === selectedSalesPerson.toLowerCase();
+
+    return matchesSearch && matchesIndustry && matchesTechnology && matchesSalesPerson;
   });
 
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
@@ -840,7 +861,7 @@ export function PortfolioPage() {
               placeholder="Search portfolio items..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-7 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 text-xs h-7"
+              className="pl-7 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 text-xs h-[33px]"
             />
           </div>
 
@@ -851,7 +872,7 @@ export function PortfolioPage() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  className="h-7 px-2 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40 text-gray-700"
+                  className="h-[33px] px-2 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40 text-gray-700"
                 >
                   <div className="flex items-center gap-1 min-w-0 text-gray-500">
                     <Filter className="h-3 w-3 flex-shrink-0" />
@@ -886,7 +907,7 @@ export function PortfolioPage() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  className="h-7 px-2 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40 text-gray-700"
+                  className="h-[33px] px-2 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40 text-gray-700"
                 >
                   <div className="flex items-center gap-1 min-w-0 text-gray-500">
                     <Code className="h-3 w-3 flex-shrink-0" />
@@ -916,13 +937,48 @@ export function PortfolioPage() {
               </DropdownMenuContent>
             </DropdownMenu>
 
+               {/* SalesPerson Filter */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="h-[33px] px-2 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40 text-gray-700"
+                >
+                  <div className="flex items-center gap-1 min-w-0 text-gray-500">
+                    <Code className="h-3 w-3 flex-shrink-0" />
+                    <span className="truncate">{selectedSalesPerson || "Sales Person"}</span>
+                    <ChevronDown className="h-3 w-3 flex-shrink-0" />
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="start">
+                <DropdownMenuLabel>Filter by Sales Person</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => handleSalesPersonFilter(null)}
+                  className={!selectedSalesPerson ? "bg-blue-50 text-blue-700" : ""}
+                >
+                  All Sales Person
+                </DropdownMenuItem>
+                {salesPerson.map((salesPerson) => (
+                  <DropdownMenuItem
+                    key={salesPerson._id}
+                    onClick={() => handleSalesPersonFilter(salesPerson.name)}
+                    className={selectedSalesPerson === salesPerson.name ? "bg-blue-50 text-blue-700" : ""}
+                  >
+                    {salesPerson.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             {/* Clear Filters */}
             {hasActiveFilters && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={clearAllFilters}
-                className="h-7 px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="h-[33px] px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
               >
                 <X className="h-3 w-3 -mr-1.5" />
                 Clear
@@ -934,7 +990,7 @@ export function PortfolioPage() {
         {/* Right Side Controls */}
         <div className="flex items-center gap-2 flex-shrink-0">
           {isLoggedIn && (
-            <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200">
+            <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 h-[33px]">
               <Checkbox
                 checked={isSelectionMode}
                 onCheckedChange={handleSelectionModeToggle}
@@ -948,7 +1004,7 @@ export function PortfolioPage() {
               variant={viewMode === "table" ? "default" : "ghost"}
               size="sm"
               onClick={() => handleViewModeChange("table")}
-              className={`h-7 w-7 sm:h-8 sm:w-8 ${
+              className={`h-[33px] w-[33px] ${
                 viewMode === "table" ? "bg-blue-600 hover:bg-blue-700" : ""
               }`}
               title="Table View"
@@ -959,7 +1015,7 @@ export function PortfolioPage() {
               variant={viewMode === "grid" ? "default" : "ghost"}
               size="sm"
               onClick={() => handleViewModeChange("grid")}
-              className={`h-7 w-7 sm:h-8 sm:w-8 ${
+              className={`h-[33px] w-[33px] ${
                 viewMode === "grid" ? "bg-blue-600 hover:bg-blue-700" : ""
               }`}
               title="Grid View"

@@ -443,7 +443,7 @@ export function PublicPortfolioPage() {
                   placeholder="Search portfolio items..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-7 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 text-xs h-7"
+                  className="pl-7 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 text-xs h-[33px]"
                 />
               </div>
 
@@ -454,7 +454,7 @@ export function PublicPortfolioPage() {
                    <DropdownMenuTrigger asChild>
                      <Button
                        variant="outline"
-                       className="h-auto min-h-7 px-2 py-1 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40 text-gray-700"
+                       className="h-[33px] px-2 py-1 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40 text-gray-700"
                      >
                        <div className="flex items-center gap-1 min-w-0 text-gray-500">
                          <Filter className="h-3 w-3 flex-shrink-0" />
@@ -489,7 +489,7 @@ export function PublicPortfolioPage() {
                    <DropdownMenuTrigger asChild>
                      <Button
                        variant="outline"
-                       className="h-auto min-h-7 px-2 py-1 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40 text-gray-700"
+                       className="h-[33px] px-2 py-1 text-xs border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 hover:border-blue-500 data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20 data-[state=closed]:border-gray-200 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 max-w-32 sm:max-w-40 text-gray-700"
                      >
                        <div className="flex items-center gap-1 min-w-0  text-gray-500">
                          <Code className="h-3 w-3 flex-shrink-0" />
@@ -525,7 +525,7 @@ export function PublicPortfolioPage() {
                     variant="ghost"
                     size="sm"
                     onClick={clearAllFilters}
-                    className="h-7 px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                    className="h-[33px] px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
                   >
                     <X className="h-3 w-3 -mr-1.5" />
                     Clear
@@ -541,7 +541,7 @@ export function PublicPortfolioPage() {
                   variant={viewMode === "table" ? "default" : "ghost"}
                   size="sm"
                   onClick={() => handleViewModeChange("table")}
-                  className={`h-7 w-7 sm:h-8 sm:w-8 ${
+                  className={`h-[33px] w-[33px] ${
                     viewMode === "table" ? "bg-blue-600 hover:bg-blue-700" : ""
                   }`}
                   title="Table View"
@@ -552,7 +552,7 @@ export function PublicPortfolioPage() {
                   variant={viewMode === "grid" ? "default" : "ghost"}
                   size="sm"
                   onClick={() => handleViewModeChange("grid")}
-                  className={`h-7 w-7 sm:h-8 sm:w-8 ${
+                  className={`h-[33px] w-[33px] ${
                     viewMode === "grid" ? "bg-blue-600 hover:bg-blue-700" : ""
                   }`}
                   title="Grid View"
