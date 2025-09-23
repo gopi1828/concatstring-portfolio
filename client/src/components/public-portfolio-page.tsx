@@ -62,8 +62,9 @@ const TableSkeleton = () => (
           <TableHead className="w-20 ">Thumbnail</TableHead>
           <TableHead>Title</TableHead>
           <TableHead>Technology</TableHead>
-          <TableHead>Category</TableHead>
-        </TableRow>
+            <TableHead>Category</TableHead>
+            <TableHead>Website</TableHead>
+                </TableRow>
       </TableHeader>
       <TableBody>
         {[...Array(6)].map((_, i) => (
@@ -270,10 +271,11 @@ export function PublicPortfolioPage() {
               <TableHeader>
           <TableRow className="bg-gray-50">
             <TableHead className="w-20">Thumbnail</TableHead>
+            <TableHead>Title</TableHead>
             <TableHead>Technology</TableHead>
             <TableHead>Industry</TableHead>
             <TableHead>Category</TableHead>
-            <TableHead>Title</TableHead>
+            <TableHead>Website</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -286,7 +288,7 @@ export function PublicPortfolioPage() {
                   <button
                     className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-lg border border-gray-200 bg-white"
                     onClick={() =>
-                      window.open(item.clientInvoices[0], "_blank")
+                      window.open(item.websiteLink, "_blank")
                     }
                     title="Open PDF"
                   >
@@ -297,9 +299,9 @@ export function PublicPortfolioPage() {
                           src={getFirstImageUrl(item.clientInvoices)}
                           alt={item.projectName}
                     onClick={() =>
-                      window.open(item.clientInvoices[0], "_blank")
+                      window.open(item.websiteLink, "_blank")
                     }
-                    title="Open Image"
+                    title="Open Website"
                     className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 object-cover rounded-lg cursor-pointer"
                   />
                 )}
@@ -337,6 +339,29 @@ export function PublicPortfolioPage() {
                         </span>
                       )}
                     </TableCell>
+                    <TableCell className="text-gray-600">
+                      {item.websiteLink && (
+                        <button
+                          onClick={() => window.open(item.websiteLink, "_blank")}
+                          className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
+                          title="Open Website"
+                        >
+                          <svg 
+                            className="h-4 w-4 text-gray-600" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round" 
+                              strokeWidth={2} 
+                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" 
+                            />
+                          </svg>
+                        </button>
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -367,6 +392,35 @@ export function PublicPortfolioPage() {
                 />
               )}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+              {/* Link Icon */}
+              <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (item.websiteLink) {
+                      window.open(item.websiteLink, "_blank");
+                    }
+                  }}
+                  className="bg-white/90 hover:bg-white rounded-full p-1.5 sm:p-2 shadow-md transition-colors duration-200"
+                  title="Open Website"
+                  disabled={!item.websiteLink}
+                >
+                  <svg 
+                    className="h-3 w-3 sm:h-4 sm:w-4 text-gray-600" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" 
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
           </Link>
           <CardContent className="p-3 sm:p-4 lg:p-6">

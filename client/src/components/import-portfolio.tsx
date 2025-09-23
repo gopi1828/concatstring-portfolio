@@ -106,7 +106,7 @@ export default function ImportPortfolio({
     const file = e.target.files?.[0];
     if (!file) return;
     setIsImporting(true);
-    try {
+    try {   
       const text = await file.text();
       const rows = parseCsv(text);
 
