@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const tagSchema = new mongoose.Schema(
+const pagebuilderSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -13,4 +13,6 @@ const tagSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.models.Tag || mongoose.model("Tag", tagSchema);
+module.exports =
+  mongoose.models.PageBuilder ||
+  mongoose.model("PageBuilder", pagebuilderSchema);

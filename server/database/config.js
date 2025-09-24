@@ -15,7 +15,7 @@ async function connectToDatabase() {
   mongoose.set("strictQuery", true);
 
   await mongoose.connect(mongoUri, {
-    // keep options minimal for modern mongoose
+    
   });
 
   isConnected = true;

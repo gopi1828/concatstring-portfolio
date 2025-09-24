@@ -5,7 +5,7 @@ const dotenv = require("dotenv");
 
 const connectToDatabase = require("./database/config");
 const authRoutes = require("./routes/authRoutes");
-const tagRoutes = require("./routes/tagRoutes");
+const pagebuilderRoutes = require("./routes/pagebuilderRoutes");
 const industryRoutes = require("./routes/industryRoutes");
 const technologyRoutes = require("./routes/technologyRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
@@ -28,12 +28,10 @@ app.get("/", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-// Public routes (no authentication required)
 app.use("/api/public", publicRoutes);
 
-// Protected routes (authentication required)
 app.use("/api/auth", authRoutes);
-app.use("/api/tags", tagRoutes);
+app.use("/api/pagebuilders", pagebuilderRoutes);
 app.use("/api/industry", industryRoutes);
 app.use("/api/technologies", technologyRoutes);
 app.use("/api/categories", categoryRoutes);
@@ -42,5 +40,5 @@ app.use("/api/upload", uploadRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-	console.log(`Server listening on port ${PORT}`);
+  console.log(`Server listening on port ${PORT}`);
 });

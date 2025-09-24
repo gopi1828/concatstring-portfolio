@@ -17,8 +17,7 @@ function authenticateToken(req, res, next) {
     if (err) {
       console.log("JWT verification failed:", err.message);
 
-      // Provide specific error message based on error type
-      let errorMessage = "Invalid token";
+     let errorMessage = "Invalid token";
       if (err.name === "TokenExpiredError") {
         errorMessage = "Token has expired. Please login again.";
       } else if (err.name === "JsonWebTokenError") {

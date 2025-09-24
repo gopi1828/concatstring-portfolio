@@ -24,7 +24,7 @@ exports.createPortfolio = async function createPortfolio(req, res) {
       salesPerson,
       clientName,
       testimonials,
-      tag,
+      
     } = req.body || {};
 
     if (
@@ -74,7 +74,7 @@ exports.createPortfolio = async function createPortfolio(req, res) {
         typeof clientName === "string" ? clientName.trim() : undefined,
       testimonials:
         typeof testimonials === "string" ? testimonials.trim() : undefined,
-      tag: Array.isArray(tag) ? tag : undefined,
+     
     });
 
     return res
@@ -145,10 +145,10 @@ exports.updatePortfolioById = async function updatePortfolioById(req, res) {
       salesPerson,
       clientName,
       testimonials,
-      tag,
+     
     } = req.body || {};
 
-    // Check for duplicate project name if projectName is being updated
+    
     if (
       projectName &&
       typeof projectName === "string" &&
@@ -156,7 +156,7 @@ exports.updatePortfolioById = async function updatePortfolioById(req, res) {
     ) {
       const existing = await Portfolio.findOne({
         projectName: projectName.trim(),
-        _id: { $ne: id }, // Exclude current portfolio from duplicate check
+        _id: { $ne: id }
       });
       if (existing) {
         return res
@@ -192,8 +192,7 @@ exports.updatePortfolioById = async function updatePortfolioById(req, res) {
 
     if (typeof testimonials === "string")
       updates.testimonials = testimonials.trim();
-    if (Array.isArray(tag)) updates.tag = tag;
-
+   
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({ message: "No valid fields to update" });
     }
