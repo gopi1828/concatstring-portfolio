@@ -126,7 +126,7 @@ export function AddUserModal({
               className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.name && formik.errors.name && (
-              <p className="text-red-500 text-sm">{formik.errors.name}</p>
+              <span className="text-red-500 text-sm">{formik.errors.name}</span>
             )}
           </div>
 
@@ -148,7 +148,7 @@ export function AddUserModal({
               className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.username && formik.errors.username && (
-              <p className="text-red-500 text-sm">{formik.errors.username}</p>
+              <span className="text-red-500 text-sm">{formik.errors.username}</span>
             )}
           </div>
 
@@ -185,7 +185,7 @@ export function AddUserModal({
               </Button>
             </div>
             {formik.touched.password && formik.errors.password && (
-              <p className="text-red-500 text-sm">{formik.errors.password}</p>
+              <span className="text-red-500 text-sm">{formik.errors.password}</span>
             )}
           </div>
 
@@ -221,7 +221,7 @@ export function AddUserModal({
             </div>
 
             {formik.touched.role && formik.errors.role && (
-              <p className="text-red-500 text-sm">{formik.errors.role}</p>
+              <span className="text-red-500 text-sm">{formik.errors.role}</span>
             )}
           </div>
 

@@ -131,9 +131,9 @@ export function EditUserForm() {
                 onBlur={formik.handleBlur}
                 className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
               />
-              {formik.touched.name && formik.errors.name && (
-                <p className="text-red-500 text-sm">{formik.errors.name}</p>
-              )}
+            {formik.touched.name && formik.errors.name && (
+              <span className="text-red-500 text-sm">{formik.errors.name}</span>
+            )}
             </div>
 
             <div className="space-y-2">
@@ -153,9 +153,9 @@ export function EditUserForm() {
                 onBlur={formik.handleBlur}
                 className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
               />
-              {formik.touched.username && formik.errors.username && (
-                <p className="text-red-500 text-sm">{formik.errors.username}</p>
-              )}
+            {formik.touched.username && formik.errors.username && (
+              <span className="text-red-500 text-sm">{formik.errors.username}</span>
+            )}
             </div>
 
             <div className="space-y-2">
@@ -190,9 +190,9 @@ export function EditUserForm() {
                   )}
                 </Button>
               </div>
-              {formik.touched.password && formik.errors.password && (
-                <p className="text-red-500 text-sm">{formik.errors.password}</p>
-              )}
+            {formik.touched.password && formik.errors.password && (
+              <span className="text-red-500 text-sm">{formik.errors.password}</span>
+            )}
             </div>
 
             <Button

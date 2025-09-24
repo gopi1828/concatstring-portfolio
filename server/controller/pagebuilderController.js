@@ -113,7 +113,7 @@ exports.deletePageBuilder = async function deletePageBuilder(req, res) {
       return res.status(400).json({ error: "Page Builder id is required" });
     }
 
-    const deleted = await pagebuilders.findByIdAndDelete(id);
+    const deleted = await pagebuilder.findByIdAndDelete(id);
     if (!deleted) {
       return res.status(404).json({ error: "Page Builder not found" });
     }

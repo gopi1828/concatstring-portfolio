@@ -123,7 +123,7 @@ export function EditPageBuilderModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.name && formik.errors.name && (
-              <p className="text-sm text-red-600">{formik.errors.name}</p>
+              <span className="text-sm text-red-600">{formik.errors.name}</span>
             )}
           </div>
 
