@@ -20,6 +20,7 @@ import {
   Code2,
   Building2,
   X,
+  Layout,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import api from "../lib/api";
@@ -37,6 +38,7 @@ const navigation: NavigationItem[] = [
   { name: "Categories", href: "/dashboard/categories", icon: Layers },
   { name: "Industries", href: "/dashboard/industries", icon: Building2 },
   { name: "Technologies", href: "/dashboard/technologies", icon: Code2 },
+  { name: "Page Builders", href: "/dashboard/pagebuilders", icon: Layout },
 ];
 
 interface MainLayoutProps {

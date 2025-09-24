@@ -8,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-// import { Separator } from "./ui/separator";
 import {
   Tabs,
   TabsContent,
@@ -26,11 +25,6 @@ import {
   User,
   ImageIcon,
   FileText,
-  Code,
-  Building2,
-  Award,
-  Globe,
-  Download,
 } from "lucide-react";
 import api from "../lib/api";
 import { toast } from "react-hot-toast";
@@ -54,6 +48,7 @@ interface PortfolioItem {
   startDate: string;
   completionDate: string;
   testimonials: string;
+  tag: string[];
   createdAt?: string;
 }
 
@@ -76,11 +71,8 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
         const response = await api.get(`/api/portfolios/${id}`);
 
         const data = response.data;
-        const item = (data &&
-          (data.result ||
-            data.portfolio ||
-            data.item ||
-            data)) as PortfolioItem | null;
+
+        const item = data as PortfolioItem | null;
         if (item && (item as any)._id) {
           setPortfolio(item as PortfolioItem);
         } else {
@@ -141,9 +133,8 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
     );
   }
 
- 
+  const portfolioTags = portfolio.tag || [];
 
-  
   const technologiesUsed = Array.isArray(portfolio.technology)
     ? portfolio.technology.filter(Boolean)
     : portfolio.technology
@@ -154,372 +145,351 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
     (url || "").toLowerCase().split("?")[0].endsWith(".pdf");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Hero Section */}
-      <div className="relative">
-        {/* Background Image */}
-        <div className="relative h-96 lg:h-[500px] overflow-hidden">
-          {portfolio.clientInvoices && portfolio.clientInvoices.length > 0 ? (
-            <img
-              src={portfolio.clientInvoices[selectedImage]}
-              alt={portfolio.projectName}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
-              <div className="text-center text-white">
-                <Code className="h-16 w-16 mx-auto mb-4 opacity-80" />
-                <h2 className="text-2xl font-bold">No Preview Available</h2>
-              </div>
-            </div>
-          )}
-          
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-black/40" />
-          
-          {/* Navigation */}
-          <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => navigate(-1)}
-              className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            
-            {portfolio.websiteLink && (
-              <Button
-                size="sm"
-                className="bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
-                onClick={() => window.open(portfolio.websiteLink, "_blank")}
-              >
-                <Globe className="mr-2 h-4 w-4" />
-                Live Demo
-              </Button>
-            )}
-          </div>
-
-          {/* Project Info Overlay */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-            <div className="max-w-4xl">
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Badge className="bg-white/20 text-white border-white/30">
-                  {portfolio.category}
-                </Badge>
-                {portfolio.industry && (
-                  <Badge className="bg-white/20 text-white border-white/30">
-                    {portfolio.industry}
-                  </Badge>
-                )}
-                {portfolio.invoiceAmount && (
-                  <Badge className="bg-green-500/80 text-white">
-                    ${portfolio.invoiceAmount}
-                  </Badge>
-                )}
-              </div>
-              <h1 className="text-3xl lg:text-5xl font-bold mb-2">
-                {portfolio.projectName}
-              </h1>
-              <p className="text-lg text-white/90 max-w-2xl">
-                {portfolio.description}
-              </p>
-            </div>
-          </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <div className="flex-1">
+          <h1 className="text-2xl font-bold text-gray-900">
+            {portfolio.projectName}
+          </h1>
+          <p className="text-gray-600">{portfolio.category}</p>
         </div>
-
-        {/* Thumbnail Navigation */}
-        {portfolio.clientInvoices && portfolio.clientInvoices.length > 1 && (
-          <div className="bg-white/95 backdrop-blur-sm border-t">
-            <div className="max-w-7xl mx-auto px-6 py-4">
-              <div className="flex gap-3 overflow-x-auto">
-                {portfolio.clientInvoices.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedImage(index)}
-                    className={`flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
-                      selectedImage === index
-                        ? "border-blue-500 scale-105"
-                        : "border-gray-200 hover:border-gray-300"
-                    }`}
-                  >
-                    {isPdfUrl(image) ? (
-                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                        <FileText className="h-4 w-4 text-gray-600" />
-                      </div>
-                    ) : (
-                      <img
-                        src={image}
-                        alt={`View ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-3 space-y-8">
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-blue-500 rounded-lg">
-                      <Calendar className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-blue-600 font-medium">Start Date</p>
-                      <p className="text-lg font-bold text-blue-900">
-                        {portfolio.startDate
-                          ? new Date(portfolio.startDate).toLocaleDateString()
-                          : "N/A"}
-                      </p>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Content */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Image Gallery */}
+          <Card>
+            <CardContent className="p-0">
+              <div className="relative">
+                {portfolio.clientInvoices &&
+                portfolio.clientInvoices.length > 0 &&
+                isPdfUrl(portfolio.clientInvoices[selectedImage]) ? (
+                  <div className="w-full h-96 flex items-center justify-center bg-gray-50 rounded-t-lg border-b">
+                    <Button
+                      onClick={() =>
+                        window.open(
+                          portfolio.clientInvoices[selectedImage],
+                          "_blank"
+                        )
+                      }
+                    >
+                      <FileText className="mr-2 h-4 w-4" /> Open PDF
+                    </Button>
+                  </div>
+                ) : (
+                  <img
+                    src={
+                      portfolio.clientInvoices &&
+                      portfolio.clientInvoices.length > 0
+                        ? portfolio.clientInvoices[selectedImage]
+                        : "/placeholder.svg"
+                    }
+                    alt={portfolio.projectName}
+                    className="w-full h-96 object-cover rounded-t-lg"
+                  />
+                )}
+                <div className="absolute top-4 right-4 flex gap-2">
+                  {portfolio.websiteLink && (
+                    <Button
+                      size="sm"
+                      className="bg-white/90 text-gray-900 hover:bg-white"
+                      onClick={() =>
+                        window.open(portfolio.websiteLink, "_blank")
+                      }
+                    >
+                      <ExternalLink className="mr-2 h-4 w-4" />
+                      Live Demo
+                    </Button>
+                  )}
+                </div>
+              </div>
+              {portfolio.clientInvoices &&
+                portfolio.clientInvoices.length > 0 && (
+                  <div className="p-4">
+                    <div className="flex gap-2 overflow-x-auto">
+                      {portfolio.clientInvoices.map((image, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setSelectedImage(index)}
+                          className={`flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
+                            selectedImage === index
+                              ? "border-blue-500"
+                              : "border-gray-200"
+                          }`}
+                        >
+                          {isPdfUrl(image) ? (
+                            <div className="w-full h-full flex items-center justify-center bg-white">
+                              <FileText className="h-4 w-4 text-gray-600" />
+                            </div>
+                          ) : (
+                            <img
+                              src={image}
+                              alt={`View ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          )}
+                        </button>
+                      ))}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                )}
+            </CardContent>
+          </Card>
 
-              <Card className="bg-gradient-to-r from-green-50 to-green-100 border-green-200">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-green-500 rounded-lg">
-                      <Award className="h-5 w-5 text-white" />
+          {/* Project Description */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Project Description
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">{portfolio.description}</p>
+            </CardContent>
+          </Card>
+
+          {/* Tabs Content */}
+          <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="gallery">Gallery</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="overview" className="space-y-6">
+              {/* Project Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Project Information</CardTitle>
+                  <CardDescription>
+                    Business and project details
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {portfolio.industry && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Industry</span>
+                      <span className="font-medium">{portfolio.industry}</span>
                     </div>
-                    <div>
-                      <p className="text-sm text-green-600 font-medium">Completion</p>
-                      <p className="text-lg font-bold text-green-900">
-                        {portfolio.completionDate
-                          ? new Date(portfolio.completionDate).toLocaleDateString()
-                          : "N/A"}
-                      </p>
+                  )}
+                  {portfolio.category && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Category</span>
+                      <span className="font-medium">{portfolio.category}</span>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-purple-500 rounded-lg">
-                      <DollarSign className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-purple-600 font-medium">Value</p>
-                      <p className="text-lg font-bold text-purple-900">
-                        {portfolio.invoiceAmount ? `$${portfolio.invoiceAmount}` : "N/A"}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Tabs Content */}
-            <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="technical">Technical</TabsTrigger>
-                <TabsTrigger value="gallery">Gallery</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="overview" className="space-y-6">
-                {/* Project Details */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <FileText className="h-5 w-5" />
-                      Project Details
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {portfolio.industry && (
-                        <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-                          <Building2 className="h-5 w-5 text-gray-600" />
-                          <div>
-                            <p className="text-sm text-gray-600">Industry</p>
-                            <p className="font-semibold">{portfolio.industry}</p>
-                          </div>
-                        </div>
-                      )}
-                      
-                      {portfolio.bidPlatform && (
-                        <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-                          <Globe className="h-5 w-5 text-gray-600" />
-                          <div>
-                            <p className="text-sm text-gray-600">Platform</p>
-                            <p className="font-semibold">{portfolio.bidPlatform}</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {portfolio.bidPlatformUrl && (
-                      <div className="p-4 bg-blue-50 rounded-lg">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm text-blue-600 font-medium">Platform URL</p>
-                            <p className="text-blue-900">{portfolio.bidPlatformUrl}</p>
-                          </div>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => window.open(portfolio.bidPlatformUrl, "_blank")}
-                          >
-                            <ExternalLink className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Technologies */}
-                {technologiesUsed.length > 0 && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Code className="h-5 w-5" />
-                        Technologies Used
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-wrap gap-3">
+                  )}
+                 
+                  {technologiesUsed.length > 0 && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Technology</span>
+                      <div className="flex flex-wrap gap-1 justify-end">
                         {technologiesUsed.map((tech, index) => (
                           <Badge
                             key={index}
                             variant="outline"
-                            className="px-4 py-2 text-sm bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-blue-200 hover:from-blue-100 hover:to-indigo-100 transition-colors"
+                            className="bg-blue-50 text-blue-700 border-blue-200 text-xs"
                           >
                             {tech}
                           </Badge>
                         ))}
                       </div>
-                    </CardContent>
-                  </Card>
-                )}
+                    </div>
+                  )}
+                  {portfolio.pageBuilder && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Page Builder</span>
+                      <Badge
+                        variant="secondary"
+                        className="bg-green-50 text-green-700 text-xs"
+                      >
+                        {portfolio.pageBuilder}
+                      </Badge>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
 
-              </TabsContent>
-
-              <TabsContent value="technical" className="space-y-6">
+              {/* Project Tags */}
+              {portfolioTags.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Code className="h-5 w-5" />
-                      Technical Stack
-                    </CardTitle>
+                    <CardTitle>Project Tags</CardTitle>
                     <CardDescription>
-                      Technologies and tools used in this project
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {technologiesUsed.length > 0 && (
-                      <div>
-                        <h4 className="text-lg font-semibold mb-4">Technologies Used</h4>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                          {technologiesUsed.map((tech, index) => (
-                            <div key={index} className="p-3 bg-gray-50 rounded-lg text-center">
-                              <span className="font-medium text-gray-900">{tech}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {portfolio.pageBuilder && (
-                      <div>
-                        <h4 className="text-lg font-semibold mb-4">Page Builder</h4>
-                        <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                          <span className="font-medium text-green-800">{portfolio.pageBuilder}</span>
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="gallery" className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <ImageIcon className="h-5 w-5" />
-                      Project Gallery
-                    </CardTitle>
-                    <CardDescription>
-                      All project screenshots and images
+                      Additional tags and keywords for this project
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {portfolio.clientInvoices && portfolio.clientInvoices.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {portfolio.clientInvoices.map((image, index) => (
-                          <div key={index} className="relative group cursor-pointer" onClick={() => window.open(image, "_blank")}>
-                            {isPdfUrl(image) ? (
-                              <div className="w-full h-64 flex items-center justify-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 hover:border-gray-400 transition-colors">
-                                <div className="text-center">
-                                  <FileText className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                                  <p className="text-sm text-gray-600">PDF Document</p>
-                                  <Button size="sm" variant="outline" className="mt-2">
-                                    <Download className="h-4 w-4 mr-2" />
-                                    Download
-                                  </Button>
-                                </div>
-                              </div>
-                            ) : (
-                              <div className="relative overflow-hidden rounded-xl">
-                                <img
-                                  src={image}
-                                  alt={`Gallery image ${index + 1}`}
-                                  className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-                                />
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200" />
-                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                  <Button size="icon" variant="secondary" className="bg-white/90 hover:bg-white">
-                                    <Eye className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-12">
-                        <ImageIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                        <p className="text-lg text-gray-500">No images available for this project.</p>
-                      </div>
-                    )}
+                    <div className="flex flex-wrap gap-2">
+                      {portfolioTags.map((tag, index) => (
+                        <Badge
+                          key={index}
+                          variant="secondary"
+                          className="bg-purple-50 text-purple-700"
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
+              )}
+            </TabsContent>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Client Information */}
-            {(portfolio.clientName || portfolio.salesPerson) && (
-              <Card className="bg-gradient-to-br from-slate-50 to-slate-100">
+            <TabsContent value="gallery" className="space-y-6">
+              <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <User className="h-5 w-5" />
-                    Client Information
+                    <ImageIcon className="h-5 w-5" />
+                    Project Gallery
                   </CardTitle>
+                  <CardDescription>
+                    All project screenshots and images
+                  </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  {portfolio.clientName && (
-                    <div className="flex items-center gap-3 p-3 bg-white rounded-lg">
-                      <Avatar className="h-10 w-10">
+                <CardContent>
+                  {portfolio.clientInvoices &&
+                  portfolio.clientInvoices.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {portfolio.clientInvoices.map((image, index) => (
+                        <div key={index} className="relative group">
+                          {isPdfUrl(image) ? (
+                            <div className="w-full h-64 flex items-center justify-center bg-gray-50 rounded-lg border">
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => window.open(image, "_blank")}
+                              >
+                                <FileText className="mr-2 h-4 w-4" /> Open PDF
+                              </Button>
+                            </div>
+                          ) : (
+                            <img
+                              src={image}
+                              alt={`Gallery image ${index + 1}`}
+                              className="w-full h-64 object-cover rounded-lg"
+                            />
+                          )}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 rounded-lg" />
+                          <Button
+                            size="icon"
+                            variant="secondary"
+                            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                            onClick={() => window.open(image, "_blank")}
+                            title="View"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      No images available for this project.
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* Project Stats */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Project Stats</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm text-gray-600">Start Date</span>
+                </div>
+                <span className="font-medium">
+                  {portfolio.startDate
+                    ? new Date(portfolio.startDate).toLocaleDateString()
+                    : "N/A"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm text-gray-600">Completion Date</span>
+                </div>
+                <span className="font-medium">
+                  {portfolio.completionDate
+                    ? new Date(portfolio.completionDate).toLocaleDateString()
+                    : "N/A"}
+                </span>
+              </div>
+              {portfolio.invoiceAmount && (
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <DollarSign className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm text-gray-600">Amount</span>
+                  </div>
+                  <span className="font-medium">
+                    ${portfolio.invoiceAmount}
+                  </span>
+                </div>
+              )}
+               {portfolio.bidPlatform && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">
+                        Bid Platform
+                      </span>
+                      <span className="font-medium">
+                        {portfolio.bidPlatform}
+                      </span>
+                    </div>
+                  )}
+                  {portfolio.bidPlatformUrl && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">
+                        Platform URL
+                      </span>
+                      <a
+                        href={portfolio.bidPlatformUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-blue-600 hover:text-blue-800"
+                      >
+                        {portfolio.bidPlatformUrl}
+                      </a>
+                    </div>
+                  )}
+            </CardContent>
+          </Card>
+
+          {/* Client & Sales Information */}
+          {(portfolio.clientName ||
+            portfolio.salesPerson ||
+            portfolio.testimonials) && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <User className="h-5 w-5" />
+                  Client & Sales Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {portfolio.clientName && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-gray-600">
+                        Client
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Avatar>
                         <AvatarImage src="/placeholder.svg" />
-                        <AvatarFallback className="bg-blue-100 text-blue-700">
+                        <AvatarFallback>
                           {portfolio.clientName
                             .split(" ")
                             .map((n) => n[0])
@@ -527,17 +497,25 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-semibold text-gray-900">{portfolio.clientName}</p>
-                        <p className="text-sm text-gray-600">Client</p>
+                        <p className="font-medium text-gray-900">
+                          {portfolio.clientName}
+                        </p>
                       </div>
                     </div>
-                  )}
-                  
-                  {portfolio.salesPerson && (
-                    <div className="flex items-center gap-3 p-3 bg-white rounded-lg">
-                      <Avatar className="h-10 w-10">
+                  </div>
+                )}
+
+                {portfolio.salesPerson && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-gray-600">
+                        Sales Person
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Avatar>
                         <AvatarImage src="/placeholder.svg" />
-                        <AvatarFallback className="bg-green-100 text-green-700">
+                        <AvatarFallback>
                           {portfolio.salesPerson
                             .split(" ")
                             .map((n) => n[0])
@@ -545,80 +523,32 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-semibold text-gray-900">{portfolio.salesPerson}</p>
-                        <p className="text-sm text-gray-600">Sales Person</p>
+                        <p className="font-medium text-gray-900">
+                          {portfolio.salesPerson}
+                        </p>
                       </div>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Testimonial */}
-            {portfolio.testimonials && (
-              <Card className="bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Star className="h-5 w-5 text-yellow-600" />
-                    Client Testimonial
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-white p-4 rounded-lg border border-yellow-200">
-                    <p className="text-gray-700 italic leading-relaxed">
-                      "{portfolio.testimonials}"
-                    </p>
                   </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {portfolio.websiteLink && (
-                  <Button 
-                    className="w-full justify-start" 
-                    variant="outline"
-                    onClick={() => window.open(portfolio.websiteLink, "_blank")}
-                  >
-                    <Globe className="mr-2 h-4 w-4" />
-                    Visit Live Site
-                  </Button>
-                )}
-                
-                {portfolio.bidPlatformUrl && (
-                  <Button 
-                    className="w-full justify-start" 
-                    variant="outline"
-                    onClick={() => window.open(portfolio.bidPlatformUrl, "_blank")}
-                  >
-                    <ExternalLink className="mr-2 h-4 w-4" />
-                    View Platform
-                  </Button>
                 )}
 
-                {portfolio.clientInvoices && portfolio.clientInvoices.length > 0 && (
-                  <Button 
-                    className="w-full justify-start" 
-                    variant="outline"
-                    onClick={() => {
-                      const firstImage = portfolio.clientInvoices[0];
-                      if (isPdfUrl(firstImage)) {
-                        window.open(firstImage, "_blank");
-                      }
-                    }}
-                  >
-                    <Download className="mr-2 h-4 w-4" />
-                    Download Assets
-                  </Button>
+                {portfolio.testimonials && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Star className="h-4 w-4 text-yellow-500" />
+                      <span className="text-sm font-medium text-gray-600">
+                        Testimonial
+                      </span>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-sm text-gray-700 italic">
+                        "{portfolio.testimonials}"
+                      </p>
+                    </div>
+                  </div>
                 )}
               </CardContent>
             </Card>
-          </div>
+          )}
         </div>
       </div>
     </div>

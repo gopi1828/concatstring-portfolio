@@ -6,6 +6,7 @@ import { LoginPage } from "./components/login-page";
 import { PortfolioPage } from "./components/portfolio-page";
 import { CategoriesPage } from "./components/categories-page";
 import { TechnologiesPage } from "./components/technologies-page";
+import { PageBuildersPage } from "./components/pagebuilders-page";
 import { IndustryPage } from "./components/industry-page";
 import { EditUserForm } from "./components/edit-user-form";
 import { PortfolioDetailPage } from "./components/portfolio-detail-page";
@@ -111,6 +112,16 @@ function App() {
             <RequireAuth>
               <MainLayout>
                 <TechnologiesPage />
+              </MainLayout>
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/dashboard/pagebuilders"
+          element={
+            <RequireAuth>
+              <MainLayout>
+                <PageBuildersPage />
               </MainLayout>
             </RequireAuth>
           }
