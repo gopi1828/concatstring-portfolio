@@ -136,7 +136,7 @@ export function PublicPortfolioPage() {
   const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
   const [selectedTechnology, setSelectedTechnology] = useState<string | null>(null);
   const [loadingFilters, setLoadingFilters] = useState(true);
-  
+
   const itemsPerPage = 10;
 
   const fetchPortfolios = async () => {
