@@ -509,7 +509,7 @@ export function PortfolioPage() {
   const getDisplayTechnology = (item: PortfolioItem) => {
     return typeof item.technology === "string" ? item.technology : "";
   };
-
+  
   const isPdfUrl = (url: string) =>
     (url || "").toLowerCase().split("?")[0].endsWith(".pdf");
   const getFirstImageUrl = (files: string[] = []) => {

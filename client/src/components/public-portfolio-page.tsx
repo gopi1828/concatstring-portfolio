@@ -267,10 +267,11 @@ export function PublicPortfolioPage() {
               <TableHeader>
           <TableRow className="bg-gray-50">
             <TableHead className="w-20">Thumbnail</TableHead>
+             <TableHead>Title</TableHead>
             <TableHead>Technology</TableHead>
             <TableHead>Industry</TableHead>
             <TableHead>Category</TableHead>
-            <TableHead>Title</TableHead>
+           
                 </TableRow>
               </TableHeader>
               <TableBody>

@@ -35,6 +35,7 @@ export function AddPortfolioModal({
   const [techOptions, setTechOptions] = useState<any[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<any[]>([]);
   const [industryOptions, setIndustryOptions] = useState<any[]>([]);
+  const [pageBuilderOptions, setPageBuilderOptions] = useState<any[]>([]);
   const [userOptions, setUserOptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -100,6 +101,21 @@ export function AddPortfolioModal({
 
     if (open) {
       fetchIndustry();
+    }
+  }, [open]);
+
+  useEffect(() => {
+    const fetchPageBuilders = async () => {
+      try {
+        const res = await api.get("/api/pagebuilders");
+        setPageBuilderOptions(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        setPageBuilderOptions([]);
+      }
+    };
+
+    if (open) {
+      fetchPageBuilders();
     }
   }, [open]);
 
@@ -461,12 +477,23 @@ export function AddPortfolioModal({
               value={formik.values.pageBuilder}
               onChange={formik.handleChange}
               className="w-full h-11 border border-gray-200 rounded-md focus:outline-none focus:ring-blue-500/20 px-3"
+              disabled={isLoading}
             >
               <option value="">-- Select Page Builder --</option>
-              <option value="Webflow">Webflow</option>
-              <option value="Elementor">Elementor</option>
-              <option value="WordPress">WordPress</option>
-              <option value="Custom">Custom</option>
+              {Array.isArray(pageBuilderOptions) && pageBuilderOptions.length > 0 ? (
+                pageBuilderOptions.map((pageBuilder, index) => (
+                  <option
+                    key={pageBuilder._id || pageBuilder.id || pageBuilder.name || index}
+                    value={pageBuilder.name || pageBuilder}
+                  >
+                    {pageBuilder.name || pageBuilder}
+                  </option>
+                ))
+              ) : (
+                <option value="" disabled>
+                  {isLoading ? "Loading page builders..." : "No page builders available"}
+                </option>
+              )}
             </select>
           </div>
 
