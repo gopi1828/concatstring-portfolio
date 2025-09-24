@@ -324,9 +324,9 @@ export function AddPortfolioModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.projectName && formik.errors.projectName && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.projectName}
-              </p>
+              </span>
             )}
           </div>
 
@@ -345,9 +345,9 @@ export function AddPortfolioModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.websiteLink && formik.errors.websiteLink && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.websiteLink}
-              </p>
+              </span>
             )}
           </div>
 
@@ -382,7 +382,7 @@ export function AddPortfolioModal({
               )}
             </select>
             {formik.touched.technology && formik.errors.technology && (
-              <p className="text-sm text-red-600">{formik.errors.technology}</p>
+              <span className="text-sm text-red-600">{formik.errors.technology}</span>
             )}
           </div>
 
@@ -438,9 +438,9 @@ export function AddPortfolioModal({
                 ))}
             </select>
             {formik.touched.industry && formik.errors.industry && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.industry}
-              </p>
+              </span>
             )}
           </div>
 
@@ -460,9 +460,9 @@ export function AddPortfolioModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.description && formik.errors.description && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.description}
-              </p>
+              </span>
             )}
           </div>
 
@@ -527,9 +527,9 @@ export function AddPortfolioModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.bidPlatformUrl && formik.errors.bidPlatformUrl && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.bidPlatformUrl}
-              </p>
+              </span>
             )}
           </div>
 
@@ -549,9 +549,9 @@ export function AddPortfolioModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.invoiceAmount && formik.errors.invoiceAmount && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.invoiceAmount}
-              </p>
+              </span>
             )}
           </div>
 
@@ -570,7 +570,7 @@ export function AddPortfolioModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.startDate && formik.errors.startDate && (
-              <p className="text-sm text-red-600">{formik.errors.startDate}</p>
+              <span className="text-sm text-red-600">{formik.errors.startDate}</span>
             )}
           </div>
 
@@ -589,9 +589,9 @@ export function AddPortfolioModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.completionDate && formik.errors.completionDate && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.completionDate}
-              </p>
+              </span>
             )}
           </div>
 
@@ -626,9 +626,9 @@ export function AddPortfolioModal({
               )}
             </select>
             {formik.touched.salesPerson && formik.errors.salesPerson && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.salesPerson}
-              </p>
+              </span>
             )}
           </div>
 

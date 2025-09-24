@@ -121,9 +121,9 @@ export function LoginPage() {
                 className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
               />
               {formik.touched.username && formik.errors.username && (
-                <p className="text-sm text-red-600 -mt-2">
+                <span className="text-sm text-red-600 -mt-2">
                   {formik.errors.username}
-                </p>
+                </span>
               )}
             </div>
 
@@ -160,9 +160,9 @@ export function LoginPage() {
                 </Button>
               </div>
               {formik.touched.password && formik.errors.password && (
-                <p className="text-sm text-red-600 -mt-2">
+                <span className="text-sm text-red-600 -mt-2">
                   {formik.errors.password}
-                </p>
+                </span>
               )}
             </div>
 

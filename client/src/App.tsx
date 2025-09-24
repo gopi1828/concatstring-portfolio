@@ -126,6 +126,7 @@ function App() {
             </RequireAuth>
           }
         />
+        
         <Route
           path="/dashboard/industries"
           element={

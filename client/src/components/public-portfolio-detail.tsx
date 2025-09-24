@@ -316,7 +316,7 @@ export function PublicPortfolioDetail() {
                       {portfolio.pageBuilder && (
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-gray-600">Page Builder</span>
-                          <Badge variant="secondary" className="bg-green-50 text-green-700 text-xs">
+                          <Badge variant="secondary" className="bg-green-50 text-gray-600 text-xs">
                             {portfolio.pageBuilder}
                           </Badge>
                         </div>

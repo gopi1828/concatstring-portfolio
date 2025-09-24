@@ -362,9 +362,9 @@ export default function EditPortfolioModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.projectName && formik.errors.projectName && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.projectName as string}
-              </p>
+              </span>
             )}
           </div>
 
@@ -383,9 +383,9 @@ export default function EditPortfolioModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.websiteLink && formik.errors.websiteLink && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.websiteLink as string}
-              </p>
+              </span>
             )}
           </div>
 
@@ -422,9 +422,9 @@ export default function EditPortfolioModal({
               )}
             </select>
             {formik.touched.technology && formik.errors.technology && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.technology as string}
-              </p>
+              </span>
             )}
           </div>
 
@@ -480,9 +480,9 @@ export default function EditPortfolioModal({
                 ))}
             </select>
             {formik.touched.industry && formik.errors.industry && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.industry as string}
-              </p>
+              </span>
             )}
           </div>
 
@@ -502,9 +502,9 @@ export default function EditPortfolioModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.description && formik.errors.description && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.description as string}
-              </p>
+              </span>
             )}
           </div>
 
@@ -554,9 +554,9 @@ export default function EditPortfolioModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.bidPlatform && formik.errors.bidPlatform && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.bidPlatform as string}
-              </p>
+              </span>
             )}
           </div>
 
@@ -575,9 +575,9 @@ export default function EditPortfolioModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.bidPlatformUrl && formik.errors.bidPlatformUrl && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.bidPlatformUrl as string}
-              </p>
+              </span>
             )}
           </div>
 
@@ -598,9 +598,9 @@ export default function EditPortfolioModal({
             />
 
             {formik.touched.invoiceAmount && formik.errors.invoiceAmount && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.invoiceAmount as string}
-              </p>
+              </span>
             )}
           </div>
 
@@ -619,9 +619,9 @@ export default function EditPortfolioModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.startDate && formik.errors.startDate && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.startDate as string}
-              </p>
+              </span>
             )}
           </div>
 
@@ -640,9 +640,9 @@ export default function EditPortfolioModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.completionDate && formik.errors.completionDate && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.completionDate as string}
-              </p>
+              </span>
             )}
           </div>
 
@@ -677,9 +677,9 @@ export default function EditPortfolioModal({
               )}
             </select>
             {formik.touched.salesPerson && formik.errors.salesPerson && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.salesPerson as string}
-              </p>
+              </span>
             )}
           </div>
 
@@ -698,9 +698,9 @@ export default function EditPortfolioModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.clientName && formik.errors.clientName && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.clientName as string}
-              </p>
+              </span>
             )}
           </div>
 
@@ -720,9 +720,9 @@ export default function EditPortfolioModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.testimonials && formik.errors.testimonials && (
-              <p className="text-sm text-red-600">
+              <span className="text-sm text-red-600">
                 {formik.errors.testimonials as string}
-              </p>
+              </span>
             )}
           </div>
 
