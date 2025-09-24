@@ -289,13 +289,7 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
                       <span className="text-sm text-gray-600">Technology</span>
                       <div className="flex flex-wrap gap-1 justify-end">
                         {technologiesUsed.map((tech, index) => (
-                          <Badge
-                            key={index}
-                            variant="outline"
-                            className="bg-blue-50 text-blue-700 border-blue-200 text-xs"
-                          >
-                            {tech}
-                          </Badge>
+                          <span key={index} className="font-medium">{tech}</span>
                         ))}
                       </div>
                     </div>
@@ -303,12 +297,7 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
                   {portfolio.pageBuilder && (
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600">Page Builder</span>
-                      <Badge
-                        variant="secondary"
-                        className="bg-green-50 text-green-700 text-xs"
-                      >
-                        {portfolio.pageBuilder}
-                      </Badge>
+                      <span className="font-medium">{portfolio.pageBuilder}</span>
                     </div>
                   )}
                 </CardContent>

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../lib/api";
 import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
 import {
   Card,
   CardContent,
@@ -287,38 +286,11 @@ export function PublicPortfolioDetail() {
                           </span>
                         </div>
                       )}
-                      {portfolio.bidPlatform && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">
-                            Bid Platform
-                          </span>
-                          <span className="font-medium">
-                            {portfolio.bidPlatform}
-                          </span>
-                        </div>
-                      )}
-                      {portfolio.bidPlatformUrl && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">
-                            Platform URL
-                          </span>
-                          <a 
-                            href={portfolio.bidPlatformUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="font-medium text-blue-600 hover:text-blue-800"
-                          >
-                            {portfolio.bidPlatformUrl}
-                          </a>
-                        </div>
-                      )}
                     
                       {portfolio.pageBuilder && (
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-gray-600">Page Builder</span>
-                          <Badge variant="secondary" className="bg-green-50 text-gray-600 text-xs">
-                            {portfolio.pageBuilder}
-                          </Badge>
+                         <span className="font-medium">{portfolio.pageBuilder}</span>
                         </div>
                       )}
                     </CardContent>
