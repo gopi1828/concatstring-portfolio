@@ -63,7 +63,7 @@ export function AddCategoryModal({
     },
   });
 
-  // Reset form when modal opens
+ 
   useEffect(() => {
     if (open) {
       formik.resetForm();
