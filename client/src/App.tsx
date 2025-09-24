@@ -6,7 +6,6 @@ import { LoginPage } from "./components/login-page";
 import { PortfolioPage } from "./components/portfolio-page";
 import { CategoriesPage } from "./components/categories-page";
 import { TechnologiesPage } from "./components/technologies-page";
-import { TagsPage } from "./components/tags-page";
 import { IndustryPage } from "./components/industry-page";
 import { EditUserForm } from "./components/edit-user-form";
 import { PortfolioDetailPage } from "./components/portfolio-detail-page";
@@ -112,16 +111,6 @@ function App() {
             <RequireAuth>
               <MainLayout>
                 <TechnologiesPage />
-              </MainLayout>
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/dashboard/tags"
-          element={
-            <RequireAuth>
-              <MainLayout>
-                <TagsPage />
               </MainLayout>
             </RequireAuth>
           }

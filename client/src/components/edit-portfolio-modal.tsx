@@ -38,14 +38,9 @@ export default function EditPortfolioModal({
   const [isClientSide, setIsClientSide] = useState(false);
   const [techOptions, setTechOptions] = useState<any[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<any[]>([]);
-  const [tagOptions, setTagOptions] = useState<any[]>([]);
   const [industryOptions, setIndustryOptions] = useState<any[]>([]);
   const [userOptions, setUserOptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedTags, setSelectedTags] = useState<string[]>(
-    initialValues?.tag || []
-  );
-  const [newTag, setNewTag] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -127,17 +122,6 @@ export default function EditPortfolioModal({
     if (open) fetchCategory();
   }, [open]);
 
-  useEffect(() => {
-    const fetchTag = async () => {
-      try {
-        const res = await api.get("/api/tags");
-        setTagOptions(Array.isArray(res.data) ? res.data : []);
-      } catch (err) {
-        setTagOptions([]);
-      }
-    };
-    if (open) fetchTag();
-  }, [open]);
 
   useEffect(() => {
     const fetchIndustry = async () => {
@@ -189,7 +173,6 @@ export default function EditPortfolioModal({
     salesPerson: iv?.salesPerson ?? "",
     clientName: iv?.clientName ?? "",
     testimonials: iv?.testimonials ?? "",
-    tag: iv?.tag ?? "",
   });
 
   const formik = useFormik({
@@ -213,7 +196,6 @@ export default function EditPortfolioModal({
           salesPerson: "",
           clientName: "",
           testimonials: "",
-          tag: "",
         },
     validationSchema,
     onSubmit: async (values) => {
@@ -258,7 +240,6 @@ export default function EditPortfolioModal({
         salesPerson: values.salesPerson,
         clientName: values.clientName,
         testimonials: values.testimonials,
-        tag: selectedTags,
       };
 
       Object.keys(payload).forEach(
@@ -330,27 +311,9 @@ export default function EditPortfolioModal({
     }
   };
 
-  const addTag = (tag: string) => {
-    if (!selectedTags.includes(tag)) {
-      setSelectedTags([...selectedTags, tag]);
-    }
-  };
-
-  const removeTag = (tag: string) => {
-    setSelectedTags(selectedTags.filter((t) => t !== tag));
-  };
-
-  const addNewTag = () => {
-    if (newTag.trim() && !selectedTags.includes(newTag.trim())) {
-      setSelectedTags([...selectedTags, newTag.trim()]);
-      setNewTag("");
-    }
-  };
 
   const handleCancel = () => {
     formik.resetForm();
-    setSelectedTags(initialValues?.tag || []);
-    setNewTag("");
     setImagePreview(null);
     onOpenChange(false);
   };
@@ -739,75 +702,6 @@ export default function EditPortfolioModal({
             )}
           </div>
 
-          {/* Tags */}
-          <div className="space-y-3">
-            <Label className="text-sm font-medium">Tags</Label>
-            {/* Selected Tags */}
-            {selectedTags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {selectedTags.map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant="secondary"
-                    className="bg-blue-50 text-blue-700 hover:bg-blue-100 pr-1"
-                  >
-                    {tag}
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="h-4 w-4 ml-1 hover:bg-blue-200"
-                      onClick={() => removeTag(tag)}
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
-                  </Badge>
-                ))}
-              </div>
-            )}
-            {/* Add New Tag */}
-            <div className="flex gap-2">
-              <Input
-                placeholder="Add custom tag"
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                onKeyPress={(e) =>
-                  e.key === "Enter" && (e.preventDefault(), addNewTag())
-                }
-                className="flex-1 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                onClick={addNewTag}
-                disabled={!newTag.trim()}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-            {/* Available Tags */}
-            <div className="space-y-2">
-              <p className="text-xs text-gray-500">Popular tags:</p>
-              <div className="flex flex-wrap gap-2">
-                {Array.isArray(tagOptions) &&
-                  tagOptions
-                    .filter((tag) => !selectedTags.includes(tag.name || tag))
-                    .slice(0, 10)
-                    .map((tag, index) => (
-                      <Button
-                        key={tag._id || tag.id || tag.name || index}
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => addTag(tag.name || tag)}
-                        className="text-xs h-7 border-gray-200 hover:bg-blue-50 hover:border-blue-300"
-                      >
-                        {tag.name || tag}
-                      </Button>
-                    ))}
-              </div>
-            </div>
-          </div>
 
           {/* File Upload */}
           <div className="space-y-3">

@@ -20,7 +20,6 @@ export type ExportPortfolioItem = {
   startDate: string;
   completionDate: string;
   testimonials: string;
-  tag: string[];
 };
 
 type ExportPortfolioProps = {
@@ -88,7 +87,6 @@ export default function ExportPortfolio({
       "Start Date",
       "Completion Date",
       "Testimonials",
-      "Tag",
       "Client Invoices",
     ];
     rows.push(headers);
@@ -114,9 +112,6 @@ export default function ExportPortfolio({
           formatDateForCsv(p.startDate),
           formatDateForCsv(p.completionDate),
           cleanTextForCsv(p.testimonials || "", 150),
-          Array.isArray(p.tag)
-            ? p.tag.join(", ")
-            : cleanTextForCsv(String(p.tag ?? ""), 50),
           Array.isArray(p.clientInvoices)
             ? p.clientInvoices
                 .filter((url) => url && typeof url === "string")

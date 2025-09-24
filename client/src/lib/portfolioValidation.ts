@@ -41,5 +41,4 @@ export const portfolioValidationSchema = Yup.object().shape({
   testimonials: Yup.string()
     .max(500, "Testimonials must be less than 500 characters")
     .optional(),
-  tag: Yup.array().optional(),
 });

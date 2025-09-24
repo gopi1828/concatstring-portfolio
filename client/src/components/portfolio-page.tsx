@@ -71,7 +71,6 @@ type PortfolioItem = {
   startDate: string;
   completionDate: string;
   testimonials: string;
-  tag: string[];
   createdAt?: string;
 };
 
@@ -95,7 +94,6 @@ const TableSkeleton = ({ showSelectColumn = false }: { showSelectColumn?: boolea
           {showSelectColumn && <TableHead className="w-8">Select</TableHead>}
           <TableHead className="w-20">Thumbnail</TableHead>
           <TableHead>Title</TableHead>
-          <TableHead>Tags</TableHead>
           <TableHead>Date</TableHead>
           <TableHead className="w-20">Actions</TableHead>
         </TableRow>
@@ -472,7 +470,6 @@ export function PortfolioPage() {
     const salesPerson = item.salesPerson?.toLowerCase() || "";
     const technology =
       typeof item.technology === "string" ? item.technology.toLowerCase() : "";
-    const tag = Array.isArray(item.tag) ? item.tag : [];
     const category = item.category?.toLowerCase() || "";
     const industry = item.industry?.toLowerCase() || "";
     const search = searchTerm.toLowerCase();
@@ -484,7 +481,6 @@ export function PortfolioPage() {
       clientName.includes(search) ||
       salesPerson.includes(search) ||
       technology.includes(search) ||
-      tag.some((t) => t?.toLowerCase().includes(search)) ||
       category.includes(search) ||
       industry.includes(search)
     );
@@ -579,9 +575,9 @@ export function PortfolioPage() {
                   <button
                     className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-lg border border-gray-200 bg-white"
                     onClick={() =>
-                      window.open(item.websiteLink, "_blank")
+                      window.open(item.clientInvoices[0], "_blank")
                     }
-                    title="Open Website"
+                    title="Open PDF"
                   >
                     <FileText className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5 text-gray-600" />
                   </button>
@@ -590,9 +586,9 @@ export function PortfolioPage() {
                     src={getFirstImageUrl(item.clientInvoices)}
                     alt={item.projectName}
                     onClick={() =>
-                      window.open(item.websiteLink, "_blank")
+                      window.open(item.clientInvoices[0], "_blank")
                     }
-                    title="Open Website"
+                    title="Open Image"
                     className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 object-cover rounded-lg cursor-pointer"
                   />
                 )}
@@ -710,35 +706,6 @@ export function PortfolioPage() {
                 />
               )}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-              {/* Link Icon */}
-              <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (item.websiteLink) {
-                      window.open(item.websiteLink, "_blank");
-                    }
-                  }}
-                  className="bg-white/90 hover:bg-white rounded-full p-1.5 sm:p-2 shadow-md transition-colors duration-200"
-                  title="Open Website"
-                  disabled={!item.websiteLink}
-                >
-                  <svg 
-                    className="h-3 w-3 sm:h-4 sm:w-4 text-gray-600" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={2} 
-                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" 
-                    />
-                  </svg>
-                </button>
-              </div>
               {isLoggedIn && (
                 <div className="absolute top-2 right-2 sm:top-3 sm:right-3 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="flex gap-1 sm:gap-2">
