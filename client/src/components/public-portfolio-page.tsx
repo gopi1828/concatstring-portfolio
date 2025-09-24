@@ -50,7 +50,6 @@ type PortfolioItem = {
   startDate: string;
   completionDate: string;
   testimonials: string;
-  tag: string[];
   createdAt?: string;
 };
 
@@ -207,7 +206,6 @@ export function PublicPortfolioPage() {
     const description = item.description?.toLowerCase() || "";
     const technology =
       typeof item.technology === "string" ? item.technology.toLowerCase() : "";
-    const tag = Array.isArray(item.tag) ? item.tag : [];
     const category = item.category?.toLowerCase() || "";
     const industry = item.industry?.toLowerCase() || "";
     const search = searchTerm.toLowerCase();
@@ -217,7 +215,6 @@ export function PublicPortfolioPage() {
       projectName.includes(search) ||
       description.includes(search) ||
       technology.includes(search) ||
-      tag.some((t) => t?.toLowerCase().includes(search)) ||
       category.includes(search) ||
       industry.includes(search)
     );

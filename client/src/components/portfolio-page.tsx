@@ -71,7 +71,6 @@ type PortfolioItem = {
   startDate: string;
   completionDate: string;
   testimonials: string;
-  tag: string[];
   createdAt?: string;
 };
 
@@ -95,7 +94,6 @@ const TableSkeleton = ({ showSelectColumn = false }: { showSelectColumn?: boolea
           {showSelectColumn && <TableHead className="w-8">Select</TableHead>}
           <TableHead className="w-20">Thumbnail</TableHead>
           <TableHead>Title</TableHead>
-          <TableHead>Tags</TableHead>
           <TableHead>Date</TableHead>
           <TableHead className="w-20">Actions</TableHead>
         </TableRow>
@@ -472,7 +470,6 @@ export function PortfolioPage() {
     const salesPerson = item.salesPerson?.toLowerCase() || "";
     const technology =
       typeof item.technology === "string" ? item.technology.toLowerCase() : "";
-    const tag = Array.isArray(item.tag) ? item.tag : [];
     const category = item.category?.toLowerCase() || "";
     const industry = item.industry?.toLowerCase() || "";
     const search = searchTerm.toLowerCase();
@@ -484,7 +481,6 @@ export function PortfolioPage() {
       clientName.includes(search) ||
       salesPerson.includes(search) ||
       technology.includes(search) ||
-      tag.some((t) => t?.toLowerCase().includes(search)) ||
       category.includes(search) ||
       industry.includes(search)
     );

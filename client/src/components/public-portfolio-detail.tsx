@@ -39,7 +39,6 @@ type PortfolioItem = {
   startDate: string;
   completionDate: string;
   testimonials: string;
-  tag: string[];
   createdAt?: string;
 };
 
@@ -128,7 +127,6 @@ export function PublicPortfolioDetail() {
     );
   }
 
-  const portfolioTags = portfolio.tag || [];
   const technologiesUsed = Array.isArray(portfolio.technology)
     ? portfolio.technology.filter(Boolean)
     : portfolio.technology
@@ -326,30 +324,6 @@ export function PublicPortfolioDetail() {
                     </CardContent>
                   </Card>
 
-                  {/* Project Tags */}
-                  {portfolioTags.length > 0 && (
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Project Tags</CardTitle>
-                        <CardDescription>
-                          Additional tags and keywords for this project
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex flex-wrap gap-2">
-                          {portfolioTags.map((tag, index) => (
-                            <Badge
-                              key={index}
-                              variant="secondary"
-                              className="bg-purple-50 text-purple-700"
-                            >
-                              {tag}
-                            </Badge>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
                 </TabsContent>
 
                 <TabsContent value="gallery" className="space-y-6">

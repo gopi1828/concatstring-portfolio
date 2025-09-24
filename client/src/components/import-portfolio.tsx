@@ -182,7 +182,6 @@ export default function ImportPortfolio({
           "finished",
         ],
         Testimonials: ["testimonials", "testimonial", "feedback", "review"],
-        Tag: ["tag", "tags", "keywords", "labels"],
       };
 
       for (const [standardName, variations] of Object.entries(
@@ -258,7 +257,6 @@ export default function ImportPortfolio({
             startDate: toIsoDate(getValue("Start Date")),
             completionDate: toIsoDate(getValue("Completion Date")),
             testimonials: getValue("Testimonials"),
-            tag: getValue("Tag"),
           };
 
           return normalized;
@@ -309,12 +307,6 @@ export default function ImportPortfolio({
             continue;
           }
 
-          const tagsArray = p.tag
-            ? p.tag
-                .split(",")
-                .map((t) => t.trim())
-                .filter(Boolean)
-            : [];
 
           const portfolioData = {
             projectName: p.projectName,
@@ -332,7 +324,6 @@ export default function ImportPortfolio({
             startDate: p.startDate || undefined,
             completionDate: p.completionDate || undefined,
             testimonials: p.testimonials,
-            tag: tagsArray,
           };
 
           await api.post("/api/portfolios", portfolioData);

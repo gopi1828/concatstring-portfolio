@@ -13,7 +13,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 import {
   UserPlus,
   FolderOpen,
-  Tag,
   Menu,
   LogOut,
   Edit,
@@ -38,7 +37,6 @@ const navigation: NavigationItem[] = [
   { name: "Categories", href: "/dashboard/categories", icon: Layers },
   { name: "Industries", href: "/dashboard/industries", icon: Building2 },
   { name: "Technologies", href: "/dashboard/technologies", icon: Code2 },
-  { name: "Tags", href: "/dashboard/tags", icon: Tag },
 ];
 
 interface MainLayoutProps {
