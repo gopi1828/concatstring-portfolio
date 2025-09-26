@@ -10,14 +10,14 @@ import {
   CardDescription,
 } from "./ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { 
-  ArrowLeft, 
-  ExternalLink, 
-  User, 
+import {
+  ArrowLeft,
+  ExternalLink,
+  User,
   FileText,
   ImageIcon,
   Eye,
+  UserIcon,
 } from "lucide-react";
 
 type PortfolioItem = {
@@ -84,7 +84,11 @@ export function PublicPortfolioDetail() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="space-y-6">
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" onClick={() => navigate("/portfolio")}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate("/portfolio")}
+              >
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <div className="flex-1">
@@ -108,7 +112,11 @@ export function PublicPortfolioDetail() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="space-y-6">
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" onClick={() => navigate("/portfolio")}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate("/portfolio")}
+              >
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <div className="flex-1">
@@ -138,7 +146,11 @@ export function PublicPortfolioDetail() {
         <div className="space-y-6">
           {/* Header */}
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/portfolio")}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/portfolio")}
+            >
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <div className="flex-1">
@@ -256,23 +268,23 @@ export function PublicPortfolioDetail() {
                   <Card>
                     <CardHeader>
                       <CardTitle>Project Information</CardTitle>
-                      <CardDescription>
-                        Business and project details
-                      </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      
                       {portfolio.industry && (
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Industry</span>
+                          <span className="text-sm text-gray-600">
+                            Industry
+                          </span>
                           <span className="font-medium">
                             {portfolio.industry}
                           </span>
                         </div>
                       )}
-                       {technologiesUsed.length > 0 && (
+                      {technologiesUsed.length > 0 && (
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Technology</span>
+                          <span className="text-sm text-gray-600">
+                            Technology
+                          </span>
                           <span className="font-medium">
                             {technologiesUsed.join(", ")}
                           </span>
@@ -280,22 +292,27 @@ export function PublicPortfolioDetail() {
                       )}
                       {portfolio.category && (
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Category</span>
+                          <span className="text-sm text-gray-600">
+                            Category
+                          </span>
                           <span className="font-medium">
                             {portfolio.category}
                           </span>
                         </div>
                       )}
-                    
+
                       {portfolio.pageBuilder && (
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Page Builder</span>
-                         <span className="font-medium">{portfolio.pageBuilder}</span>
+                          <span className="text-sm text-gray-600">
+                            Page Builder
+                          </span>
+                          <span className="font-medium">
+                            {portfolio.pageBuilder}
+                          </span>
                         </div>
                       )}
                     </CardContent>
                   </Card>
-
                 </TabsContent>
 
                 <TabsContent value="gallery" className="space-y-6">
@@ -322,7 +339,8 @@ export function PublicPortfolioDetail() {
                                     variant="secondary"
                                     onClick={() => window.open(image, "_blank")}
                                   >
-                                    <FileText className="mr-2 h-4 w-4" /> Open PDF
+                                    <FileText className="mr-2 h-4 w-4" /> Open
+                                    PDF
                                   </Button>
                                 </div>
                               ) : (
@@ -358,9 +376,10 @@ export function PublicPortfolioDetail() {
 
             {/* Sidebar */}
             <div className="space-y-6">
-
               {/* Client & Sales Information */}
-              {(portfolio.clientName || portfolio.salesPerson || portfolio.testimonials) && (
+              {(portfolio.clientName ||
+                portfolio.salesPerson ||
+                portfolio.testimonials) && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -372,18 +391,14 @@ export function PublicPortfolioDetail() {
                     {portfolio.clientName && (
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-gray-600">Client</span>
+                          <span className="text-sm font-medium text-gray-600">
+                            Client
+                          </span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <Avatar>
-                            <AvatarImage src="/placeholder.svg" />
-                            <AvatarFallback>
-                              {portfolio.clientName
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
-                            </AvatarFallback>
-                          </Avatar>
+                          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                            <UserIcon className="h-4 w-4 text-gray-600" />
+                          </div>
                           <div>
                             <p className="font-medium text-gray-900">
                               {portfolio.clientName}
@@ -396,7 +411,9 @@ export function PublicPortfolioDetail() {
                     {portfolio.testimonials && (
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-gray-600">Testimonial</span>
+                          <span className="text-sm font-medium text-gray-600">
+                            Testimonial
+                          </span>
                         </div>
                         <div className="bg-gray-50 p-3 rounded-lg">
                           <p className="text-sm text-gray-700 italic">

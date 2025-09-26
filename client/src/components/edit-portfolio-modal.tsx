@@ -765,7 +765,7 @@ export default function EditPortfolioModal({
             {imagePreview && (
               <div className="relative">
                 <img
-                  src={imagePreview || "/placeholder.svg"}
+                  src={imagePreview}
                   alt="Preview"
                   className="w-full h-48 object-cover rounded-lg border border-gray-200"
                 />

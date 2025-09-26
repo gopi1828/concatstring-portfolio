@@ -14,7 +14,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "../components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import {
   ArrowLeft,
   ExternalLink,
@@ -25,6 +24,7 @@ import {
   User,
   ImageIcon,
   FileText,
+  UserIcon,
 } from "lucide-react";
 import api from "../lib/api";
 import { toast } from "react-hot-toast";
@@ -266,9 +266,7 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
               <Card>
                 <CardHeader>
                   <CardTitle>Project Information</CardTitle>
-                  <CardDescription>
-                    Business and project details
-                  </CardDescription>
+                  
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {portfolio.industry && (
@@ -463,7 +461,7 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
+                  <User className="h-8 w-8" />
                   Client & Sales Information
                 </CardTitle>
               </CardHeader>
@@ -476,15 +474,9 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
                       </span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarImage src="/placeholder.svg" />
-                        <AvatarFallback>
-                          {portfolio.clientName
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
+                      <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                        <UserIcon className="h-4 w-4 text-gray-600" />
+                      </div>
                       <div>
                         <p className="font-medium text-gray-900">
                           {portfolio.clientName}
@@ -502,15 +494,9 @@ export function PortfolioDetailPage({ id }: PortfolioDetailPageProps) {
                       </span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarImage src="/placeholder.svg" />
-                        <AvatarFallback>
-                          {portfolio.salesPerson
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
+                      <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                        <UserIcon className="h-4 w-4 text-gray-600" />
+                      </div>
                       <div>
                         <p className="font-medium text-gray-900">
                           {portfolio.salesPerson}

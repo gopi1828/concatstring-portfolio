@@ -307,7 +307,6 @@ export default function ImportPortfolio({
             continue;
           }
 
-
           const portfolioData = {
             projectName: p.projectName,
             websiteLink: p.websiteLink,
@@ -340,7 +339,7 @@ export default function ImportPortfolio({
           } else if (err.response?.data?.message) {
             reason = err.response.data.message;
           } else if (err.message) {
-            reason = err.message; 
+            reason = err.message;
           }
 
           skipped.push({ projectName: p.projectName, reason });
@@ -354,7 +353,7 @@ export default function ImportPortfolio({
       setDialogOpen(true);
     } catch (err: any) {
       console.error("Import failed:", err);
-    } finally { 
+    } finally {
       setIsImporting(false);
       if (e.target) e.target.value = "";
     }
@@ -393,7 +392,7 @@ export default function ImportPortfolio({
             onImported?.();
           }
         }}
-        >
+      >
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">
@@ -529,7 +528,7 @@ export default function ImportPortfolio({
           <DialogFooter className="border-t pt-4">
             <Button
               onClick={() => setDialogOpen(false)}
-  className="min-w-[100px] bg-transparent text-black border border-black hover:bg-black/10 hover:text-black rounded-md transition-colors"
+              className="min-w-[100px] bg-transparent text-black border border-black hover:bg-black/10 hover:text-black rounded-md transition-colors"
             >
               Close
             </Button>

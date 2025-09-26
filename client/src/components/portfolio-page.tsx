@@ -95,8 +95,9 @@ const TableSkeleton = ({ showSelectColumn = false }: { showSelectColumn?: boolea
           {showSelectColumn && <TableHead className="w-8">Select</TableHead>}
           <TableHead className="w-20">Thumbnail</TableHead>
           <TableHead>Title</TableHead>
-          <TableHead>Date</TableHead>
-          <TableHead className="w-20">Actions</TableHead>
+          <TableHead>Technology</TableHead>
+          <TableHead className="w-10">Date</TableHead>
+          <TableHead>Action</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -111,13 +112,13 @@ const TableSkeleton = ({ showSelectColumn = false }: { showSelectColumn?: boolea
               <Skeleton className="w-12 h-12 rounded-lg" />
             </TableCell>
             <TableCell>
-              <Skeleton className="h-4 w-32 mb-2" />
-              <Skeleton className="h-3 w-48" />
+              <Skeleton className="h-3 w-32 mb-2" />
+              <Skeleton className="h-2 w-72 mb-1" />
+              <Skeleton className="h-2 w-48" />
             </TableCell>
             <TableCell>
               <div className="flex gap-2">
-                <Skeleton className="h-5 w-12 rounded-full" />
-                <Skeleton className="h-5 w-12 rounded-full" />
+                <Skeleton className="h-4 w-20" />                
               </div>
             </TableCell>
             <TableCell>
@@ -140,13 +141,12 @@ const GridSkeleton = () => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {[...Array(6)].map((_, i) => (
       <Card key={i} className="border-0 shadow-md bg-white">
-        <Skeleton className="w-full h-48 rounded-t-lg" />
+        <Skeleton className="w-auto h-48 rounded-t-lg" />
         <CardContent className="p-6 space-y-3">
           <Skeleton className="h-5 w-40" />
-          <Skeleton className="h-4 w-64" />
+          <Skeleton className="h-4 w-56" />
           <div className="flex gap-2">
-            <Skeleton className="h-5 w-16 rounded-full" />
-            <Skeleton className="h-5 w-16 rounded-full" />
+          <Skeleton className="h-4 w-40" />
           </div>
           <Skeleton className="h-4 w-24" />
         </CardContent>
