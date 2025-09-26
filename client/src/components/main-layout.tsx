@@ -11,7 +11,7 @@ import {
 } from "./ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 import {
-  UserPlus,
+  User,
   FolderOpen,
   Menu,
   LogOut,
@@ -33,7 +33,7 @@ interface NavigationItem {
 }
 
 const navigation: NavigationItem[] = [
-  { name: "Users", href: "/dashboard/users", icon: UserPlus, adminOnly: true },
+  { name: "Users", href: "/dashboard/users", icon: User, adminOnly: true },
   { name: "Portfolio", href: "/dashboard", icon: FolderOpen },
   { name: "Categories", href: "/dashboard/categories", icon: Layers },
   { name: "Industries", href: "/dashboard/industries", icon: Building2 },
