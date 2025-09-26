@@ -39,11 +39,11 @@ function toCsvValue(value: unknown): string {
 
 function formatDateForCsv(dateStr?: string): string {
   if (!dateStr) return "";
-  const d = new Date(dateStr);
-  if (isNaN(d.getTime())) return dateStr;
-  const day = String(d.getDate()).padStart(2, "0");
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const year = d.getFullYear();
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return dateStr;
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
   return `${day}/${month}/${year}`;
 }
 
@@ -97,9 +97,7 @@ export default function ExportPortfolio({
       try {
         rows.push([
           cleanTextForCsv(p.projectName || "", 50),
-          Array.isArray(p.technology)
-            ? p.technology.join(", ")
-            : cleanTextForCsv(String(p.technology ?? ""), 30),
+          cleanTextForCsv(p.technology || "", 30),
           cleanTextForCsv(p.category || "", 30),
           cleanTextForCsv(p.industry || "", 30),
           cleanTextForCsv(p.description || "", 200),

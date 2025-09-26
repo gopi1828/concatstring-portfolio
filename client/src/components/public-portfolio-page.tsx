@@ -62,6 +62,7 @@ const TableSkeleton = () => (
           <TableHead className="w-20 ">Thumbnail</TableHead>
           <TableHead>Title</TableHead>
           <TableHead>Technology</TableHead>
+          <TableHead>Industry</TableHead>
             <TableHead>Category</TableHead>
             <TableHead>Website</TableHead>
                 </TableRow>
@@ -77,12 +78,16 @@ const TableSkeleton = () => (
               <Skeleton className="h-3 w-48" />
             </TableCell>
             <TableCell>
-              <div className="flex gap-2">
-                <Skeleton className="h-5 w-12 rounded-full" />
-              </div>
+             <Skeleton className="h-4 w-16" />
             </TableCell>
             <TableCell>
               <Skeleton className="h-4 w-16" />
+            </TableCell>
+             <TableCell>
+              <Skeleton className="h-4 w-16" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="w-7 h-7 rounded-md" />
             </TableCell>
           </TableRow>
         ))}
