@@ -41,7 +41,6 @@ export function AddIndustryModal({
         formik.resetForm();
         onOpenChange(false);
 
-        // Refresh the industries list
         if (onIndustryAdded) {
           onIndustryAdded();
         }
@@ -57,7 +56,6 @@ export function AddIndustryModal({
     },
   });
 
-  // Reset form when modal opens
   useEffect(() => {
     if (open) {
       formik.resetForm();
@@ -88,7 +86,7 @@ export function AddIndustryModal({
               Industry Name *
             </Label>
             <Input
-              id="name" 
+              id="name"
               name="name"
               placeholder="e.g., E-commerce, Finance, Healthcare"
               value={formik.values.name}

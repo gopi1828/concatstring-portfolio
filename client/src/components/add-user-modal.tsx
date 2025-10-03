@@ -44,9 +44,7 @@ const userValidationSchema = Yup.object({
     .required("Password is required")
     .min(4, "Password must be at least 4 characters")
     .max(100, "Password must be less than 100 characters"),
-  role: Yup.string()
-    .required("Role is required")
-    .oneOf(["user", "admin"], "Role must be either user or admin"),
+ 
 });
 
 export function AddUserModal({

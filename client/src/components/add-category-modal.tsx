@@ -43,27 +43,24 @@ export function AddCategoryModal({
         const response = await api.post("/api/categories", {
           name: values.name,
         });
-        const created = response.data?.category || response.data;
-
+        const created = response.data?.category;
         onCategoryAdded({
           ...created,
-          id: created._id || created.id,
+          id: created._id,
           count: 0,
         });
-        
         formik.resetForm();
         onOpenChange(false);
       } catch (error: any) {
-        const errorMessage = 
-          error.response?.data?.message || 
-          error.message || 
+        const errorMessage =
+          error.response?.data?.message ||
+          error.message ||
           "Error adding category";
         toast.error(errorMessage);
       }
     },
   });
 
- 
   useEffect(() => {
     if (open) {
       formik.resetForm();
@@ -102,9 +99,7 @@ export function AddCategoryModal({
               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
             />
             {formik.touched.name && formik.errors.name && (
-              <span className="text-sm text-red-600">
-                {formik.errors.name}
-              </span>
+              <span className="text-sm text-red-600">{formik.errors.name}</span>
             )}
           </div>
 

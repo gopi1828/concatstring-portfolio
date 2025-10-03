@@ -43,7 +43,7 @@ exports.getPageBuilders = async function getPageBuilders(_req, res) {
     const pagebuildersWithCounts = await Promise.all(
       pagebuilders.map(async (pagebuilder) => {
         const count = await portfolio.countDocuments({
-          pagebuilder: pagebuilder.name,
+          pageBuilder: pagebuilder.name,
         });
         return {
           ...pagebuilder,
